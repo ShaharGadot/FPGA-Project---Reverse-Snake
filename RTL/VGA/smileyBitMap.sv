@@ -28,8 +28,8 @@ localparam  logic	[10:0] OBJECT_WIDTH_X = 11'b1 <<  OBJECT_NUMBER_OF_X_BITS;
  logic	[10:0] HitCodeY ; 
 assign HitCodeX = offsetX >> ( OBJECT_NUMBER_OF_X_BITS - 4 );	//hitedge code MSB of the offset
 assign HitCodeY = offsetY >> ( OBJECT_NUMBER_OF_Y_BITS - 4 );	 	 
-assign address = ((OBJECT_HEIGHT_Y-offsetY)*OBJECT_WIDTH_X + offsetX);
-//assign address = ((offsetY)*OBJECT_WIDTH_X + offsetX);
+//assign address = ((OBJECT_HEIGHT_Y-offsetY)*OBJECT_WIDTH_X + offsetX);
+assign address = ((offsetY)*OBJECT_WIDTH_X + offsetX);
 
 // generating a smiley bitmap from a MIF file
 

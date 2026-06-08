@@ -17,8 +17,12 @@ module	back_ground_draw	(
 
 const int	xFrameSize	=	635;
 const int	yFrameSize	=	475;
-const int	bracketOffset =	32;
-//const int   COLOR_MARTIX_SIZE  = 16*8 ; // 128 
+const int	topBorder =	100;
+const int	otherBorder =	1;
+const int	borderWidth =	8;
+
+
+
 
 logic [2:0] redBits;
 logic [2:0] greenBits;
@@ -43,7 +47,7 @@ parameter  logic [10:0] COLOR_MATRIX_LEFT_X = 100 ;
     .LPM_WIDTH(8),
     .LPM_WIDTHAD(19),
 	 .LPM_NUMWORDS(307200),
-    .LPM_FILE("RTL/VGA_BG.mif"),
+    .LPM_FILE("RTL/background_dark_house.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
 		.LPM_OUTDATA            ("UNREGISTERED"), 
@@ -82,13 +86,13 @@ begin
 		boardersDrawReq <= 	1'b0 ; 
 		
 		if (   
-		// 1. draw the yellow borders
-						((pixelX <= bracketOffset) && (pixelX >=(bracketOffset- bracketOffset/4))) ||
-						((pixelY <= bracketOffset) && (pixelY >= (bracketOffset- bracketOffset/4))) ||
+						((pixelX <= otherBorder + borderWidth) && (pixelX >= otherBorder) && pixelY >= topBorder) ||
+						((pixelY <= topBorder + borderWidth) && (pixelY >= topBorder)) ||
 						
-		// 2. draw four lines with "bracketOffset" offset from the border 
-						((pixelX >= (xFrameSize-bracketOffset))&&(pixelX <= (xFrameSize-(bracketOffset- bracketOffset/4)))) || 
-						((pixelY >= (yFrameSize-bracketOffset))&&(pixelY <= (yFrameSize-(bracketOffset- bracketOffset/4))))) 
+						((pixelX >= (xFrameSize - (otherBorder + borderWidth))) && (pixelX <= (xFrameSize - otherBorder)) && pixelY >= topBorder) || 
+						((pixelY >= (yFrameSize - (otherBorder + borderWidth))) && (pixelY <= (yFrameSize - otherBorder))) 
+			) 
+			
 			begin 
 					redBits <= LIGHT_COLOR ;	
 					greenBits <= DARK_COLOR  ;	
@@ -98,26 +102,12 @@ begin
 			end
 	
 				
-
-	// 3. draw a matrix of 16*16 rectangles with all the colors, each rectsangle 8*8 pixels  	
-   // ---------------------------------------------------------------------------------------
-		if (( pixelY > 4 ) && (pixelY < 20 ) && (pixelX >30 )&& (pixelX <542 ))
-		 begin
-		        shift_pixelX<= pixelX-11'd29;
-
-             blueBits <= shift_pixelX[8:7] ; 
-				 greenBits <= shift_pixelX[3:1] ; 
-				 redBits <= shift_pixelX[6:4];       
-				 boardersDrawReq <= 	1'b1;
-	
-				
-		 end 
 		
 		
 	BG_RGB <=  { blueBits, redBits, greenBits } ; //collect color nibbles to an 8 bit word		
 
 
-	end; 	
+	end 	
 end 
 endmodule
 
