@@ -2,7 +2,7 @@
 // game controller dudy Febriary 2020
 // (c) Technion IIT, Department of Electrical Engineering 2021 
 //updated --Eyal Lev 2021
-//razzz
+
 
 module	game_controller	(	
 			input	logic	clk,
