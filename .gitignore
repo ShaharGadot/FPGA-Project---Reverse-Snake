@@ -1,0 +1,9 @@
+# Quartus junk folders
+db/
+incremental_db/
+output_files/
+
+# Quartus generated report files
+*.rpt
+*.qws
+*.qarlog
