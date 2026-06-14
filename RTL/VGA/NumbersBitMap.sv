@@ -33,10 +33,10 @@ assign address = ((digit_location_MIF*digit)+((offsetY)*OBJECT_WIDTH_X + (offset
 parameter  logic	[7:0] digit_color = 8'hff ; //set the color of the digit 
 
 lpm_rom #(
-    .LPM_WIDTH(1),
-    .LPM_WIDTHAD(13),
-	 .LPM_NUMWORDS(8192),
-    .LPM_FILE("RTL/numbers.mif"),
+    .LPM_WIDTH(8),
+    .LPM_WIDTHAD(8),
+	 .LPM_NUMWORDS(256),
+    .LPM_FILE("RTL/hero_front_1.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
 		.LPM_OUTDATA            ("UNREGISTERED"), 
