@@ -23,19 +23,21 @@ localparam logic[12:0] OBJECT_WIDTH_Y = 6'd32;
 localparam logic[12:0] digit_location_MIF = OBJECT_WIDTH_X*OBJECT_WIDTH_Y;
 
 // generating a number bitmap from a MIF file
-logic [12:0] address  ;
-logic  color  ;
+logic [9:0] address  ;
+logic [7:0] color  ;
+localparam logic [7:0] TRANSPARENT_ENCODING = 8'hFF ;// RGB value in the bitmap representing a transparent pixel 
+
  
 //assign address = ((digit_location_MIF*digit)+((offsetY>>1)*OBJECT_WIDTH_X + (offsetX>>1))); //***Double size
 assign address = ((digit_location_MIF*digit)+((offsetY)*OBJECT_WIDTH_X + (offsetX))); //Origimal size of digit
-	//***comment the previous line and adjust the square object to double size as the size of a double bitmap
+
 
 parameter  logic	[7:0] digit_color = 8'hff ; //set the color of the digit 
 
 lpm_rom #(
     .LPM_WIDTH(8),
-    .LPM_WIDTHAD(8),
-	 .LPM_NUMWORDS(256),
+    .LPM_WIDTHAD(10),
+	 .LPM_NUMWORDS(1024),
     .LPM_FILE("RTL/hero_front_1.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
@@ -55,18 +57,19 @@ lpm_rom #(
 always_ff@(posedge clk or negedge resetN)
 begin
 	if(!resetN) begin
-		drawingRequest <=	1'b0;
-		
+		RGBout <= TRANSPARENT_ENCODING ;
 	end
 	
 	else begin
-		drawingRequest <=	1'b0;
-	  	if (InsideRectangle == 1'b1 )
-			drawingRequest <= (color == 1'b1) ? 1'b1 : 1'b0;
+		//drawingRequest <=	1'b0;
+		RGBout <= TRANSPARENT_ENCODING ; // default  
+
+	  	if (InsideRectangle == 1'b1 ) begin
+			RGBout <= color;
+		end
  	end 
 end
 
-assign RGBout = digit_color ; // this is a fixed color 
-
+assign drawingRequest = (RGBout != TRANSPARENT_ENCODING ) ? 1'b1 : 1'b0 ; // get optional transparent command from the bitmpap   
 
 endmodule
