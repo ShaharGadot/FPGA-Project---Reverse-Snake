@@ -10,8 +10,8 @@ module	HartsMatrixBitMap	(
 					input logic	[10:0] offsetX,// offset from top left  position 
 					input logic	[10:0] offsetY,
 					input	logic	InsideRectangle, //input that the pixel is within a bracket 
-					input logic random_hart,
-					input logic collision_Smiley_Hart,
+					input logic random_trap,
+					input logic collision_hero_trap,
 
 					output	logic	drawingRequest, //output that the pixel should be dispalyed 
 					output	logic	[7:0] RGBout  //rgb value from the bitmap 
@@ -39,6 +39,8 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;
  logic [9:0] offsetY_LSB  ; 
  logic [10:0] offsetX_MSB ;
  logic [10:0] offsetY_MSB  ;
+ logic [10:0] offsetX_32;
+ logic [10:0] offsetY_32;
  logic [9:0] address  ;
  logic [0:1][7:0] color  ;
 
@@ -121,18 +123,18 @@ begin
 	end
 	else begin
 		RGBout <= TRANSPARENT_ENCODING ; // default 
-		if (collision_Smiley_Hart)
+		if (collision_hero_trap)
 			begin
 				MazeBitMapMask[{offsetY_MSB[10:1],1'b0}][{offsetX_MSB[10:1],1'b0}] <= 4'h00;  // clear entry 
 				MazeBitMapMask[{offsetY_MSB[10:1],1'b0}][{offsetX_MSB[10:1],1'b1}] <= 4'h00;
 				MazeBitMapMask[{offsetY_MSB[10:1],1'b1}][{offsetX_MSB[10:1],1'b0}] <= 4'h00;
-				MazeBitMapMask[{offsetY_MSB[10:1],1'b1}][{offsetX_MSB[10:1],1'b1}] <= 4'h00;// !!!!only works now for in tile objects	!!!!!		end
+				MazeBitMapMask[{offsetY_MSB[10:1],1'b1}][{offsetX_MSB[10:1],1'b1}] <= 4'h00;// !!!!only works now for in 36*36tile objects	!!!!!		end
 		
 		if (InsideRectangle == 1'b1 )	
 			begin 
 		   	case (MazeBitMapMask[offsetY_MSB][offsetX_MSB])
 					 4'h0 : RGBout <= TRANSPARENT_ENCODING ;
-			   	 4'h1 : RGBout <= color[random_hart]; 
+			   	 4'h1 : RGBout <= color[random_trap]; 
 					 4'h2 : RGBout <= color[1] ; 
 					 default:  RGBout <= TRANSPARENT_ENCODING ; 
 				endcase
