@@ -21,15 +21,15 @@ module	HartsMatrixBitMap	(
 localparam logic [7:0] TRANSPARENT_ENCODING = 8'hFF ;// RGB value in the bitmap representing a transparent pixel 
 
 
-localparam  logic [9:0] TILE_NUMBER_OF_X_BITS = 5;  // 2^5 = 32  everu object 
-localparam  logic [9:0] TILE_NUMBER_OF_Y_BITS = 5;  // 2^5 = 32 
+localparam  logic [9:0] TILE_NUMBER_OF_X_BITS = 4;  // 2^4 = 16  size of tile 
+localparam  logic [9:0] TILE_NUMBER_OF_Y_BITS = 4;  // 2^4 = 16
 
-localparam  int MAZE_NUMBER_OF__X_BITS = 4;  // 2^4 = 16 / /the maze of the objects 
-localparam  int MAZE_NUMBER_OF__Y_BITS = 3;  // 2^3 = 8 
+localparam  int MAZE_NUMBER_OF__X_BITS = 6;  // 2^6 = 64 / /the maze of the objects 
+localparam  int MAZE_NUMBER_OF__Y_BITS = 5;  // 2^5 = 32 //dimentions of maze
 
 //-----
 
-localparam  logic [9:0] TILE_WIDTH_X = 10'b1 << TILE_NUMBER_OF_X_BITS ;
+localparam  logic [9:0] TILE_WIDTH_X = 10'b1 << TILE_NUMBER_OF_X_BITS ;// calc dimentions
 localparam  logic [9:0] TILE_HEIGHT_Y = 1'b1 <<  TILE_NUMBER_OF_Y_BITS ;
 localparam  logic [10:0] MAZE_WIDTH_X = 11'b1 << MAZE_NUMBER_OF__X_BITS ;
 localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;
@@ -42,11 +42,15 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;
  logic [9:0] address  ;
  logic [0:1][7:0] color  ;
 
- assign offsetX_LSB  = offsetX[(TILE_NUMBER_OF_X_BITS-1):0] ; // get lower bits 
+ assign offsetX_LSB  = offsetX[(TILE_NUMBER_OF_X_BITS-1):0] ; // get offset in crnt tile
  assign offsetY_LSB  = offsetY[(TILE_NUMBER_OF_Y_BITS-1):0] ; // get lower bits 
- assign offsetX_MSB  = offsetX[(TILE_NUMBER_OF_X_BITS + MAZE_NUMBER_OF__X_BITS -1 ):TILE_NUMBER_OF_X_BITS] ; // get higher bits 
+ assign offsetX_MSB  = offsetX[(TILE_NUMBER_OF_X_BITS + MAZE_NUMBER_OF__X_BITS -1 ):TILE_NUMBER_OF_X_BITS] ; // get offset of tile in maze
  assign offsetY_MSB  = offsetY[(TILE_NUMBER_OF_Y_BITS + MAZE_NUMBER_OF__Y_BITS -1 ):TILE_NUMBER_OF_Y_BITS] ; // get higher bits 
- assign address = (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
+ 
+ assign offsetX_32 = {offsetX_MSB[0],offsetX_LSB}; //calc the offset for 32*32 image on 16*16 tiles
+ assign offsetY_32 = {offsetY_MSB[0],offsetY_LSB};
+
+ assign address = (offsetY_32 * 32) + offsetX_32;
 
 
 
@@ -118,7 +122,11 @@ begin
 	else begin
 		RGBout <= TRANSPARENT_ENCODING ; // default 
 		if (collision_Smiley_Hart)
-			MazeBitMapMask[offsetY_MSB][offsetX_MSB] <= 4'h00;  // clear entry 
+			begin
+				MazeBitMapMask[{offsetY_MSB[10:1],1'b0}][{offsetX_MSB[10:1],1'b0}] <= 4'h00;  // clear entry 
+				MazeBitMapMask[{offsetY_MSB[10:1],1'b0}][{offsetX_MSB[10:1],1'b1}] <= 4'h00;
+				MazeBitMapMask[{offsetY_MSB[10:1],1'b1}][{offsetX_MSB[10:1],1'b0}] <= 4'h00;
+				MazeBitMapMask[{offsetY_MSB[10:1],1'b1}][{offsetX_MSB[10:1],1'b1}] <= 4'h00;// !!!!only works now for in tile objects	!!!!!		end
 		
 		if (InsideRectangle == 1'b1 )	
 			begin 
