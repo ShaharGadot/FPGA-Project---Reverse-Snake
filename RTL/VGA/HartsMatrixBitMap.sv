@@ -12,6 +12,8 @@ module	HartsMatrixBitMap	(
 					input	logic	InsideRectangle, //input that the pixel is within a bracket 
 					input logic random_trap,
 					input logic collision_hero_trap,
+					input logic [10:0] Hero_X, //hero top left coardinets
+               input logic [10:0] Hero_Y,
 
 					output	logic	drawingRequest, //output that the pixel should be dispalyed 
 					output	logic	[7:0] RGBout  //rgb value from the bitmap 
@@ -31,28 +33,57 @@ localparam  int MAZE_NUMBER_OF__Y_BITS = 5;  // 2^5 = 32 //dimentions of maze
 
 localparam  logic [9:0] TILE_WIDTH_X = 10'b1 << TILE_NUMBER_OF_X_BITS ;// calc dimentions
 localparam  logic [9:0] TILE_HEIGHT_Y = 1'b1 <<  TILE_NUMBER_OF_Y_BITS ;
-localparam  logic [10:0] MAZE_WIDTH_X = 11'b1 << MAZE_NUMBER_OF__X_BITS ;
-localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;
+localparam  logic [10:0] MAZE_WIDTH_X = 11'b1 << MAZE_NUMBER_OF__X_BITS ;//64
+localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//32
 
 
  logic [9:0] offsetX_LSB  ;
  logic [9:0] offsetY_LSB  ; 
  logic [10:0] offsetX_MSB ;
  logic [10:0] offsetY_MSB  ;
- logic [10:0] offsetX_32;
- logic [10:0] offsetY_32;
  logic [9:0] address  ;
  logic [0:1][7:0] color  ;
+ 
+ logic [4:0] MEMX_32;
+ logic [4:0] MEMY_32;
+ logic [3:0] object_flag;
 
  assign offsetX_LSB  = offsetX[(TILE_NUMBER_OF_X_BITS-1):0] ; // get offset in crnt tile
  assign offsetY_LSB  = offsetY[(TILE_NUMBER_OF_Y_BITS-1):0] ; // get lower bits 
  assign offsetX_MSB  = offsetX[(TILE_NUMBER_OF_X_BITS + MAZE_NUMBER_OF__X_BITS -1 ):TILE_NUMBER_OF_X_BITS] ; // get offset of tile in maze
  assign offsetY_MSB  = offsetY[(TILE_NUMBER_OF_Y_BITS + MAZE_NUMBER_OF__Y_BITS -1 ):TILE_NUMBER_OF_Y_BITS] ; // get higher bits 
  
- assign offsetX_32 = {offsetX_MSB[0],offsetX_LSB}; //calc the offset for 32*32 image on 16*16 tiles
- assign offsetY_32 = {offsetY_MSB[0],offsetY_LSB};
+ 
+ 
+ always_comb begin // checking if inside object. is yes, calc where the "anquer" is and setting the memory addres accordingly
+	MEMX = 5'b0;
+	MEMY = 5'b0;
+	object_flag = 4'h0;//inside object indicator, will store the type of object
+	
+	if (MazeBitMapMask[offsetY_MSB][offsetX_MSB] != 4'h0) begin
+		MEMX = {1'b0, offsetX_LSB};
+		MEMY = {1'b0, offsetY_LSB};
+		object_flag = MazeBitMapMask[offsetY_MSB][offsetX_MSB];
+	end
+	else if ((offsetX_MSB > 0) && (MazeBitMapMask[offsetY_MSB][offsetX_MSB - 1] != 4'h0)) begin
+		MEMX = {1'b1, offsetX_LSB};
+		MEMY = {1'b0, offsetY_LSB};
+		object_flag = MazeBitMapMask[offsetY_MSB][offsetX_MSB - 1];
+	end
+	else if ((offsetY_MSB > 0) && (MazeBitMapMask[offsetY_MSB - 1][offsetX_MSB] != 4'h0)) begin
+		MEMX = {1'b0, offsetX_LSB};
+		MEMY = {1'b1, offsetY_LSB};
+		object_flag = MazeBitMapMask[offsetY_MSB - 1][offsetX_MSB];
+	end
+	else if ((offsetX_MSB > 0) && (offsetY_MSB > 0) && (MazeBitMapMask[offsetY_MSB - 1][offsetX_MSB - 1] != 4'h0)) begin
+		MEMX = {1'b1, offsetX_LSB};
+		MEMY = {1'b1, offsetY_LSB};
+		object_flag = MazeBitMapMask[offsetY_MSB - 1][offsetX_MSB - 1];
+	end
+	
+ end
 
- assign address = (offsetY_32 * 32) + offsetX_32;
+ assign address = (MEMY * 32) + MEMX;
 
 
 
@@ -63,19 +94,50 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;
 // all numbers here are hard coded to simplify the understanding 
 
 
-logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]  MazeBitMapMask ;  
+logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]  MazeBitMapMask ; //[32][64][4] 
 
-logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   MazeDefaultBitMapMask= // defult table to load on reset 
-{{64'h1001110000011100},
- {64'h0010001101100010},
- {64'h0001000010000100},
- {64'h0020100000001200},
- {64'h0000010000010000},
- {64'h0000001000100000},
- {64'h0000000101000000},
- {64'h0000000010000000}};
-
-lpm_rom #(
+logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0] MazeDefaultBitMapMask = {
+													       // end of screen
+    {256'h1000000000000000000000000000000000000001_000000000000000000000000}, // Y = 0  top row
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 1 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 2 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 3 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 4 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 5 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 6 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 7 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 8 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 9 
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 10
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 11
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 12
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 13
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 14
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 15
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 16
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 17
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 18
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 19
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 20
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 21
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 22
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 23
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 24
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 25
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 26
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 27
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 28
+    {256'h1000000000000000000000000000000000000001_000000000000000000000000}, // Y = 29 bottom row
+    	     // end of screen    	     // end of screen
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 30
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}  // Y = 31
+};
+ 
+ 
+ 
+ 
+ 
+ lpm_rom #(
     .LPM_WIDTH(8),
     .LPM_WIDTHAD(10),
 	 .LPM_NUMWORDS(1024),
@@ -123,22 +185,17 @@ begin
 	end
 	else begin
 		RGBout <= TRANSPARENT_ENCODING ; // default 
-		if (collision_hero_trap)
-			begin
-				MazeBitMapMask[{offsetY_MSB[10:1],1'b0}][{offsetX_MSB[10:1],1'b0}] <= 4'h00;  // clear entry 
-				MazeBitMapMask[{offsetY_MSB[10:1],1'b0}][{offsetX_MSB[10:1],1'b1}] <= 4'h00;
-				MazeBitMapMask[{offsetY_MSB[10:1],1'b1}][{offsetX_MSB[10:1],1'b0}] <= 4'h00;
-				MazeBitMapMask[{offsetY_MSB[10:1],1'b1}][{offsetX_MSB[10:1],1'b1}] <= 4'h00;// !!!!only works now for in 36*36tile objects	!!!!!		end
-		
-		if (InsideRectangle == 1'b1 )	
-			begin 
-		   	case (MazeBitMapMask[offsetY_MSB][offsetX_MSB])
+//		if (collision_hero_trap)begin
+//				MazeBitMapMask[{offsetY_MSB[10:1],1'b0}][{offsetX_MSB[10:1],1'b0}] <= 4'h00;  // clear entry 
+//		end
+		if (InsideRectangle == 1'b1 )	begin 
+		   	case (object_flag)
 					 4'h0 : RGBout <= TRANSPARENT_ENCODING ;
 			   	 4'h1 : RGBout <= color[random_trap]; 
 					 4'h2 : RGBout <= color[1] ; 
 					 default:  RGBout <= TRANSPARENT_ENCODING ; 
 				endcase
-			end 
+		end 
 
 	end 
 end

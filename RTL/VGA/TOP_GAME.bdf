@@ -1009,7 +1009,7 @@ agreement for further details.
 	)
 )
 (symbol
-	(rect 952 0 1256 192)
+	(rect 944 32 1248 224)
 	(text "OBJECTS_GRID" (rect 5 0 99 19)(font "Intel Clear" (font_size 8)))
 	(text "inst11" (rect 8 171 36 188)(font "Intel Clear" ))
 	(port
@@ -1567,63 +1567,53 @@ agreement for further details.
 	(bus)
 )
 (connector
-	(text "clk" (rect 898 16 912 33)(font "Intel Clear" ))
-	(pt 952 32)
-	(pt 888 32)
-)
-(connector
-	(text "resetN" (rect 898 32 928 49)(font "Intel Clear" ))
-	(pt 952 48)
-	(pt 888 48)
-)
-(connector
-	(pt 952 128)
-	(pt 888 128)
-)
-(connector
-	(pt 952 144)
-	(pt 888 144)
-)
-(connector
-	(text "pixelX[10..0]" (rect 898 48 957 65)(font "Intel Clear" ))
-	(pt 952 64)
-	(pt 888 64)
-	(bus)
-)
-(connector
-	(text "pixelY[10..0]" (rect 898 64 957 81)(font "Intel Clear" ))
-	(pt 952 80)
-	(pt 888 80)
-	(bus)
-)
-(connector
 	(pt 816 64)
 	(pt 856 64)
 	(bus)
 )
 (connector
+	(pt 944 160)
+	(pt 880 160)
+)
+(connector
+	(pt 944 176)
+	(pt 880 176)
+)
+(connector
 	(pt 856 64)
-	(pt 856 96)
+	(pt 856 128)
 	(bus)
 )
 (connector
-	(pt 856 96)
-	(pt 952 96)
+	(text "clk" (rect 890 48 904 65)(font "Intel Clear" ))
+	(pt 880 64)
+	(pt 944 64)
+)
+(connector
+	(text "resetN" (rect 890 64 920 81)(font "Intel Clear" ))
+	(pt 880 80)
+	(pt 944 80)
+)
+(connector
+	(text "pixelX[10..0]" (rect 890 80 949 97)(font "Intel Clear" ))
+	(pt 880 96)
+	(pt 944 96)
+	(bus)
+)
+(connector
+	(text "pixelY[10..0]" (rect 890 96 949 113)(font "Intel Clear" ))
+	(pt 880 112)
+	(pt 944 112)
+	(bus)
+)
+(connector
+	(pt 856 128)
+	(pt 944 128)
 	(bus)
 )
 (connector
 	(pt 816 144)
-	(pt 856 144)
-	(bus)
-)
-(connector
-	(pt 856 144)
-	(pt 856 112)
-	(bus)
-)
-(connector
-	(pt 952 112)
-	(pt 856 112)
+	(pt 944 144)
 	(bus)
 )
 (junction (pt 552 968))

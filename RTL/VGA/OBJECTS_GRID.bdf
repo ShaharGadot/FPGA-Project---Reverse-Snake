@@ -327,12 +327,12 @@ agreement for further details.
 	)
 	(parameter
 		"OBJECT_WIDTH_X"
-		"512"
+		"640"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
 		"OBJECT_HEIGHT_Y"
-		"256"
+		"480"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
