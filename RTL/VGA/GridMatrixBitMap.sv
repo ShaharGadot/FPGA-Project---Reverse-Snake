@@ -10,11 +10,19 @@ module	GridMatrixBitMap	(
 					input logic	[10:0] offsetX,// offset from top left  position 
 					input logic	[10:0] offsetY,
 					input	logic	InsideRectangle, //input that the pixel is within a bracket 
+					
 					input logic collision_hero_trap,
 					input logic collision_hero_border,
+					
+					input	logic	motion_clk,
+					
+					input logic [10:0] RandomPixelX,//from LFSR
+					input logic [10:0] RandomPixelY,
 
 					input logic [10:0] Hero_X, //hero top left coardinets
                input logic [10:0] Hero_Y,
+					
+					input logic startOfFrame,
 
 					output	logic	[1:0] drawingRequest, //output that the pixel should be dispalyed 
 					output	logic	[7:0] RGBout  //rgb value from the bitmap 
@@ -48,14 +56,32 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//32
  logic [7:0] trapColor ;
 
  
- logic [4:0] MEMX;
+ logic [4:0] MEMX;//for mif addres
  logic [4:0] MEMY;
- logic [3:0] object_flag;
+ 
+ logic [3:0] object_flag;//in object
+ logic collision_flag;//in collision
+ logic [5:0] hit_X;//coardinates of tile to erase
+ logic [5:0] hit_Y;
 
+ logic generate_trap;// on wjile generating trap
+ logic [5:0] random_X_MSB;//random tile
+ logic [5:0] random_Y_MSB;
+
+ logic check_valid;//1 if in valid place
+ logic in_borders;
+ logic unoccupied;
+ logic [5:0] X;//for calc of random
+ logic [5:0] Y;
+
+ 
  assign offsetX_LSB  = offsetX[(TILE_NUMBER_OF_X_BITS-1):0] ; // get offset in crnt tile
  assign offsetY_LSB  = offsetY[(TILE_NUMBER_OF_Y_BITS-1):0] ; // get lower bits 
  assign offsetX_MSB  = offsetX[(TILE_NUMBER_OF_X_BITS + MAZE_NUMBER_OF__X_BITS -1 ):TILE_NUMBER_OF_X_BITS] ; // get offset of tile in maze
  assign offsetY_MSB  = offsetY[(TILE_NUMBER_OF_Y_BITS + MAZE_NUMBER_OF__Y_BITS -1 ):TILE_NUMBER_OF_Y_BITS] ; // get higher bits 
+ 
+ assign random_X_MSB  = RandomPixelX[(TILE_NUMBER_OF_X_BITS + MAZE_NUMBER_OF__X_BITS -1 ):TILE_NUMBER_OF_X_BITS] ; // get offset of tile in maze
+ assign random_Y_MSB  = RandomPixelY[(TILE_NUMBER_OF_Y_BITS + MAZE_NUMBER_OF__Y_BITS -1 ):TILE_NUMBER_OF_Y_BITS] ; // get higher bits 
  
  
  
@@ -113,7 +139,7 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0] MazeDefaultBitMapMask = {
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 8 
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 9 
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 10
-    {256'h0000000200000000000000000000000000000000_000000000000000000000000}, // Y = 11
+    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 11
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 12
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 13
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 14
@@ -185,13 +211,34 @@ always_ff@(posedge clk or negedge resetN)
 begin
 	if(!resetN) begin
 		RGBout <=	8'h00;
+		collision_flag <= 1'b0;
+		generate_trap <= 1'b0;
 		MazeBitMapMask  <=  MazeDefaultBitMapMask ;  //  copy default tabel 
+		hit_X <= 6'h0;
+		hit_Y <= 6'h0;
+
 	end
 	else begin
 		RGBout <= TRANSPARENT_ENCODING ; // default 
-		if (collision_hero_trap)begin
-				MazeBitMapMask[offsetY_MSB - MEMY[4]][offsetX_MSB - MEMX[4]] <= 4'h0;  // clear entry, in colision, go to the anquer calc before 
+		if (collision_hero_trap) begin
+			collision_flag <= 1'b1;
+			hit_X <= offsetX_MSB - MEMX[4];//save for deleting
+			hit_Y <= offsetY_MSB - MEMY[4];
 		end
+		if (collision_flag && startOfFrame) begin
+			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // clear entry, in colision, go to the anquer calc before 
+			collision_flag <= 1'b0;
+			generate_trap <= 1'b1;
+		end
+		
+		if (generate_trap) begin
+		
+			if (check_valid) begin //place to put trap
+				MazeBitMapMask[random_Y_MSB][random_X_MSB] <= 4'h2;  //put trap
+				generate_trap <= 1'b0;
+			end
+		end
+		
 		if (InsideRectangle == 1'b1 )	begin 
 		   	case (object_flag)
 					 4'h0 : RGBout <= TRANSPARENT_ENCODING ;
@@ -208,5 +255,21 @@ end
 // decide if to draw the pixel or not 
 assign drawingRequest[0] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 1)) ? 1'b1 : 1'b0 ; // get optional transparent command from the bitmpap   
 assign drawingRequest[1] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 2)) ? 1'b1 : 1'b0 ;
+
+
+assign Y = random_Y_MSB;
+assign X = random_X_MSB;
+
+
+assign in_borders = (0 < X) && (0 < Y) && (Y < 29) && (X < 39);//between borders
+
+assign unoccupied = (MazeBitMapMask[Y - 1][X - 1] == 4'h0) && (MazeBitMapMask[Y - 1][X] == 4'h0) && (MazeBitMapMask[Y - 1][X + 1] == 4'h0) && //check if no object in grid near
+						 (MazeBitMapMask[Y][X - 1] == 4'h0) && (MazeBitMapMask[Y][X] == 4'h0) && (MazeBitMapMask[Y][X + 1] == 4'h0) &&
+						 (MazeBitMapMask[Y + 1][X - 1] == 4'h0) && (MazeBitMapMask[Y + 1][X] == 4'h0) && (MazeBitMapMask[Y + 1][X + 1] == 4'h0);
+
+assign check_valid = in_borders && unoccupied;
+
+
+
 endmodule
 
