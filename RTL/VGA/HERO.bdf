@@ -422,13 +422,13 @@ agreement for further details.
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
 		"player_speed"
-		"40"
+		"80"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
 		(rectangle (rect 16 16 200 160))
 	)
-	(annotation_block (parameter)(rect 176 240 368 320))
+	(annotation_block (parameter)(rect 160 240 345 316))
 )
 (connector
 	(text "clk" (rect 666 272 680 289)(font "Intel Clear" ))

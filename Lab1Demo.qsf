@@ -319,8 +319,12 @@ set_global_assignment -name BDF_FILE RTL/VGA/HERO.bdf
 set_global_assignment -name BDF_FILE RTL/VGA/OBJECTS_GRID.bdf
 set_global_assignment -name SYSTEMVERILOG_FILE RTL/VGA/GridMatrixBitMap.sv
 set_global_assignment -name SYSTEMVERILOG_FILE RTL/VGA/HeroBitMap.sv
+set_global_assignment -name SYSTEMVERILOG_FILE RTL/VGA/LFSR_random_pixel.sv
+set_global_assignment -name VECTOR_WAVEFORM_FILE output_files/Waveform.vwf
+set_global_assignment -name VECTOR_WAVEFORM_FILE Waveform.vwf
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name SYSTEMVERILOG_FILE RTL/VGA/motion_clk.sv
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
 set_global_assignment -name SLD_FILE db/stp1_auto_stripped.stp
