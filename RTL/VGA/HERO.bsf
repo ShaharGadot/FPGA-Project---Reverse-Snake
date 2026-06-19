@@ -21,7 +21,7 @@ agreement for further details.
 */
 (header "symbol" (version "1.2"))
 (symbol
-	(rect 16 16 320 176)
+	(rect 16 16 304 176)
 	(text "HERO" (rect 5 0 39 19)(font "Intel Clear" (font_size 8)))
 	(text "inst" (rect 8 139 24 156)(font "Intel Clear" ))
 	(port
@@ -67,27 +67,20 @@ agreement for further details.
 		(line (pt 0 112)(pt 16 112)(line_width 3))
 	)
 	(port
-		(pt 0 128)
-		(input)
-		(text "collision " (rect 0 0 50 19)(font "Intel Clear" (font_size 8)))
-		(text "collision " (rect 21 123 71 142)(font "Intel Clear" (font_size 8)))
-		(line (pt 0 128)(pt 16 128))
+		(pt 288 32)
+		(output)
+		(text "HeroDrawingRequest" (rect 0 0 125 19)(font "Intel Clear" (font_size 8)))
+		(text "HeroDrawingRequest" (rect 142 27 267 46)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 32)(pt 272 32))
 	)
 	(port
-		(pt 304 32)
+		(pt 288 48)
 		(output)
-		(text "numberDrawingRequest" (rect 0 0 142 19)(font "Intel Clear" (font_size 8)))
-		(text "numberDrawingRequest" (rect 141 27 283 46)(font "Intel Clear" (font_size 8)))
-		(line (pt 304 32)(pt 288 32))
-	)
-	(port
-		(pt 304 48)
-		(output)
-		(text "RGBNum[7..0]" (rect 0 0 84 19)(font "Intel Clear" (font_size 8)))
-		(text "RGBNum[7..0]" (rect 199 43 283 62)(font "Intel Clear" (font_size 8)))
-		(line (pt 304 48)(pt 288 48)(line_width 3))
+		(text "HeroRGB[7..0]" (rect 0 0 84 19)(font "Intel Clear" (font_size 8)))
+		(text "HeroRGB[7..0]" (rect 183 43 267 62)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 48)(pt 272 48)(line_width 3))
 	)
 	(drawing
-		(rectangle (rect 16 16 288 144))
+		(rectangle (rect 16 16 272 144))
 	)
 )

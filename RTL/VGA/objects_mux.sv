@@ -13,15 +13,16 @@ module	objects_mux	(
 					input		logic	resetN,
 		 
 					     
-		  // add the box here 
-					input		logic	heroDrawingRequest,
-					input		logic	[7:0] heroRGB, 
+					input		logic	HeroDrawingRequest,
+					input		logic	[7:0] HeroRGB, 
 			  
 		  ////////////////////////
 		  // background 
-					input		logic	[7:0] backGroundRGB, 
-					input		logic	BGDrawingRequest, 
-					input		logic	[7:0] RGB_MIF, 
+					input		logic	[1:0] GridDrawingRequest, 
+					input		logic	[7:0] GridRGB, 
+					
+					
+					input		logic	[7:0] BackGroundRGB, 
 			  
 				   output	logic	[7:0] RGBOut
 );
@@ -34,12 +35,13 @@ begin
 	
 	else begin
 		
-		if (heroDrawingRequest == 1'b1)
-				RGBOut <= heroRGB;
+		if (HeroDrawingRequest == 1'b1)
+				RGBOut <= HeroRGB;
  	
-		else if (BGDrawingRequest == 1'b1)
-				RGBOut <= backGroundRGB ;
-		else RGBOut <= RGB_MIF ;// last priority 
+		else if (GridDrawingRequest != 2'b0)
+				RGBOut <= GridRGB ;
+				
+		else RGBOut <= BackGroundRGB ;// last priority 
 		end ; 
 	end
 

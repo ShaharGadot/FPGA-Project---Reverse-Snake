@@ -4,20 +4,19 @@
 
 
 
-module	HartsMatrixBitMap	(	
+module	GridMatrixBitMap	(	
 					input	logic	clk,
 					input	logic	resetN,
 					input logic	[10:0] offsetX,// offset from top left  position 
 					input logic	[10:0] offsetY,
 					input	logic	InsideRectangle, //input that the pixel is within a bracket 
-					input logic random_trap,
 					input logic collision_hero_trap,
 					input logic collision_hero_border,
 
 					input logic [10:0] Hero_X, //hero top left coardinets
                input logic [10:0] Hero_Y,
 
-					output	logic	drawingRequest, //output that the pixel should be dispalyed 
+					output	logic	[1:0] drawingRequest, //output that the pixel should be dispalyed 
 					output	logic	[7:0] RGBout  //rgb value from the bitmap 
  ) ;
  
@@ -39,15 +38,18 @@ localparam  logic [10:0] MAZE_WIDTH_X = 11'b1 << MAZE_NUMBER_OF__X_BITS ;//64
 localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//32
 
 
- logic [9:0] offsetX_LSB  ;
- logic [9:0] offsetY_LSB  ; 
- logic [10:0] offsetX_MSB ;
- logic [10:0] offsetY_MSB  ;
+ logic [3:0] offsetX_LSB  ;
+ logic [3:0] offsetY_LSB  ; 
+ logic [5:0] offsetX_MSB ;
+ logic [5:0] offsetY_MSB  ;
  logic [9:0] address  ;
- logic [0:1][7:0] color  ;
  
- logic [4:0] MEMX_32;
- logic [4:0] MEMY_32;
+ logic [7:0] borderColor  ;
+ logic [7:0] trapColor ;
+
+ 
+ logic [4:0] MEMX;
+ logic [4:0] MEMY;
  logic [3:0] object_flag;
 
  assign offsetX_LSB  = offsetX[(TILE_NUMBER_OF_X_BITS-1):0] ; // get offset in crnt tile
@@ -111,7 +113,7 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0] MazeDefaultBitMapMask = {
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 8 
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 9 
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 10
-    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 11
+    {256'h0000000200000000000000000000000000000000_000000000000000000000000}, // Y = 11
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 12
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 13
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 14
@@ -119,7 +121,7 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0] MazeDefaultBitMapMask = {
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 16
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 17
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 18
-    {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 19
+    {256'h0000000000000000000000200000000000000000_000000000000000000000000}, // Y = 19
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 20
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 21
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 22
@@ -154,7 +156,7 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0] MazeDefaultBitMapMask = {
     .address(address),
 	 .inclock(clk),
 	// .outclock(clk),
-    .q(color[0])
+    .q(borderColor)
 );
 
  
@@ -173,7 +175,7 @@ lpm_rom #(
     .address(address),
 	 .inclock(clk),
 	// .outclock(clk),
-    .q(color[1])
+    .q(trapColor)
 ); 
 
  
@@ -193,8 +195,8 @@ begin
 		if (InsideRectangle == 1'b1 )	begin 
 		   	case (object_flag)
 					 4'h0 : RGBout <= TRANSPARENT_ENCODING ;
-			   	 4'h1 : RGBout <= color[random_trap]; 
-					 4'h2 : RGBout <= color[1] ; 
+			   	 4'h1 : RGBout <= borderColor; 
+					 4'h2 : RGBout <= trapColor ; 
 					 default:  RGBout <= TRANSPARENT_ENCODING ; 
 				endcase
 		end 
@@ -204,6 +206,7 @@ end
 
 //==----------------------------------------------------------------------------------------------------------------=
 // decide if to draw the pixel or not 
-assign drawingRequest = (RGBout != TRANSPARENT_ENCODING ) ? 1'b1 : 1'b0 ; // get optional transparent command from the bitmpap   
+assign drawingRequest[0] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 1)) ? 1'b1 : 1'b0 ; // get optional transparent command from the bitmpap   
+assign drawingRequest[1] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 2)) ? 1'b1 : 1'b0 ;
 endmodule
 

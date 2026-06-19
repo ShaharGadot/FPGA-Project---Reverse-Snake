@@ -12,7 +12,7 @@ module	back_ground_draw	(
 
 //					output	logic	[7:0]	BG_RGB,
 //					output	logic		boardersDrawReq, 
-					output	logic	[7:0] MIF_VGA
+					output	logic	[7:0] BackGroundRGB
 );
 
 //const int	xFrameSize	=	640;
@@ -58,7 +58,7 @@ module	back_ground_draw	(
     .address(address),
 	 .inclock(clk),
 	// .outclock(clk),
-    .q(MIF_VGA)
+    .q(BackGroundRGB)
 );
 
 // this is a block to generate the background 

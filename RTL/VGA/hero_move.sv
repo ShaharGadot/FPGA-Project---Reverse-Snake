@@ -17,9 +17,7 @@ module	hero_move	(
 					input	 logic down_key,      //2 for down 
 					input	 logic right_key,      //6 for right
 					input	 logic left_key,      //4 for left
-
-
-					input  logic collision,         //collision if hero hits an object
+					
 					output logic signed 	[10:0] topLeftX, // output the top left corner 
 					output logic signed	[10:0] topLeftY  // can be negative , if the object is partliy outside 
 					

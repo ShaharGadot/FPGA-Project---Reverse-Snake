@@ -6,22 +6,34 @@
 module	game_controller	(	
 			input	logic	clk,
 			input	logic	resetN,
-			input	logic	startOfFrame,  // short pulse every start of frame 30Hz 
-			input	logic	drawing_request_boarders,
+			input	logic	startOfFrame,  // short pulse every start of frame 30Hz
 		
-			input	logic	drawing_request_hero,
+		
+			input	logic	[1:0] GridDrawingRequest,	
+			input	logic	HeroDrawingRequest,
 
 			
-			output logic collision, // active in case of collision between two objects
-			
-			output logic SingleHitPulse // critical code, generating A single pulse in a frame 
+			output logic collision_hero_trap, // collisions are active in case of collision between objects
+			output logic collision_hero_border,
+
+			output logic SinglePulse_TrapCollision //generating A single pulse in a frame in trap collision 
 			
 );
+
+logic BorderDrawingRequest;
+logic TrapDrawingRequest;
+
+assign BorderDrawingRequest = GridDrawingRequest[0];
+assign TrapDrawingRequest = GridDrawingRequest[1];
+
+
 
 logic flag ; // a semaphore to set the output only once per frame regardless of number of collisions 
 
 
-assign collision = (drawing_request_boarders && drawing_request_hero);
+assign collision_hero_trap = (TrapDrawingRequest && HeroDrawingRequest);
+assign collision_hero_border = (BorderDrawingRequest && HeroDrawingRequest);
+
 
 
 always_ff@(posedge clk or negedge resetN)
@@ -29,19 +41,19 @@ begin
 	if(!resetN)
 	begin 
 		flag	<= 1'b0;
-		SingleHitPulse <= 1'b0 ; 
+		SinglePulse_TrapCollision <= 1'b0 ; 
 		
 	end 
 	else begin 
 	
-			SingleHitPulse <= 1'b0 ; // default 
+			SinglePulse_TrapCollision <= 1'b0 ; // default 
 			if(startOfFrame) 
 				flag <= 1'b0 ; // reset for next time 
 				
 
-if ( collision && (flag == 1'b0)) begin 
+if ( collision_hero_trap && (flag == 1'b0)) begin 
 			flag	<= 1'b1; // to enter only once 
-			SingleHitPulse <= 1'b1 ; 
+			SinglePulse_TrapCollision <= 1'b1 ; 
 		end ; 
  
 	end 
