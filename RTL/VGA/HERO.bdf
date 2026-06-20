@@ -117,6 +117,22 @@ agreement for further details.
 	(text "VCC" (rect 152 7 172 17)(font "Arial" (font_size 6)))
 )
 (pin
+	(input)
+	(rect -240 488 -72 504)
+	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
+	(text "motion_clk" (rect 5 0 58 12)(font "Arial" ))
+	(pt 168 8)
+	(drawing
+		(line (pt 84 12)(pt 109 12))
+		(line (pt 84 4)(pt 109 4))
+		(line (pt 113 8)(pt 168 8))
+		(line (pt 84 12)(pt 84 4))
+		(line (pt 109 4)(pt 113 8))
+		(line (pt 109 12)(pt 113 8))
+	)
+	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
+)
+(pin
 	(output)
 	(rect 1664 216 1863 232)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
@@ -243,40 +259,9 @@ agreement for further details.
 	(annotation_block (parameter)(rect 720 176 975 252))
 )
 (symbol
-	(rect 960 408 1072 456)
-	(text "LPM_CONSTANT" (rect 4 0 125 16)(font "Arial" (font_size 10)))
-	(text "inst1" (rect 3 37 25 54)(font "Intel Clear" ))
-	(port
-		(pt 112 32)
-		(output)
-		(text "result[LPM_WIDTH-1..0]" (rect 75 19 208 33)(font "Arial" (font_size 8)))
-		(text "result[]" (rect 75 19 113 33)(font "Arial" (font_size 8)))
-		(line (pt 64 32)(pt 112 32)(line_width 3))
-	)
-	(parameter
-		"LPM_CVALUE"
-		"0"
-		"Unsigned value to which outputs will be set"
-	)
-	(parameter
-		"LPM_WIDTH"
-		"4"
-		"Width of output, any integer > 0"
-		" 1" " 2" " 3" " 4" " 5" " 6" " 7" " 8" " 9" "10" "11" "12" "13" "14" "15" "16" "20" "24" "28" "32" 
-	)
-	(drawing
-		(text "(cvalue)" (rect 21 26 68 40)(font "Arial" (font_size 8)))
-		(line (pt 16 24)(pt 64 24))
-		(line (pt 16 40)(pt 64 40))
-		(line (pt 64 40)(pt 64 24))
-		(line (pt 16 40)(pt 16 24))
-	)
-	(annotation_block (parameter)(rect 1072 344 1209 401))
-)
-(symbol
-	(rect 1336 192 1560 336)
+	(rect 1336 176 1560 352)
 	(text "HeroBitMap" (rect 5 0 61 12)(font "Arial" ))
-	(text "inst" (rect 8 128 25 140)(font "Arial" ))
+	(text "inst" (rect 8 160 25 172)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -320,6 +305,13 @@ agreement for further details.
 		(line (pt 0 112)(pt 16 112)(line_width 3))
 	)
 	(port
+		(pt 0 128)
+		(input)
+		(text "motion_clk" (rect 0 0 53 12)(font "Arial" ))
+		(text "motion_clk" (rect 21 123 74 135)(font "Arial" ))
+		(line (pt 0 128)(pt 16 128))
+	)
+	(port
 		(pt 224 32)
 		(output)
 		(text "drawingRequest" (rect 0 0 77 12)(font "Arial" ))
@@ -339,9 +331,9 @@ agreement for further details.
 		""
 		(type "PARAMETER_UNSIGNED_BIN")	)
 	(drawing
-		(rectangle (rect 16 16 208 128))
+		(rectangle (rect 16 16 208 160))
 	)
-	(annotation_block (parameter)(rect 1352 144 1560 184))
+	(annotation_block (parameter)(rect 1344 128 1552 168))
 )
 (symbol
 	(rect 168 320 384 496)
@@ -410,6 +402,13 @@ agreement for further details.
 		(text "topLeftY[10..0]" (rect 132 43 207 55)(font "Arial" ))
 		(line (pt 216 48)(pt 200 48)(line_width 3))
 	)
+	(port
+		(pt 216 64)
+		(output)
+		(text "digit[3..0]" (rect 0 0 46 12)(font "Arial" ))
+		(text "digit[3..0]" (rect 157 59 203 71)(font "Arial" ))
+		(line (pt 216 64)(pt 200 64)(line_width 3))
+	)
 	(parameter
 		"INITIAL_X"
 		"280"
@@ -422,13 +421,13 @@ agreement for further details.
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
 		"player_speed"
-		"80"
+		"100"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
 		(rectangle (rect 16 16 200 160))
 	)
-	(annotation_block (parameter)(rect 160 240 345 316))
+	(annotation_block (parameter)(rect 184 232 369 308))
 )
 (connector
 	(text "clk" (rect 666 272 680 289)(font "Intel Clear" ))
@@ -470,60 +469,6 @@ agreement for further details.
 	(pt 1224 320)
 )
 (connector
-	(text "clk" (rect 1272 208 1286 225)(font "Intel Clear" ))
-	(pt 1224 224)
-	(pt 1336 224)
-)
-(connector
-	(text "resetN" (rect 1264 224 1297 236)(font "Arial" ))
-	(pt 1224 240)
-	(pt 1336 240)
-)
-(connector
-	(pt 1208 272)
-	(pt 1336 272)
-	(bus)
-)
-(connector
-	(pt 1160 256)
-	(pt 1336 256)
-	(bus)
-)
-(connector
-	(pt 1160 288)
-	(pt 1160 256)
-	(bus)
-)
-(connector
-	(pt 1208 304)
-	(pt 1208 272)
-	(bus)
-)
-(connector
-	(text "boxDrawingRequest" (rect 1234 272 1328 289)(font "Intel Clear" ))
-	(pt 1224 288)
-	(pt 1336 288)
-)
-(connector
-	(pt 1224 288)
-	(pt 1224 320)
-)
-(connector
-	(pt 1336 304)
-	(pt 1240 304)
-	(bus)
-)
-(connector
-	(pt 1240 304)
-	(pt 1240 440)
-	(bus)
-)
-(connector
-	(pt 1072 440)
-	(pt 1240 440)
-	(bus)
-)
-(connector
 	(pt 384 352)
 	(pt 720 352)
 	(bus)
@@ -554,11 +499,6 @@ agreement for further details.
 	(pt 168 400)
 )
 (connector
-	(text "keyIsPressed[2]" (rect -14 400 61 417)(font "Intel Clear" ))
-	(pt 0 416)
-	(pt 168 416)
-)
-(connector
 	(text "keyIsPressed[6]" (rect -14 416 61 433)(font "Intel Clear" ))
 	(pt 0 432)
 	(pt 168 432)
@@ -587,14 +527,93 @@ agreement for further details.
 	(bus)
 )
 (connector
-	(text "<<__$DEF_ALIAS1852>>" (rect 1562 208 1680 225)(font "Intel Clear" )(invisible))
-	(pt 1560 224)
-	(pt 1664 224)
+	(text "keyIsPressed[5]" (rect -14 400 61 417)(font "Intel Clear" ))
+	(pt 0 416)
+	(pt 168 416)
 )
 (connector
-	(text "<<__$DEF_ALIAS1854>>" (rect 1570 224 1688 241)(font "Intel Clear" )(invisible))
-	(pt 1560 240)
+	(text "digit[3..0]" (rect 394 368 437 385)(font "Intel Clear" ))
+	(pt 384 384)
+	(pt 456 384)
+	(bus)
+)
+(connector
+	(pt 1664 224)
+	(pt 1656 224)
+)
+(connector
 	(pt 1664 240)
+	(pt 1648 240)
+	(bus)
+)
+(connector
+	(text "clk" (rect 1272 192 1286 209)(font "Intel Clear" ))
+	(pt 1224 208)
+	(pt 1336 208)
+)
+(connector
+	(text "resetN" (rect 1264 208 1297 220)(font "Arial" ))
+	(pt 1224 224)
+	(pt 1336 224)
+)
+(connector
+	(pt 1208 256)
+	(pt 1336 256)
+	(bus)
+)
+(connector
+	(pt 1160 240)
+	(pt 1336 240)
+	(bus)
+)
+(connector
+	(pt 1160 288)
+	(pt 1160 240)
+	(bus)
+)
+(connector
+	(pt 1208 304)
+	(pt 1208 256)
+	(bus)
+)
+(connector
+	(text "boxDrawingRequest" (rect 1234 256 1328 273)(font "Intel Clear" ))
+	(pt 1224 272)
+	(pt 1336 272)
+)
+(connector
+	(pt 1224 320)
+	(pt 1224 272)
+)
+(connector
+	(pt 1656 224)
+	(pt 1656 208)
+)
+(connector
+	(text "<<__$DEF_ALIAS1852>>" (rect 1562 192 1680 209)(font "Intel Clear" )(invisible))
+	(pt 1656 208)
+	(pt 1560 208)
+)
+(connector
+	(pt 1648 240)
+	(pt 1648 224)
+	(bus)
+)
+(connector
+	(text "<<__$DEF_ALIAS1854>>" (rect 1570 208 1688 225)(font "Intel Clear" )(invisible))
+	(pt 1648 224)
+	(pt 1560 224)
+	(bus)
+)
+(connector
+	(text "motion_clk" (rect 1274 288 1327 305)(font "Intel Clear" ))
+	(pt 1336 304)
+	(pt 1264 304)
+)
+(connector
+	(text "digit[3..0]" (rect 1250 272 1293 289)(font "Intel Clear" ))
+	(pt 1336 288)
+	(pt 1240 288)
 	(bus)
 )
 (text " " (rect 224 216 226 233)(font "Intel Clear" ))

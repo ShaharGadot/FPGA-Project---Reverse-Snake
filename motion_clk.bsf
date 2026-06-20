@@ -52,6 +52,13 @@ agreement for further details.
 		(text "motion_pulse" (rect 136 27 187 39)(font "Arial" ))
 		(line (pt 208 32)(pt 192 32)(line_width 1))
 	)
+	(port
+		(pt 208 48)
+		(output)
+		(text "motion_clk" (rect 0 0 42 12)(font "Arial" ))
+		(text "motion_clk" (rect 145 43 187 55)(font "Arial" ))
+		(line (pt 208 48)(pt 192 48)(line_width 1))
+	)
 	(parameter
 		"frames_per_motion"
 		"10"

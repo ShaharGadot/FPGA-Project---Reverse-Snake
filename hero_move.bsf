@@ -87,6 +87,13 @@ agreement for further details.
 		(text "topLeftY[10..0]" (rect 136 43 195 55)(font "Arial" ))
 		(line (pt 216 48)(pt 200 48)(line_width 3))
 	)
+	(port
+		(pt 216 64)
+		(output)
+		(text "digit[3..0]" (rect 0 0 34 12)(font "Arial" ))
+		(text "digit[3..0]" (rect 161 59 195 71)(font "Arial" ))
+		(line (pt 216 64)(pt 200 64)(line_width 3))
+	)
 	(parameter
 		"INITIAL_X"
 		"280"

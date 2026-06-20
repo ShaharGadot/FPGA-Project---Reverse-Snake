@@ -1,16 +1,16 @@
 /*<simulation_settings>
-<ftestbench_cmd>quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off Lab1Demo -c Lab1Demo --vector_source="C:/Users/Lior/Dropbox/My PC (DESKTOP-3Q3C15S)/Documents/maabada1a/GITGAMESNAKE/FPGA-Project---Reverse-Snake/Waveform.vwf" --testbench_file="C:/Users/Lior/Dropbox/My PC (DESKTOP-3Q3C15S)/Documents/maabada1a/GITGAMESNAKE/FPGA-Project---Reverse-Snake/simulation/qsim/Waveform.vwf.vt"</ftestbench_cmd>
-<ttestbench_cmd>quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off Lab1Demo -c Lab1Demo --vector_source="C:/Users/Lior/Dropbox/My PC (DESKTOP-3Q3C15S)/Documents/maabada1a/GITGAMESNAKE/FPGA-Project---Reverse-Snake/Waveform.vwf" --testbench_file="C:/Users/Lior/Dropbox/My PC (DESKTOP-3Q3C15S)/Documents/maabada1a/GITGAMESNAKE/FPGA-Project---Reverse-Snake/simulation/qsim/Waveform.vwf.vt"</ttestbench_cmd>
-<fnetlist_cmd>quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Users/Lior/Dropbox/My PC (DESKTOP-3Q3C15S)/Documents/maabada1a/GITGAMESNAKE/FPGA-Project---Reverse-Snake/simulation/qsim/" Lab1Demo -c Lab1Demo</fnetlist_cmd>
-<tnetlist_cmd>quartus_eda --write_settings_files=off --simulation --functional=off --flatten_buses=off --timescale=1ps --tool=modelsim_oem --format=verilog --output_directory="C:/Users/Lior/Dropbox/My PC (DESKTOP-3Q3C15S)/Documents/maabada1a/GITGAMESNAKE/FPGA-Project---Reverse-Snake/simulation/qsim/" Lab1Demo -c Lab1Demo</tnetlist_cmd>
+<ftestbench_cmd>quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off Lab1Demo -c Lab1Demo --vector_source="C:/Users/guyga/OneDrive/Lab1a/FPGA Project - Snake/Waveform.vwf" --testbench_file="C:/Users/guyga/OneDrive/Lab1a/FPGA Project - Snake/simulation/qsim/Waveform.vwf.vt"</ftestbench_cmd>
+<ttestbench_cmd>quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off Lab1Demo -c Lab1Demo --vector_source="C:/Users/guyga/OneDrive/Lab1a/FPGA Project - Snake/Waveform.vwf" --testbench_file="C:/Users/guyga/OneDrive/Lab1a/FPGA Project - Snake/simulation/qsim/Waveform.vwf.vt"</ttestbench_cmd>
+<fnetlist_cmd>quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Users/guyga/OneDrive/Lab1a/FPGA Project - Snake/simulation/qsim/" Lab1Demo -c Lab1Demo</fnetlist_cmd>
+<tnetlist_cmd>quartus_eda --write_settings_files=off --simulation --functional=off --flatten_buses=off --timescale=1ps --tool=modelsim_oem --format=verilog --output_directory="C:/Users/guyga/OneDrive/Lab1a/FPGA Project - Snake/simulation/qsim/" Lab1Demo -c Lab1Demo</tnetlist_cmd>
 <modelsim_script>onerror {exit -code 1}
 vlib work
 vlog -work work Lab1Demo.vo
 vlog -work work Waveform.vwf.vt
-vsim -novopt -c -t 1ps -L cyclonev_ver -L altera_ver -L altera_mf_ver -L 220model_ver -L sgate_ver -L altera_lnsim_ver work.LFSR_random_pixel_vlg_vec_tst
+vsim -novopt -c -t 1ps -L cyclonev_ver -L altera_ver -L altera_mf_ver -L 220model_ver -L sgate_ver -L altera_lnsim_ver work.motion_clk_vlg_vec_tst
 vcd file -direction Lab1Demo.msim.vcd
-vcd add -internal LFSR_random_pixel_vlg_vec_tst/*
-vcd add -internal LFSR_random_pixel_vlg_vec_tst/i1/*
+vcd add -internal motion_clk_vlg_vec_tst/*
+vcd add -internal motion_clk_vlg_vec_tst/i1/*
 proc simTimestamp {} {
     echo "Simulation time: $::now ps"
     if { [string equal running [runStatus]] } {
@@ -25,10 +25,10 @@ quit -f
 vlib work
 vlog -work work Lab1Demo.vo
 vlog -work work Waveform.vwf.vt
-vsim -novopt -c -t 1ps -L cyclonev_ver -L altera_ver -L altera_mf_ver -L 220model_ver -L sgate_ver -L altera_lnsim_ver work.LFSR_random_pixel_vlg_vec_tst
+vsim -novopt -c -t 1ps -L cyclonev_ver -L altera_ver -L altera_mf_ver -L 220model_ver -L sgate_ver -L altera_lnsim_ver work.motion_clk_vlg_vec_tst
 vcd file -direction Lab1Demo.msim.vcd
-vcd add -internal LFSR_random_pixel_vlg_vec_tst/*
-vcd add -internal LFSR_random_pixel_vlg_vec_tst/i1/*
+vcd add -internal motion_clk_vlg_vec_tst/*
+vcd add -internal motion_clk_vlg_vec_tst/i1/*
 proc simTimestamp {} {
     echo "Simulation time: $::now ps"
     if { [string equal running [runStatus]] } {
@@ -76,244 +76,74 @@ HEADER
 	GRID_DUTY_CYCLE = 50;
 }
 
-SIGNAL("RandomPixelX")
+SIGNAL("clk")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = BUS;
-	WIDTH = 11;
-	LSB_INDEX = 0;
-	DIRECTION = OUTPUT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = INPUT;
 	PARENT = "";
 }
 
-SIGNAL("RandomPixelX[10]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[9]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[8]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[7]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[6]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[5]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[4]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[3]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[2]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[1]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelX[0]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelX";
-}
-
-SIGNAL("RandomPixelY")
+SIGNAL("counter")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = BUS;
-	WIDTH = 11;
+	WIDTH = 5;
 	LSB_INDEX = 0;
-	DIRECTION = OUTPUT;
+	DIRECTION = REGISTERED;
 	PARENT = "";
 }
 
-SIGNAL("RandomPixelY[10]")
+SIGNAL("counter[4]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
+	DIRECTION = REGISTERED;
+	PARENT = "counter";
 }
 
-SIGNAL("RandomPixelY[9]")
+SIGNAL("counter[3]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
+	DIRECTION = REGISTERED;
+	PARENT = "counter";
 }
 
-SIGNAL("RandomPixelY[8]")
+SIGNAL("counter[2]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
+	DIRECTION = REGISTERED;
+	PARENT = "counter";
 }
 
-SIGNAL("RandomPixelY[7]")
+SIGNAL("counter[1]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
+	DIRECTION = REGISTERED;
+	PARENT = "counter";
 }
 
-SIGNAL("RandomPixelY[6]")
+SIGNAL("counter[0]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
-}
-
-SIGNAL("RandomPixelY[5]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
-}
-
-SIGNAL("RandomPixelY[4]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
-}
-
-SIGNAL("RandomPixelY[3]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
-}
-
-SIGNAL("RandomPixelY[2]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
-}
-
-SIGNAL("RandomPixelY[1]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
-}
-
-SIGNAL("RandomPixelY[0]")
-{
-	VALUE_TYPE = NINE_LEVEL_BIT;
-	SIGNAL_TYPE = SINGLE_BIT;
-	WIDTH = 1;
-	LSB_INDEX = -1;
-	DIRECTION = OUTPUT;
-	PARENT = "RandomPixelY";
+	DIRECTION = REGISTERED;
+	PARENT = "counter";
 }
 
 SIGNAL("resetN")
@@ -326,7 +156,7 @@ SIGNAL("resetN")
 	PARENT = "";
 }
 
-SIGNAL("clk")
+SIGNAL("startOfFrame")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
@@ -336,213 +166,14 @@ SIGNAL("clk")
 	PARENT = "";
 }
 
-TRANSITION_LIST("RandomPixelX[10]")
+SIGNAL("motion_pulse")
 {
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[9]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[8]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[7]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[6]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[5]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[4]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[3]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[2]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[1]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelX[0]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[10]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[9]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[8]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[7]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[6]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[5]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[4]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[3]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[2]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[1]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("RandomPixelY[0]")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL X FOR 1000.0;
-	}
-}
-
-TRANSITION_LIST("resetN")
-{
-	NODE
-	{
-		REPEAT = 1;
-		LEVEL 1 FOR 10.0;
-		LEVEL 0 FOR 50.0;
-		LEVEL 1 FOR 940.0;
-	}
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "";
 }
 
 TRANSITION_LIST("clk")
@@ -552,11 +183,88 @@ TRANSITION_LIST("clk")
 		REPEAT = 1;
 		NODE
 		{
-			REPEAT = 33;
-			LEVEL 0 FOR 15.0;
-			LEVEL 1 FOR 15.0;
+			REPEAT = 100;
+			LEVEL 0 FOR 5.0;
+			LEVEL 1 FOR 5.0;
 		}
-		LEVEL 0 FOR 10.0;
+	}
+}
+
+TRANSITION_LIST("counter[4]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL U FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("counter[3]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL U FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("counter[2]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL U FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("counter[1]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL U FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("counter[0]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL U FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("resetN")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL 0 FOR 90.0;
+		LEVEL 1 FOR 910.0;
+	}
+}
+
+TRANSITION_LIST("startOfFrame")
+{
+	NODE
+	{
+		REPEAT = 1;
+		NODE
+		{
+			REPEAT = 40;
+			LEVEL 0 FOR 12.5;
+			LEVEL 1 FOR 12.5;
+		}
+	}
+}
+
+TRANSITION_LIST("motion_pulse")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
 	}
 }
 
@@ -580,242 +288,80 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "RandomPixelX";
+	CHANNEL = "startOfFrame";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Binary;
 	TREE_INDEX = 2;
 	TREE_LEVEL = 0;
-	CHILDREN = 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13;
 }
 
 DISPLAY_LINE
 {
-	CHANNEL = "RandomPixelX[10]";
+	CHANNEL = "counter";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Binary;
 	TREE_INDEX = 3;
-	TREE_LEVEL = 1;
-	PARENT = 2;
+	TREE_LEVEL = 0;
+	CHILDREN = 4, 5, 6, 7, 8;
 }
 
 DISPLAY_LINE
 {
-	CHANNEL = "RandomPixelX[9]";
+	CHANNEL = "counter[4]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Binary;
 	TREE_INDEX = 4;
 	TREE_LEVEL = 1;
-	PARENT = 2;
+	PARENT = 3;
 }
 
 DISPLAY_LINE
 {
-	CHANNEL = "RandomPixelX[8]";
+	CHANNEL = "counter[3]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Binary;
 	TREE_INDEX = 5;
 	TREE_LEVEL = 1;
-	PARENT = 2;
+	PARENT = 3;
 }
 
 DISPLAY_LINE
 {
-	CHANNEL = "RandomPixelX[7]";
+	CHANNEL = "counter[2]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Binary;
 	TREE_INDEX = 6;
 	TREE_LEVEL = 1;
-	PARENT = 2;
+	PARENT = 3;
 }
 
 DISPLAY_LINE
 {
-	CHANNEL = "RandomPixelX[6]";
+	CHANNEL = "counter[1]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Binary;
 	TREE_INDEX = 7;
 	TREE_LEVEL = 1;
-	PARENT = 2;
+	PARENT = 3;
 }
 
 DISPLAY_LINE
 {
-	CHANNEL = "RandomPixelX[5]";
+	CHANNEL = "counter[0]";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Binary;
 	TREE_INDEX = 8;
 	TREE_LEVEL = 1;
-	PARENT = 2;
+	PARENT = 3;
 }
 
 DISPLAY_LINE
 {
-	CHANNEL = "RandomPixelX[4]";
+	CHANNEL = "motion_pulse";
 	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
+	RADIX = Binary;
 	TREE_INDEX = 9;
-	TREE_LEVEL = 1;
-	PARENT = 2;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelX[3]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 10;
-	TREE_LEVEL = 1;
-	PARENT = 2;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelX[2]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 11;
-	TREE_LEVEL = 1;
-	PARENT = 2;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelX[1]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 12;
-	TREE_LEVEL = 1;
-	PARENT = 2;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelX[0]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 13;
-	TREE_LEVEL = 1;
-	PARENT = 2;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 14;
 	TREE_LEVEL = 0;
-	CHILDREN = 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[10]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 15;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[9]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 16;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[8]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 17;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[7]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 18;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[6]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 19;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[5]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 20;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[4]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 21;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[3]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 22;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[2]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 23;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[1]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 24;
-	TREE_LEVEL = 1;
-	PARENT = 14;
-}
-
-DISPLAY_LINE
-{
-	CHANNEL = "RandomPixelY[0]";
-	EXPAND_STATUS = COLLAPSED;
-	RADIX = Unsigned;
-	TREE_INDEX = 25;
-	TREE_LEVEL = 1;
-	PARENT = 14;
 }
 
 TIME_BAR

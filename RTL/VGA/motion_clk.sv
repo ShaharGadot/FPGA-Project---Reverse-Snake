@@ -6,7 +6,9 @@ module	motion_clk	(
 		 
 
 			  
-				   output	logic	motion_pulse
+				   output	logic	motion_pulse,
+				   output	logic	motion_clk
+
 
 );
 
@@ -18,6 +20,7 @@ begin
 	if(!resetN) begin
 		counter <= 5'h0;
 		motion_pulse <= 1'b0;
+		motion_clk <= 1'b0;
 
 	end
 	
@@ -31,6 +34,7 @@ begin
 			
 				counter <= 5'h0;
 				motion_pulse <= 1'b1;
+				motion_clk <= !motion_clk;
 			end
 		end
 			

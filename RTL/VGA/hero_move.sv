@@ -19,7 +19,8 @@ module	hero_move	(
 					input	 logic left_key,      //4 for left
 					
 					output logic signed 	[10:0] topLeftX, // output the top left corner 
-					output logic signed	[10:0] topLeftY  // can be negative , if the object is partliy outside 
+					output logic signed	[10:0] topLeftY,  // can be negative , if the object is partliy outside 
+					output logic [3:0] digit // which direction the character is moving
 					
 );
  int 	 topLeftX_tmp; // output the top left corner 
@@ -70,6 +71,7 @@ begin : fsm_sync_proc
 		SM_Motion <= IDLE_ST ; 
 		Xspeed <= 0   ; 
 		Yspeed <= 0  ; 
+		digit <= 4'd4; // player starts to the right
 	Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
 	Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
 	
@@ -84,7 +86,7 @@ begin : fsm_sync_proc
 			IDLE_ST: begin
 		//------------
 		
-				Xspeed  <= player_speed ; 
+				Xspeed  <= player_speed ; // player starts to the left
 				Yspeed  <= 0  ; 
 				Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER; 
 				Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER; 
@@ -101,24 +103,28 @@ begin : fsm_sync_proc
 				if (up_key && Yspeed <= 0 ) begin
 					Yspeed <= -player_speed; 
 					Xspeed <= 0; 
+					digit <= 4'd2; // back
 
 				end
 					
 				if (down_key && Yspeed >= 0 ) begin
 					Yspeed <= player_speed; 
 					Xspeed <= 0; 
+					digit <= 4'd0; // front
 
 				end
 				
 				if (right_key && Xspeed >= 0 ) begin
 					Yspeed <= 0; 
-					Xspeed <= player_speed; 
+					Xspeed <= player_speed;
+					digit <= 4'd4; // right
 
 				end
 		
 				if (left_key && Xspeed <= 0 ) begin
 					Yspeed <= 0; 
 					Xspeed <= -player_speed; 
+					digit <= 4'd6; // left
 
 				end
 					
