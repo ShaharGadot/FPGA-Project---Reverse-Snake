@@ -97,15 +97,15 @@ agreement for further details.
 	(port
 		(pt 0 192)
 		(input)
-		(text "Hero_X[10..0]" (rect 0 0 55 12)(font "Arial" ))
-		(text "Hero_X[10..0]" (rect 21 187 76 199)(font "Arial" ))
+		(text "hero_X[10..0]" (rect 0 0 53 12)(font "Arial" ))
+		(text "hero_X[10..0]" (rect 21 187 74 199)(font "Arial" ))
 		(line (pt 0 192)(pt 16 192)(line_width 3))
 	)
 	(port
 		(pt 0 208)
 		(input)
-		(text "Hero_Y[10..0]" (rect 0 0 56 12)(font "Arial" ))
-		(text "Hero_Y[10..0]" (rect 21 203 77 215)(font "Arial" ))
+		(text "hero_Y[10..0]" (rect 0 0 54 12)(font "Arial" ))
+		(text "hero_Y[10..0]" (rect 21 203 75 215)(font "Arial" ))
 		(line (pt 0 208)(pt 16 208)(line_width 3))
 	)
 	(port
@@ -129,7 +129,13 @@ agreement for further details.
 		(text "RGBout[7..0]" (rect 190 43 243 55)(font "Arial" ))
 		(line (pt 264 48)(pt 248 48)(line_width 3))
 	)
+	(parameter
+		"MAX_ghost_num"
+		"20"
+		""
+		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
 		(rectangle (rect 16 16 248 256)(line_width 1))
 	)
+	(annotation_block (parameter)(rect 280 -64 380 16))
 )

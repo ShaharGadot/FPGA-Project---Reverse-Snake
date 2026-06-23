@@ -152,7 +152,7 @@ agreement for further details.
 	(input)
 	(rect 400 432 568 448)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
-	(text "startOfFrame" (rect 5 0 73 12)(font "Arial" ))
+	(text "startOfFrame" (rect 5 0 72 12)(font "Arial" ))
 	(pt 168 8)
 	(drawing
 		(line (pt 84 12)(pt 109 12))
@@ -168,7 +168,7 @@ agreement for further details.
 	(input)
 	(rect 400 416 568 432)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
-	(text "motion_clk" (rect 5 0 59 12)(font "Arial" ))
+	(text "motion_clk" (rect 5 0 58 12)(font "Arial" ))
 	(pt 168 8)
 	(drawing
 		(line (pt 84 12)(pt 109 12))
@@ -184,7 +184,7 @@ agreement for further details.
 	(input)
 	(rect 1072 464 1240 480)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
-	(text "Hero_X[10..0]" (rect 5 0 73 12)(font "Arial" ))
+	(text "Hero_X[10..0]" (rect 5 0 72 12)(font "Arial" ))
 	(pt 168 8)
 	(drawing
 		(line (pt 84 12)(pt 109 12))
@@ -200,7 +200,7 @@ agreement for further details.
 	(input)
 	(rect 1072 480 1240 496)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
-	(text "Hero_Y[10..0]" (rect 5 0 70 17)(font "Intel Clear" ))
+	(text "Hero_Y[10..0]" (rect 5 0 69 17)(font "Intel Clear" ))
 	(pt 168 8)
 	(drawing
 		(line (pt 84 12)(pt 109 12))
@@ -451,15 +451,15 @@ agreement for further details.
 	(port
 		(pt 0 192)
 		(input)
-		(text "Hero_X[10..0]" (rect 0 0 67 12)(font "Arial" ))
-		(text "Hero_X[10..0]" (rect 21 187 88 199)(font "Arial" ))
+		(text "hero_X[10..0]" (rect 0 0 64 12)(font "Arial" ))
+		(text "hero_X[10..0]" (rect 21 187 85 199)(font "Arial" ))
 		(line (pt 0 192)(pt 16 192)(line_width 3))
 	)
 	(port
 		(pt 0 208)
 		(input)
-		(text "Hero_Y[10..0]" (rect 0 0 69 12)(font "Arial" ))
-		(text "Hero_Y[10..0]" (rect 21 203 90 215)(font "Arial" ))
+		(text "hero_Y[10..0]" (rect 0 0 67 12)(font "Arial" ))
+		(text "hero_Y[10..0]" (rect 21 203 88 215)(font "Arial" ))
 		(line (pt 0 208)(pt 16 208)(line_width 3))
 	)
 	(port
@@ -483,9 +483,15 @@ agreement for further details.
 		(text "RGBout[7..0]" (rect 189 43 253 55)(font "Arial" ))
 		(line (pt 264 48)(pt 248 48)(line_width 3))
 	)
+	(parameter
+		"MAX_ghost_num"
+		"20"
+		""
+		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
 		(rectangle (rect 16 16 248 256))
 	)
+	(annotation_block (parameter)(rect 1312 232 1520 272))
 )
 (connector
 	(text "resetN" (rect 1226 312 1256 329)(font "Intel Clear" ))

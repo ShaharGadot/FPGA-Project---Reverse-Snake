@@ -87,6 +87,20 @@ agreement for further details.
 		(text "HeroRGB[7..0]" (rect 183 43 267 62)(font "Intel Clear" (font_size 8)))
 		(line (pt 288 48)(pt 272 48)(line_width 3))
 	)
+	(port
+		(pt 288 64)
+		(output)
+		(text "Hero_X[10..0]" (rect 0 0 82 19)(font "Intel Clear" (font_size 8)))
+		(text "Hero_X[10..0]" (rect 185 59 267 78)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 64)(pt 272 64)(line_width 3))
+	)
+	(port
+		(pt 288 80)
+		(output)
+		(text "Hero_Y[10..0]" (rect 0 0 82 19)(font "Intel Clear" (font_size 8)))
+		(text "Hero_Y[10..0]" (rect 185 75 267 94)(font "Intel Clear" (font_size 8)))
+		(line (pt 288 80)(pt 272 80)(line_width 3))
+	)
 	(drawing
 		(rectangle (rect 16 16 272 144))
 	)
