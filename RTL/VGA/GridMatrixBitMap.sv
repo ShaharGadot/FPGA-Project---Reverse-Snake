@@ -274,11 +274,6 @@ lpm_rom #(
 ); 
 
  
- 
-initial begin
-    MazeBitMapMask = MazeDefaultBitMapMask;
-	 crnt_num_ghosts = 5'h20;
-end
 
 //==----------------------------------------------------------------------------------------------------------------=
 always_ff@(posedge clk or negedge resetN)
@@ -287,10 +282,10 @@ begin
 		RGBout <=	8'h00;
 		collision_flag <= 1'b0;
 		generate_trap <= 1'b0;
-		//MazeBitMapMask  <=  MazeDefaultBitMapMask ;  //  copy default tabel 
 		hit_X <= 6'h0;
 		hit_Y <= 6'h0;
-		moving_ghost <= crnt_num_ghosts * 2 + 5'h1;
+		moving_ghost <= MAX_ghost_num * 2 + 5'h1;
+		crnt_num_ghosts <= MAX_ghost_num;
 		hero_new_direction <= 4'hB;
 		
 		direction_d1 <= 4'hA;
@@ -417,15 +412,21 @@ begin
 end
 //==----------------------------------------------------------------------------------------------------------------=
 
-always_ff@(posedge clk)
+always_ff@(posedge clk or negedge resetN)
 begin
-
-	if(grid_write_A.we) begin
-		MazeBitMapMask[grid_write_A.y][grid_write_A.x] <= grid_write_A.data;
+	if(!resetN) begin
+		MazeBitMapMask <= MazeDefaultBitMapMask;
 	end
+	else begin
+
+
+		if(grid_write_A.we) begin
+			MazeBitMapMask[grid_write_A.y][grid_write_A.x] <= grid_write_A.data;
+		end
 	
-	if(grid_write_B.we) begin
-		MazeBitMapMask[grid_write_B.y][grid_write_B.x] <= grid_write_B.data;
+		if(grid_write_B.we) begin
+			MazeBitMapMask[grid_write_B.y][grid_write_B.x] <= grid_write_B.data;
+		end
 	end
 
 end
