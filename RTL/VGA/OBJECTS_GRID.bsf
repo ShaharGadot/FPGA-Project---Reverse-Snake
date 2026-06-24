@@ -111,8 +111,8 @@ agreement for further details.
 	(port
 		(pt 336 32)
 		(output)
-		(text "GridDrawingRequest[1..0]" (rect 0 0 153 19)(font "Intel Clear" (font_size 8)))
-		(text "GridDrawingRequest[1..0]" (rect 162 27 315 46)(font "Intel Clear" (font_size 8)))
+		(text "GridDrawingRequest[2..0]" (rect 0 0 153 19)(font "Intel Clear" (font_size 8)))
+		(text "GridDrawingRequest[2..0]" (rect 162 27 315 46)(font "Intel Clear" (font_size 8)))
 		(line (pt 336 32)(pt 320 32)(line_width 3))
 	)
 	(port

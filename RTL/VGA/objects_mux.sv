@@ -18,7 +18,7 @@ module	objects_mux	(
 			  
 		  ////////////////////////
 		  // background 
-					input		logic	[1:0] GridDrawingRequest, 
+					input		logic	[2:0] GridDrawingRequest, 
 					input		logic	[7:0] GridRGB, 
 					
 					
@@ -38,7 +38,7 @@ begin
 		if (HeroDrawingRequest == 1'b1)
 				RGBOut <= HeroRGB;
  	
-		else if (GridDrawingRequest != 2'b0)
+		else if (GridDrawingRequest != 3'b0)
 				RGBOut <= GridRGB ;
 				
 		else RGBOut <= BackGroundRGB ;// last priority 

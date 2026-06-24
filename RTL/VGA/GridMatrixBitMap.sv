@@ -24,7 +24,7 @@ module	GridMatrixBitMap	(
 					
 					input logic startOfFrame,
 
-					output	logic	[1:0] drawingRequest, //output that the pixel should be dispalyed 
+					output	logic	[2:0] drawingRequest, //output that the pixel should be dispalyed 
 					output	logic	[7:0] RGBout  //rgb value from the bitmap 
  ) ;
  
@@ -79,12 +79,13 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//32
  logic [5:0] Y;
  
  
+
+///////////////////////////////////////////////ghosts//////////////////
+
  parameter int MAX_ghost_num = 20;
 logic [MAX_ghost_num * 2 - 1:0][5:0] ghosts_history_X; //[num of gohsts *2 = num of tiles][tile]
 logic [MAX_ghost_num * 2 - 1:0][5:0] ghosts_history_Y; //[num of gohsts *2 = num of tiles][tile]
 logic [MAX_ghost_num * 2 - 1:0][3:0] ghosts_history_direction; //[num of ghosts][directions]
-
-///////////////////////////////////////////////ghosts//////////////////
 
 logic [5:0] hero_X_MSB;// hero tile
 logic [5:0] hero_Y_MSB;
@@ -99,7 +100,6 @@ logic [5:0] hero_X_MSB_d2;
 logic [5:0] hero_Y_MSB_d2;
 logic [3:0] direction_d1;
 logic [3:0] direction_d2;
-logic [3:0] hero_new_direction;
 
 logic [5:0] temp_tile_X;
 logic [5:0] temp_tile_Y;
@@ -110,13 +110,14 @@ logic [4:0] crnt_num_ghosts;
 
 logic [11:0] ghostAddress ;
 logic start_of_level;
+logic [1:0] hero_moved_twice;
 
 assign ghostAddress = (object_flag - 4'hA) * 32 * 32 + (MEMY * 32) + MEMX;
 
 ///////////////////////////////////grid/////////////////////////////////
 
  typedef struct packed {
- 	 logic we;
+ 	 logic enable;
  	 logic [5:0] y;
 	 logic [5:0] x;
 	 logic [3:0] data;
@@ -189,7 +190,7 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0] MazeDefaultBitMapMask = {
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 7 
     {256'h1000000000000000000000000000000000000010_000000000000000000000000}, // Y = 8 
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 9 
-    {256'h1000000000000A00000000000000000000000010_000000000000000000000000}, // Y = 10
+    {256'h1000000000000000000000000000000000000010_000000000000000000000000}, // Y = 10
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 11
     {256'h1000000000000000000000000000000000000010_000000000000000000000000}, // Y = 12
     {256'h0000000000000000000000000000000000000000_000000000000000000000000}, // Y = 13
@@ -284,82 +285,104 @@ begin
 		generate_trap <= 1'b0;
 		hit_X <= 6'h0;
 		hit_Y <= 6'h0;
-		moving_ghost <= MAX_ghost_num * 2 + 5'h1;
-		crnt_num_ghosts <= MAX_ghost_num;
-		hero_new_direction <= 4'hB;
+		moving_ghost <= 5'h0; // ,fixing...
+		crnt_num_ghosts <= 5'h0;
 		
-		direction_d1 <= 4'hA;
-		direction_d2 <= 4'hA;
-		ghosts_history_direction <= '{default : 4'hA};//reset the direction pipe to right direction
+		direction_d1 <= 4'hB;
+		direction_d2 <= 4'hB;
+		ghosts_history_direction <= '{default: 4'hB};//reset the direction pipe to right direction
+		ghosts_history_X <= '{default: 6'h0};
+		ghosts_history_Y <= '{default: 6'h0};
+
 		start_of_level <= 1'b1;
+		hero_moved_twice <= 2'h0;
 		
-		grid_write_A <= '{we: 1'b0, y: 6'h0, x: 6'h0, data: 4'h0};
-		grid_write_B <= '{we: 1'b0, y: 6'h0, x: 6'h0, data: 4'h0};
+		grid_write_A <= '{enable: 1'b0, y: 6'h0, x: 6'h0, data: 4'h0};
+		grid_write_B <= '{enable: 1'b0, y: 6'h0, x: 6'h0, data: 4'h0};
 
 	end
 	else begin
-		grid_write_A.we <= 1'b0;
-		grid_write_B.we <= 1'b0;
+		grid_write_A.enable <= 1'b0;
+		grid_write_B.enable <= 1'b0;
 
 		RGBout <= TRANSPARENT_ENCODING ; // default 
-		if(moving_ghost == crnt_num_ghosts * 2) // end of start
-			start_of_level <= 1'b0;
+//		if(crnt_num_ghosts == MAX_ghost_num) begin// end of start
+//			start_of_level <= 1'b0;
+//			moving_ghost <= 5'h0; //reset "ghost and spaces" counter to 0
+//		end
 		
 
 		if(((hero_X_MSB != hero_X_MSB_d1) || (hero_Y_MSB != hero_Y_MSB_d1)) && (startOfFrame)) begin	//move ghosts	
 		
 			if(hero_X_MSB_d1 < hero_X_MSB)
-				hero_new_direction <= 4'hB;//go right
+				direction_d1 <= 4'hB;//go right
 				
 			else if(hero_X_MSB_d1 > hero_X_MSB)
-				hero_new_direction <= 4'hA;//go left
+				direction_d1 <= 4'hA;//go left
 				
 			else if(hero_Y_MSB_d1 < hero_Y_MSB)
-				hero_new_direction <= 4'hD;//go up
+				direction_d1 <= 4'hD;//go up
 				
 			else if(hero_Y_MSB_d1 > hero_Y_MSB)
-				hero_new_direction <= 4'hC;//go down
+				direction_d1 <= 4'hC;//go down
 	
 
-			hero_X_MSB_d1 <= hero_X_MSB;
+			hero_X_MSB_d1 <= hero_X_MSB;			 //d1 go there next clk, start of chain
 			hero_Y_MSB_d1 <= hero_Y_MSB;
-			direction_d1 <= hero_new_direction; //d1 go there next clk, start of chain
 			
 			
 			hero_X_MSB_d2 <= hero_X_MSB_d1;
 			hero_Y_MSB_d2 <= hero_Y_MSB_d1;
 			direction_d2 <= direction_d1;//chaining
 			
+			if(hero_moved_twice != 2'h2)
+				hero_moved_twice <= hero_moved_twice + 2'h1;
 
-			//MazeBitMapMask[ghosts_history_Y[moving_ghost]][ghosts_history_X[moving_ghost]] <= 4'h0;
-			grid_write_A <= '{we: 1'b1, y: ghosts_history_Y[moving_ghost], x: ghosts_history_X[moving_ghost], data: 4'h0};
-			temp_tile_X <= ghosts_history_X[moving_ghost];//moving ghost = 0
-			temp_tile_Y <= ghosts_history_Y[moving_ghost];
-			temp_tile_direction <= ghosts_history_direction[moving_ghost];
+			
+			if (hero_moved_twice == 2'h2) begin
+				//MazeBitMapMask[ghosts_history_Y[moving_ghost]][ghosts_history_X[moving_ghost]] <= 4'h0;
+				if(!start_of_level)
+					grid_write_A <= '{enable: 1'b1, y: ghosts_history_Y[0], x: ghosts_history_X[0], data: 4'h0};
+				
+				temp_tile_X <= ghosts_history_X[0];//moving ghost = 0
+				temp_tile_Y <= ghosts_history_Y[0];
+				temp_tile_direction <= ghosts_history_direction[0];
 
-			ghosts_history_X[moving_ghost] <= hero_X_MSB_d2;//next position for first ghost, space between hero always 1-2 tiles
-			ghosts_history_Y[moving_ghost] <= hero_Y_MSB_d2;
-			ghosts_history_direction[moving_ghost] <= direction_d2;
+				ghosts_history_X[0] <= hero_X_MSB_d2;//next position for first ghost, space between hero always 1-2 tiles
+				ghosts_history_Y[0] <= hero_Y_MSB_d2;
+				ghosts_history_direction[0] <= direction_d2;
 
-			//MazeBitMapMask[hero_Y_MSB_d2][hero_X_MSB_d2] <= direction_d2;// first ghost direction chain 
-			grid_write_B <= '{we: 1'b1, y: hero_Y_MSB_d2, x: hero_X_MSB_d2, data: direction_d2};
-
-			moving_ghost <=  6'h1;//reset "ghost and spaces" counter to 1
+				//MazeBitMapMask[hero_Y_MSB_d2][hero_X_MSB_d2] <= direction_d2;// first ghost direction chain 
+				grid_write_B <= '{enable: 1'b1, y: hero_Y_MSB_d2, x: hero_X_MSB_d2, data: direction_d2};
+	//			hero_moved_twice <= 2'h0;
+				moving_ghost <=  6'h1;//reset "ghost and spaces" counter to 1
+				//crnt_num_ghosts <= 5'h1;
+			
+				if (start_of_level) begin
+					if (crnt_num_ghosts < MAX_ghost_num) begin
+						crnt_num_ghosts <= crnt_num_ghosts + 5'h1;
+					end 
+					else begin
+						start_of_level <= 1'b0;
+					end
+				end
+			
+			end
 
 		end 
-		else if (moving_ghost < crnt_num_ghosts * 2) begin//chain of movement
+		else if ((moving_ghost != 5'b0) && (moving_ghost < crnt_num_ghosts * 2)) begin//chain of movement
 			
 			if(MazeBitMapMask[ghosts_history_Y[moving_ghost]][ghosts_history_X[moving_ghost]] == 4'h0) begin// check if need to move ghost now
 				//MazeBitMapMask[temp_tile_Y][temp_tile_X] <= 4'h0;//no ghost here => no ghost in next
-				grid_write_A <= '{we: 1'b1, y: temp_tile_Y, x: temp_tile_X, data: 4'h0};
+				grid_write_A <= '{enable: 1'b1, y: temp_tile_Y, x: temp_tile_X, data: 4'h0};
 			end
 			else begin
-				//MazeBitMapMask[temp_tile_Y][temp_tile_X] <= temp_tile_direction;//ghost here, delete it and move it
-				grid_write_A <= '{we: 1'b1, y: temp_tile_Y, x: temp_tile_X, data: temp_tile_direction};
+				//MazeBitMapMask[temp_tile_Y][temp_tile_X] <= temp_tile_direction;//ghost here, move it and delete it
+				grid_write_A <= '{enable: 1'b1, y: temp_tile_Y, x: temp_tile_X, data: temp_tile_direction};
 				
-				if(!start_of_level) 
+				if(!start_of_level && (moving_ghost < (crnt_num_ghosts * 2 - 1))) 
 					//MazeBitMapMask[ghosts_history_Y[moving_ghost]][ghosts_history_X[moving_ghost]] <= 4'h0;
-					grid_write_B <= '{we: 1'b1, y: ghosts_history_Y[moving_ghost], x: ghosts_history_X[moving_ghost], data: 4'h0};
+					grid_write_B <= '{enable: 1'b1, y: ghosts_history_Y[moving_ghost], x: ghosts_history_X[moving_ghost], data: 4'h0};
 			end
 				temp_tile_X <= ghosts_history_X[moving_ghost];//moving next ghost
 				temp_tile_Y <= ghosts_history_Y[moving_ghost];
@@ -369,19 +392,22 @@ begin
 				ghosts_history_Y[moving_ghost] <= temp_tile_Y;
 				ghosts_history_direction[moving_ghost] <= temp_tile_direction;
 
-				moving_ghost <= moving_ghost + 6'h1;
+				moving_ghost <= moving_ghost + 6'h1;				
 				
+		end
+		else begin
+			moving_ghost <= 6'h0;
 		end
 	
 		
-		else if (collision_hero_trap) begin
+		if (collision_hero_trap) begin
 			collision_flag <= 1'b1;
 			hit_X <= offsetX_MSB - MEMX[4];//save for deleting
 			hit_Y <= offsetY_MSB - MEMY[4];
 		end
 		else if (collision_flag && startOfFrame) begin
 			//MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // clear entry, in colision, go to the anquer calc before 
-			grid_write_A <= '{we: 1'b1, y: hit_Y, x: hit_X, data: 4'h0};
+			grid_write_A <= '{enable: 1'b1, y: hit_Y, x: hit_X, data: 4'h0};
 			collision_flag <= 1'b0;
 			generate_trap <= 1'b1;
 		end
@@ -389,7 +415,7 @@ begin
 		
 		else if (check_valid && generate_trap) begin //place to put trap, one clk after start of frame so acceptable
 				//MazeBitMapMask[random_Y_MSB][random_X_MSB] <= 4'h2;  //put trap
-				grid_write_A <= '{we: 1'b1, y: random_Y_MSB, x: random_X_MSB, data: 4'h2};
+				grid_write_A <= '{enable: 1'b1, y: random_Y_MSB, x: random_X_MSB, data: 4'h2};
 				generate_trap <= 1'b0;
 		end
 		
@@ -420,11 +446,11 @@ begin
 	else begin
 
 
-		if(grid_write_A.we) begin
+		if(grid_write_A.enable) begin
 			MazeBitMapMask[grid_write_A.y][grid_write_A.x] <= grid_write_A.data;
 		end
 	
-		if(grid_write_B.we) begin
+		if(grid_write_B.enable) begin
 			MazeBitMapMask[grid_write_B.y][grid_write_B.x] <= grid_write_B.data;
 		end
 	end
@@ -432,8 +458,11 @@ begin
 end
 
 // decide if to draw the pixel or not 
-assign drawingRequest[0] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 1)) ? 1'b1 : 1'b0 ; // get optional transparent command from the bitmpap   
-assign drawingRequest[1] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 2)) ? 1'b1 : 1'b0 ;
+assign drawingRequest[0] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 4'h1)) ? 1'b1 : 1'b0 ; // get optional transparent command from the bitmpap   
+assign drawingRequest[1] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 4'h2)) ? 1'b1 : 1'b0 ;
+assign drawingRequest[2] = ((RGBout != TRANSPARENT_ENCODING) && ((object_flag == 4'hA) || (object_flag == 4'hB) || 
+																				  	  (object_flag == 4'hC) || (object_flag == 4'hD))) ? 1'b1 : 1'b0 ;
+
 
 
 assign Y = random_Y_MSB;

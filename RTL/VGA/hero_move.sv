@@ -28,9 +28,9 @@ module	hero_move	(
 
 // a module used to generate the  ball trajectory.  
 
-parameter int INITIAL_X = 280;
-parameter int INITIAL_Y = 185;
-parameter int player_speed = 40;
+parameter int INITIAL_X = 256;
+parameter int INITIAL_Y = 160;
+parameter int player_speed = 64;
 
 //const int	FIXED_POINT_MULTIPLIER = 64; // note it must be 2^n 
 const logic signed 	[10:0]	FIXED_POINT_MULTIPLIER = 64; // note it must be 2^n 
@@ -48,6 +48,19 @@ const int	x_FRAME_LEFT	=	(SafetyMargin)* FIXED_POINT_MULTIPLIER;
 const int	x_FRAME_RIGHT	=	(639 - SafetyMargin - OBJECT_WIDTH_X)* FIXED_POINT_MULTIPLIER; 
 const int	y_FRAME_TOP		=	(SafetyMargin) * FIXED_POINT_MULTIPLIER;
 const int	y_FRAME_BOTTOM	=	(479 -SafetyMargin - OBJECT_HIGHT_Y ) * FIXED_POINT_MULTIPLIER; //- OBJECT_HIGHT_Y
+
+
+typedef struct packed {
+ 	 int Y_speed;
+ 	 int X_speed;
+	 logic [3:0] dig;
+ } change_direction_req;
+
+change_direction_req req;
+ 
+logic X_in_grid;
+logic Y_in_grid;
+logic change_direction_flag;
 
 
 
@@ -74,6 +87,7 @@ begin : fsm_sync_proc
 		digit <= 4'd4; // player starts to the right
 	Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
 	Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
+	change_direction_flag <= 1'b0;
 	
 	end 	
 	
@@ -100,35 +114,49 @@ begin : fsm_sync_proc
 			MOVE_ST:  begin     // moving collecting colisions 
 		//------------
 		// keys direction change 
+		
+			if(!change_direction_flag) begin
 				if (up_key && Yspeed <= 0 ) begin
-					Yspeed <= -player_speed; 
-					Xspeed <= 0; 
-					digit <= 4'd2; // back
+					req.Y_speed <= -player_speed; 
+					req.X_speed <= 0; 
+					req.dig <= 4'd2; // back
+					change_direction_flag <= 1'b1;
 
 				end
 					
-				if (down_key && Yspeed >= 0 ) begin
-					Yspeed <= player_speed; 
-					Xspeed <= 0; 
-					digit <= 4'd0; // front
+				else if (down_key && Yspeed >= 0 ) begin
+					req.Y_speed <= player_speed; 
+					req.X_speed <= 0; 
+					req.dig <= 4'd0; // front
+					change_direction_flag <= 1'b1;
 
 				end
 				
-				if (right_key && Xspeed >= 0 ) begin
-					Yspeed <= 0; 
-					Xspeed <= player_speed;
-					digit <= 4'd4; // right
+				else if (right_key && Xspeed >= 0 ) begin
+					req.Y_speed <= 0; 
+					req.X_speed <= player_speed;
+					req.dig <= 4'd4; // right
+					change_direction_flag <= 1'b1;
 
 				end
 		
-				if (left_key && Xspeed <= 0 ) begin
-					Yspeed <= 0; 
-					Xspeed <= -player_speed; 
-					digit <= 4'd6; // left
+				else if (left_key && Xspeed <= 0 ) begin
+					req.Y_speed <= 0; 
+					req.X_speed <= -player_speed; 
+					req.dig <= 4'd6; // left
+					change_direction_flag <= 1'b1;
 
 				end
-					
 				
+			end 
+				else if (change_direction_flag && X_in_grid && Y_in_grid) begin
+				
+					Yspeed <= req.Y_speed; 
+					Xspeed <= req.X_speed; 
+					digit <= req.dig;
+					
+					change_direction_flag <= 1'b0;
+				end
 
 				if (startOfFrame )
 					SM_Motion <= POSITION_CHANGE_ST ; 
@@ -183,6 +211,10 @@ assign 	topLeftY_tmp = Yposition / FIXED_POINT_MULTIPLIER ;
 
 assign 	topLeftX = {topLeftX_tmp[10:0]} ;   // note it must be 2^n 
 assign 	topLeftY = {topLeftY_tmp[10:0]} ;    	
+
+assign X_in_grid = topLeftX[4:0] == 5'b0; 
+
+assign Y_in_grid = topLeftY[4:0] == 5'b0; 
 
 endmodule	
 //---------------

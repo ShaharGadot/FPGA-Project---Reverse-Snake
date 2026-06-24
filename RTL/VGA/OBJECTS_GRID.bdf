@@ -232,7 +232,7 @@ agreement for further details.
 	(output)
 	(rect 1640 304 1862 320)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
-	(text "GridDrawingRequest[1..0]" (rect 90 0 216 12)(font "Arial" ))
+	(text "GridDrawingRequest[2..0]" (rect 90 0 216 12)(font "Arial" ))
 	(pt 0 8)
 	(drawing
 		(line (pt 0 8)(pt 52 8))
@@ -375,8 +375,8 @@ agreement for further details.
 	)
 )
 (symbol
-	(rect 1288 280 1552 552)
-	(text "GridMatrixBitMap" (rect 5 0 87 12)(font "Arial" ))
+	(rect 1288 280 1560 552)
+	(text "GridMatrixBitMap_SIMPLE" (rect 5 0 132 12)(font "Arial" ))
 	(text "inst" (rect 8 256 25 268)(font "Arial" ))
 	(port
 		(pt 0 32)
@@ -470,28 +470,22 @@ agreement for further details.
 		(line (pt 0 224)(pt 16 224))
 	)
 	(port
-		(pt 264 32)
+		(pt 272 32)
 		(output)
-		(text "drawingRequest[1..0]" (rect 0 0 103 12)(font "Arial" ))
-		(text "drawingRequest[1..0]" (rect 156 27 259 39)(font "Arial" ))
-		(line (pt 264 32)(pt 248 32)(line_width 3))
+		(text "drawingRequest[2..0]" (rect 0 0 103 12)(font "Arial" ))
+		(text "drawingRequest[2..0]" (rect 164 27 267 39)(font "Arial" ))
+		(line (pt 272 32)(pt 256 32)(line_width 3))
 	)
 	(port
-		(pt 264 48)
+		(pt 272 48)
 		(output)
 		(text "RGBout[7..0]" (rect 0 0 64 12)(font "Arial" ))
-		(text "RGBout[7..0]" (rect 189 43 253 55)(font "Arial" ))
-		(line (pt 264 48)(pt 248 48)(line_width 3))
+		(text "RGBout[7..0]" (rect 197 43 261 55)(font "Arial" ))
+		(line (pt 272 48)(pt 256 48)(line_width 3))
 	)
-	(parameter
-		"MAX_ghost_num"
-		"20"
-		""
-		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 248 256))
+		(rectangle (rect 16 16 256 256))
 	)
-	(annotation_block (parameter)(rect 1312 232 1520 272))
 )
 (connector
 	(text "resetN" (rect 1226 312 1256 329)(font "Intel Clear" ))
@@ -507,17 +501,6 @@ agreement for further details.
 	(text "<<__$DEF_ALIAS448>>" (rect 1000 360 1112 377)(font "Intel Clear" )(invisible))
 	(pt 1024 376)
 	(pt 1288 376)
-)
-(connector
-	(text "<<__$DEF_ALIAS784>>" (rect 1562 312 1674 329)(font "Intel Clear" )(invisible))
-	(pt 1552 328)
-	(pt 1648 328)
-	(bus)
-)
-(connector
-	(pt 1552 312)
-	(pt 1640 312)
-	(bus)
 )
 (connector
 	(text "RandomPixelX[10..0]" (rect 1210 424 1310 441)(font "Intel Clear" ))
@@ -662,6 +645,17 @@ agreement for further details.
 	(text "clk" (rect 1050 160 1064 177)(font "Intel Clear" ))
 	(pt 1104 176)
 	(pt 1040 176)
+)
+(connector
+	(pt 1560 312)
+	(pt 1640 312)
+	(bus)
+)
+(connector
+	(text "<<__$DEF_ALIAS784>>" (rect 1562 312 1674 329)(font "Intel Clear" )(invisible))
+	(pt 1560 328)
+	(pt 1648 328)
+	(bus)
 )
 (text "// (c) Technion IIT, Department of Electrical Engineering 2025" (rect 632 24 991 43)(font "Intel Clear" (font_size 8)))
 (rectangle (rect 344 56 1872 568)(color 0 0 0)(line_width 3))

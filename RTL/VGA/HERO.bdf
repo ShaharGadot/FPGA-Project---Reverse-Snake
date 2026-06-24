@@ -443,17 +443,17 @@ agreement for further details.
 	)
 	(parameter
 		"INITIAL_X"
-		"280"
+		"128"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
 		"INITIAL_Y"
-		"185"
+		"160"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
 		"player_speed"
-		"100"
+		"128"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing

@@ -9,7 +9,7 @@ module	game_controller	(
 			input	logic	startOfFrame,  // short pulse every start of frame 30Hz
 		
 		
-			input	logic	[1:0] GridDrawingRequest,	
+			input	logic	[2:0] GridDrawingRequest,	
 			input	logic	HeroDrawingRequest,
 
 			
@@ -25,6 +25,7 @@ logic TrapDrawingRequest;
 
 assign BorderDrawingRequest = GridDrawingRequest[0];
 assign TrapDrawingRequest = GridDrawingRequest[1];
+assign GhostDrawingRequest = GridDrawingRequest[2];
 
 
 
