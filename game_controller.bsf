@@ -48,8 +48,8 @@ agreement for further details.
 	(port
 		(pt 0 80)
 		(input)
-		(text "GridDrawingRequest[2..0]" (rect 0 0 102 12)(font "Arial" ))
-		(text "GridDrawingRequest[2..0]" (rect 21 75 123 87)(font "Arial" ))
+		(text "GridDrawingRequest[3..0]" (rect 0 0 102 12)(font "Arial" ))
+		(text "GridDrawingRequest[3..0]" (rect 21 75 123 87)(font "Arial" ))
 		(line (pt 0 80)(pt 16 80)(line_width 3))
 	)
 	(port
@@ -76,9 +76,16 @@ agreement for further details.
 	(port
 		(pt 304 64)
 		(output)
-		(text "SinglePulse_TrapCollision" (rect 0 0 99 12)(font "Arial" ))
-		(text "SinglePulse_TrapCollision" (rect 184 59 283 71)(font "Arial" ))
+		(text "collision_hero_skull" (rect 0 0 74 12)(font "Arial" ))
+		(text "collision_hero_skull" (rect 209 59 283 71)(font "Arial" ))
 		(line (pt 304 64)(pt 288 64)(line_width 1))
+	)
+	(port
+		(pt 304 80)
+		(output)
+		(text "SinglePulse_TrapCollision" (rect 0 0 99 12)(font "Arial" ))
+		(text "SinglePulse_TrapCollision" (rect 184 75 283 87)(font "Arial" ))
+		(line (pt 304 80)(pt 288 80)(line_width 1))
 	)
 	(drawing
 		(rectangle (rect 16 16 288 128)(line_width 1))

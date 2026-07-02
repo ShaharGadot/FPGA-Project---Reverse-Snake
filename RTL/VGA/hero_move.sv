@@ -155,7 +155,8 @@ begin : fsm_sync_proc
 					Xspeed <= req.X_speed; 
 					digit <= req.dig;
 					
-					change_direction_flag <= 1'b0;
+					if (startOfFrame )
+						change_direction_flag <= 1'b0;
 				end
 
 				if (startOfFrame )

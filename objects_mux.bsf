@@ -55,8 +55,8 @@ agreement for further details.
 	(port
 		(pt 0 96)
 		(input)
-		(text "GridDrawingRequest[2..0]" (rect 0 0 102 12)(font "Arial" ))
-		(text "GridDrawingRequest[2..0]" (rect 21 91 123 103)(font "Arial" ))
+		(text "GridDrawingRequest[3..0]" (rect 0 0 102 12)(font "Arial" ))
+		(text "GridDrawingRequest[3..0]" (rect 21 91 123 103)(font "Arial" ))
 		(line (pt 0 96)(pt 16 96)(line_width 3))
 	)
 	(port
