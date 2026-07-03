@@ -3,6 +3,8 @@ module	motion_clk	(
 					input		logic	clk,
 					input		logic startOfFrame,
 					input		logic	resetN,
+					input    logic collision_hero_slow_time_pu,
+
 		 
 
 			  

@@ -18,7 +18,7 @@ module	objects_mux	(
 			  
 		  ////////////////////////
 		  // background 
-					input		logic	[3:0] GridDrawingRequest, 
+					input		logic	[8:0] GridDrawingRequest, 
 					input		logic	[7:0] GridRGB, 
 					
 					

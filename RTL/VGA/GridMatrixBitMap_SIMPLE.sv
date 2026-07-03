@@ -12,9 +12,15 @@ module	GridMatrixBitMap_SIMPLE	(
 					input	logic	InsideRectangle, //input that the pixel is within a bracket 
 					
 					input logic collision_hero_trap,
-					input logic collision_hero_border, // not used...
 					input logic collision_hero_skull,
+					input logic collision_hero_inverse_keys_pd,
+					input logic collision_hero_slow_time_pu,
+					input logic collision_hero_super_trap_pu,
 
+
+					input logic [2:0] GAME_STATE,
+					input logic open_sesame,
+					input logic state_transition,
 					
 					input logic motion_pulse,
 
@@ -24,11 +30,16 @@ module	GridMatrixBitMap_SIMPLE	(
 
 					input logic [10:0] hero_X, //hero top left coardinets
                input logic [10:0] hero_Y,
+			      input logic [10:0] hero_initial_X,
+               input logic [10:0] hero_initial_Y,
+
 					
 					input logic startOfFrame,
-
-					output	logic	[3:0] drawingRequest, //output that the pixel should be dispalyed 
-					output	logic	[7:0] RGBout  //rgb value from the bitmap 
+					
+					
+					output logic [4:0] num_ghosts,
+					output logic	[8:0] drawingRequest, //output that the pixel should be dispalyed 
+					output logic	[7:0] RGBout  //rgb value from the bitmap 
  ) ;
  
 
@@ -54,8 +65,8 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//16
  logic [9:0] offsetY_LSB  ; 
  logic [5:0] offsetX_MSB ;
  logic [5:0] offsetY_MSB  ;
- logic [9:0] address  ;
- logic [10:0] item_address  ;
+ logic [10:0] border_address  ;
+ logic [12:0] item_address  ;
  logic [12:0] ghost_address ;
 
 
@@ -64,6 +75,7 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//16
  logic [7:0] ghostColor ;
  
  logic [3:0] object_flag;//in object
+ logic [1:0] border_type;
  logic collision_trap_flag;//in collision
  logic collision_skull_flag;//in collision
 
@@ -93,9 +105,14 @@ logic [4:0]  crnt_num_ghosts; // Counter for current number of active ghosts (0 
 
 logic [5:0] hero_X_MSB;
 logic [5:0] hero_Y_MSB;
+logic [5:0] hero_initial_X_MSB;
+logic [5:0] hero_initial_Y_MSB;
 
 assign hero_X_MSB  = hero_X[10:TILE_NUMBER_OF_X_BITS] ; // get offset of tile in maze
 assign hero_Y_MSB  = hero_Y[10:TILE_NUMBER_OF_Y_BITS] ; // get higher bits 
+assign hero_initial_X_MSB  = hero_initial_X[10:TILE_NUMBER_OF_X_BITS] ; // get offset of tile in maze
+assign hero_initial_Y_MSB  = hero_initial_Y[10:TILE_NUMBER_OF_X_BITS] ; // get offset of tile in maze
+
 logic [5:0] hero_X_MSB_d1;
 logic [5:0] hero_Y_MSB_d1;
 logic [5:0] hero_X_MSB_d2;
@@ -110,12 +127,22 @@ logic [3:0] direction_d2;
  
  assign object_flag = MazeBitMapMask[offsetY_MSB][offsetX_MSB]; // crnt object wer'e on
 
- assign address = (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
+ assign border_address = border_type * 32 * 32 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
  assign ghost_address = (object_flag - 4'hA + explosion_end)* 32 * 32 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
  assign item_address = (object_flag - 4'h2) * 32 * 32 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
 
-logic [4:0] num_ghosts = 5'd20;
 localparam int MAX_num_ghosts = 20;
+
+typedef enum logic [2:0] {
+	 OPENING_ST     = 3'd0,
+    FIRST_LEVEL_ST = 3'd1,
+	 SECOND_LEVEL_ST = 3'd2,
+    FAILURE_ST     = 3'd3
+} local_state;
+
+local_state CURRENT_STATE;
+
+assign CURRENT_STATE = local_state'(GAME_STATE);
 
 
 
@@ -143,11 +170,34 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   MazeDefaultBitMapMask= /
     {128'h00000000000000000000_000000000000}  
 };
 
+logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   EndOfLevelBitMapMask= // defult table to load on reset
+{
+     
+    {128'h00000000000000000000_000000000000}, // Y = 0
+    {128'h00000000000000000000_000000000000}, // Y = 1
+    {128'h00000000000000000000_000000000000}, // Y = 2
+    {128'h11111111117111111111_000000000000}, // Y = 3
+	 {128'h10000000000000000001_000000000000}, // Y = 4 
+    {128'h10000000000000000001_000000000000}, // Y = 5
+    {128'h10000000000000000001_000000000000}, // Y = 6
+    {128'h10000000000000000001_000000000000}, // Y = 7
+    {128'h10000000000000000001_000000000000}, // Y = 8
+    {128'h10000000000000000001_000000000000}, // Y = 9
+    {128'h10000000000000000001_000000000000}, // Y = 10
+    {128'h10000000000000000001_000000000000}, // Y = 11
+    {128'h10000000000000000001_000000000000}, // Y = 12
+    {128'h10000000000000000001_000000000000}, // Y = 13
+    {128'h11111111111111111111_000000000000}, // Y = 14
+     // Y = 15: Out of screen bounds (Completely empty padding row)
+    {128'h00000000000000000000_000000000000}  
+};
+
+
 lpm_rom #(
     .LPM_WIDTH(8),
-    .LPM_WIDTHAD(10),
-	 .LPM_NUMWORDS(1024),
-    .LPM_FILE("RTL/border.mif"),
+    .LPM_WIDTHAD(11),
+	 .LPM_NUMWORDS(2048),
+    .LPM_FILE("RTL/borders.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
 		.LPM_OUTDATA            ("UNREGISTERED"), 
@@ -155,7 +205,7 @@ lpm_rom #(
 		.AUTO_CASCADE_BUFFERS   ("ON"),
 	   .INTENDED_DEVICE_FAMILY ("Cyclone V")  
 ) rom_inst (
-    .address(address),
+    .address(border_address),
 	 .inclock(clk),
 	// .outclock(clk),
     .q(borderColor)
@@ -164,8 +214,8 @@ lpm_rom #(
  
 lpm_rom #(
     .LPM_WIDTH(8),
-    .LPM_WIDTHAD(11),
-	 .LPM_NUMWORDS(2048),
+    .LPM_WIDTHAD(13),
+	 .LPM_NUMWORDS(6144),
     .LPM_FILE("RTL/objects.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
@@ -203,13 +253,13 @@ lpm_rom #(
 always_ff@(posedge clk or negedge resetN)
 begin
 	if(!resetN) begin
-		RGBout <=	8'h00;
+		RGBout <=	TRANSPARENT_ENCODING;
 		MazeBitMapMask  <=  MazeDefaultBitMapMask ;  //  copy default tabel 
 		
-		hero_X_MSB_d1 <= hero_X_MSB;
-		hero_X_MSB_d2 <= hero_X_MSB - 1'b1;
-		hero_Y_MSB_d1 <= hero_Y_MSB;
-		hero_Y_MSB_d2 <= hero_Y_MSB;
+		hero_X_MSB_d1 <= hero_initial_X_MSB;
+		hero_X_MSB_d2 <= hero_initial_X_MSB - 1'b1;
+		hero_Y_MSB_d1 <= hero_initial_Y_MSB;
+		hero_Y_MSB_d2 <= hero_initial_Y_MSB;
 		direction_d1 <= 4'hB;
 		direction_d2 <= 4'hB;
 		
@@ -221,22 +271,64 @@ begin
 		num_ghosts <= 5'd20;
 		explosion_end <= 1'b0;
 		explosion_flag <= 2'b0;
+		generate_trap <= 1'b0;
 		
 		collision_trap_flag <= 1'b0;
 		collision_skull_flag <= 1'b0;
 
 
 	end
+	
+	else if(CURRENT_STATE == FAILURE_ST) begin 
+		RGBout <=	TRANSPARENT_ENCODING;
+
+	end
+	
+	else if (CURRENT_STATE == OPENING_ST) begin
+		
+		//do nothing while opening screen
+		RGBout <= TRANSPARENT_ENCODING ;
+
+	end
+	
+	else if (state_transition) begin // not in open or end, only before levels do once
+				
+		RGBout <=	TRANSPARENT_ENCODING;
+		MazeBitMapMask  <=  MazeDefaultBitMapMask ;  //  copy default tabel 
+		
+		hero_X_MSB_d1 <= hero_initial_X_MSB;
+		hero_X_MSB_d2 <= hero_initial_X_MSB - 1'b1;
+		hero_Y_MSB_d1 <= hero_initial_Y_MSB;
+		hero_Y_MSB_d2 <= hero_initial_Y_MSB;
+		direction_d1 <= 4'hB;
+		direction_d2 <= 4'hB;
+		
+		ghosts_history_X <= '{default: 6'h0};
+		ghosts_history_Y <= '{default: 6'h0};
+		ghosts_history_direction <= '{default: 4'hB};
+		
+		crnt_num_ghosts <= 5'h0;
+		num_ghosts <= 5'd20;
+		explosion_end <= 1'b0;
+		explosion_flag <= 2'b0;
+		generate_trap <= 1'b0;
+
+		collision_trap_flag <= 1'b0;
+		collision_skull_flag <= 1'b0;
+		
+	
+	end	
 	else begin
+	
+	
 		RGBout <= TRANSPARENT_ENCODING ; // default 
 		explosion_end <= 1'b0;
 
 		
 		
 		/////////////////////////////ghosts managing logic///////////////////////////////////
-		
-		
-		if(((hero_X_MSB != hero_X_MSB_d1) || (hero_Y_MSB != hero_Y_MSB_d1)) && (startOfFrame)) begin	//move ghosts	
+					
+		if(((hero_X_MSB != hero_X_MSB_d1) || (hero_Y_MSB != hero_Y_MSB_d1)) && (startOfFrame) && (num_ghosts != 5'd0)) begin	//move ghosts	
 		
 			if(hero_X_MSB_d1 < hero_X_MSB)
 				direction_d1 <= 4'hB;//go right
@@ -264,18 +356,29 @@ begin
 			
 			if (crnt_num_ghosts >= num_ghosts) begin // not deleting when initializing snake
 				MazeBitMapMask[ghosts_history_Y[crnt_num_ghosts-1]][ghosts_history_X[crnt_num_ghosts-1]] <= 4'h0;  //deleting last ghost in movement
-			end 													//////maybe needs to be minus 1
+			end 	
 			else begin
 				crnt_num_ghosts <= crnt_num_ghosts + 5'h1;
 			end
 			MazeBitMapMask[hero_Y_MSB_d2][hero_X_MSB_d2] <= direction_d2;  //generating new ghost after hero
+		
+		end
+		
+		////////////////////////////////// portal at end of level////////////////////
+		
+		if(open_sesame && startOfFrame) begin
+			MazeBitMapMask  <=  EndOfLevelBitMapMask ;  //  copy end tabel 
+			num_ghosts <= 5'd0;
+			generate_trap <= 1'b0;
+			generate_skull <= 1'b0;
 
-		
-		
-		end else
+
+		end
 		
 		////////////////////////////////// collision hero trap //////////////////////
-		if(object_flag == 4'hE && explosion_flag == 2'd3)
+		
+		
+		else if(object_flag == 4'hE && explosion_flag == 2'd3)
 			explosion_end <= 1'd1;//for stepping up the adress to next mif
 
 		else if (motion_pulse && explosion_flag > 2'd0 && explosion_flag < 2'd3) //explostion phaze 2
@@ -340,9 +443,15 @@ begin
 		   	case (object_flag)
 					 4'h0 : RGBout <= TRANSPARENT_ENCODING ;
 			   	 4'h1 : RGBout <= borderColor; 
+					 
 					 4'h2 : RGBout <= itemColor ; 
-					 4'h3 : RGBout <= itemColor ; 
-
+					 4'h3 : RGBout <= itemColor ;
+					 4'h4 : RGBout <= itemColor ; 
+					 4'h5 : RGBout <= itemColor ; 
+					 4'h6 : RGBout <= itemColor ; 
+					 4'h7 : RGBout <= itemColor ;
+//					 4'h8 : RGBout <= itemColor ; 
+					 4'h9 : RGBout <= itemColor ; 
 					 
 					 4'hA : RGBout <= ghostColor;
 					 4'hB : RGBout <= ghostColor;
@@ -369,6 +478,14 @@ assign drawingRequest[2] = ((RGBout != TRANSPARENT_ENCODING) && ((object_flag ==
 																					  
 assign drawingRequest[3] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 4'h3)) ? 1'b1 : 1'b0 ; // skullDrawingRequest
 
+assign drawingRequest[4] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 4'h7)) ? 1'b1 : 1'b0 ; // portalDrawingRequest
+assign drawingRequest[5] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 4'h9)) ? 1'b1 : 1'b0 ; // graveDrawingRequest
+assign drawingRequest[6] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 4'h4)) ? 1'b1 : 1'b0 ; // inverse_keys_pd_DrawingRequest
+assign drawingRequest[7] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 4'h5)) ? 1'b1 : 1'b0 ; // slow_time_pu_DrawingRequest
+assign drawingRequest[8] = ((RGBout != TRANSPARENT_ENCODING) && (object_flag == 4'h6)) ? 1'b1 : 1'b0 ; // super_trap_pu_DrawingRequest
+
+
+
 assign random_X_MSB  = RandomPixelX[10:TILE_NUMBER_OF_X_BITS] ; // get offset of tile in maze
 assign random_Y_MSB  = RandomPixelY[10:TILE_NUMBER_OF_Y_BITS] ; // get higher bits 
  																		  
@@ -378,6 +495,25 @@ assign in_borders = (0 < random_X_MSB) && (4 < random_Y_MSB) && (random_Y_MSB < 
 assign unoccupied = (MazeBitMapMask[random_Y_MSB][random_X_MSB] == 4'h0);
 
 assign check_random_valid = in_borders && unoccupied;
+
+always_comb begin
+	case (CURRENT_STATE)
+			FIRST_LEVEL_ST : begin
+				border_type = 2'd0;
+				
+			end
+			
+			SECOND_LEVEL_ST : begin
+				border_type = 2'd1;
+
+			end
+			
+			default : begin
+				border_type = 2'd0;
+
+			end	
+		endcase
+end
 
 
 endmodule

@@ -22,7 +22,7 @@ agreement for further details.
 (header "graphic" (version "1.4"))
 (pin
 	(input)
-	(rect -240 344 -72 360)
+	(rect -360 296 -192 312)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "clk" (rect 5 0 19 12)(font "Arial" ))
 	(pt 168 8)
@@ -38,7 +38,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -240 360 -72 376)
+	(rect -360 312 -192 328)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "resetN" (rect 5 0 35 17)(font "Intel Clear" ))
 	(pt 168 8)
@@ -54,7 +54,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -240 376 -72 392)
+	(rect -360 328 -192 344)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "startOfFrame" (rect 5 0 68 17)(font "Intel Clear" ))
 	(pt 168 8)
@@ -102,7 +102,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -312 416 -120 432)
+	(rect -432 368 -240 384)
 	(text "INPUT" (rect 149 0 177 10)(font "Arial" (font_size 6)))
 	(text "KeyIsPressed[9..0]" (rect 5 0 100 12)(font "Arial" ))
 	(pt 192 8)
@@ -118,7 +118,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -240 488 -72 504)
+	(rect -408 480 -240 496)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "motion_clk" (rect 5 0 58 12)(font "Arial" ))
 	(pt 168 8)
@@ -133,8 +133,72 @@ agreement for further details.
 	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
 )
 (pin
+	(input)
+	(rect -432 496 -240 512)
+	(text "INPUT" (rect 149 0 177 10)(font "Arial" (font_size 6)))
+	(text "GAME_STATE[2..0]" (rect 5 0 100 12)(font "Arial" ))
+	(pt 192 8)
+	(drawing
+		(line (pt 108 12)(pt 133 12))
+		(line (pt 108 4)(pt 133 4))
+		(line (pt 137 8)(pt 192 8))
+		(line (pt 108 12)(pt 108 4))
+		(line (pt 133 4)(pt 137 8))
+		(line (pt 133 12)(pt 137 8))
+	)
+	(text "VCC" (rect 152 7 172 17)(font "Arial" (font_size 6)))
+)
+(pin
+	(input)
+	(rect -304 440 -48 456)
+	(text "INPUT" (rect 213 0 241 10)(font "Arial" (font_size 6)))
+	(text "collision_hero_inverse_keys_pd" (rect 5 0 162 12)(font "Arial" ))
+	(pt 256 8)
+	(drawing
+		(line (pt 172 12)(pt 197 12))
+		(line (pt 172 4)(pt 197 4))
+		(line (pt 201 8)(pt 256 8))
+		(line (pt 172 12)(pt 172 4))
+		(line (pt 197 4)(pt 201 8))
+		(line (pt 197 12)(pt 201 8))
+	)
+	(text "VCC" (rect 216 7 236 17)(font "Arial" (font_size 6)))
+)
+(pin
+	(input)
+	(rect -288 456 -48 472)
+	(text "INPUT" (rect 197 0 225 10)(font "Arial" (font_size 6)))
+	(text "collision_hero_super_trap_pu" (rect 5 0 146 17)(font "Intel Clear" ))
+	(pt 240 8)
+	(drawing
+		(line (pt 156 12)(pt 181 12))
+		(line (pt 156 4)(pt 181 4))
+		(line (pt 185 8)(pt 240 8))
+		(line (pt 156 12)(pt 156 4))
+		(line (pt 181 4)(pt 185 8))
+		(line (pt 181 12)(pt 185 8))
+	)
+	(text "VCC" (rect 200 7 220 17)(font "Arial" (font_size 6)))
+)
+(pin
+	(input)
+	(rect -416 512 -240 528)
+	(text "INPUT" (rect 133 0 161 10)(font "Arial" (font_size 6)))
+	(text "state_transition" (rect 5 0 81 12)(font "Arial" ))
+	(pt 176 8)
+	(drawing
+		(line (pt 92 12)(pt 117 12))
+		(line (pt 92 4)(pt 117 4))
+		(line (pt 121 8)(pt 176 8))
+		(line (pt 92 12)(pt 92 4))
+		(line (pt 117 4)(pt 121 8))
+		(line (pt 117 12)(pt 121 8))
+	)
+	(text "VCC" (rect 136 7 156 17)(font "Arial" (font_size 6)))
+)
+(pin
 	(output)
-	(rect 1664 216 1863 232)
+	(rect 1696 216 1895 232)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
 	(text "HeroDrawingRequest" (rect 90 0 193 12)(font "Arial" ))
 	(pt 0 8)
@@ -150,7 +214,7 @@ agreement for further details.
 )
 (pin
 	(output)
-	(rect 1664 232 1840 248)
+	(rect 1696 232 1872 248)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
 	(text "HeroRGB[7..0]" (rect 90 0 163 12)(font "Arial" ))
 	(pt 0 8)
@@ -185,6 +249,38 @@ agreement for further details.
 	(rect 1664 440 1840 456)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
 	(text "Hero_Y[10..0]" (rect 90 0 159 12)(font "Arial" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+)
+(pin
+	(output)
+	(rect 384 296 560 312)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "initial_X[10..0]" (rect 90 0 158 12)(font "Arial" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+)
+(pin
+	(output)
+	(rect 384 312 560 328)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "initial_Y[10..0]" (rect 90 0 158 17)(font "Intel Clear" ))
 	(pt 0 8)
 	(drawing
 		(line (pt 0 8)(pt 52 8))
@@ -291,7 +387,7 @@ agreement for further details.
 	(annotation_block (parameter)(rect 720 176 975 252))
 )
 (symbol
-	(rect 1336 176 1560 352)
+	(rect 1336 176 1592 352)
 	(text "HeroBitMap" (rect 5 0 61 12)(font "Arial" ))
 	(text "inst" (rect 8 160 25 172)(font "Arial" ))
 	(port
@@ -344,18 +440,25 @@ agreement for further details.
 		(line (pt 0 128)(pt 16 128))
 	)
 	(port
-		(pt 224 32)
-		(output)
-		(text "drawingRequest" (rect 0 0 77 12)(font "Arial" ))
-		(text "drawingRequest" (rect 138 27 215 39)(font "Arial" ))
-		(line (pt 224 32)(pt 208 32))
+		(pt 0 144)
+		(input)
+		(text "GAME_STATE[2..0]" (rect 0 0 95 12)(font "Arial" ))
+		(text "GAME_STATE[2..0]" (rect 21 139 116 151)(font "Arial" ))
+		(line (pt 0 144)(pt 16 144)(line_width 3))
 	)
 	(port
-		(pt 224 48)
+		(pt 256 32)
+		(output)
+		(text "drawingRequest" (rect 0 0 77 12)(font "Arial" ))
+		(text "drawingRequest" (rect 170 27 247 39)(font "Arial" ))
+		(line (pt 256 32)(pt 240 32))
+	)
+	(port
+		(pt 256 48)
 		(output)
 		(text "RGBout[7..0]" (rect 0 0 64 12)(font "Arial" ))
-		(text "RGBout[7..0]" (rect 149 43 213 55)(font "Arial" ))
-		(line (pt 224 48)(pt 208 48)(line_width 3))
+		(text "RGBout[7..0]" (rect 181 43 245 55)(font "Arial" ))
+		(line (pt 256 48)(pt 240 48)(line_width 3))
 	)
 	(parameter
 		"digit_color"
@@ -363,14 +466,14 @@ agreement for further details.
 		""
 		(type "PARAMETER_UNSIGNED_BIN")	)
 	(drawing
-		(rectangle (rect 16 16 208 160))
+		(rectangle (rect 16 16 240 160))
 	)
-	(annotation_block (parameter)(rect 1344 128 1552 168))
+	(annotation_block (parameter)(rect 1592 136 1800 176))
 )
 (symbol
-	(rect 168 320 384 496)
+	(rect 48 272 336 512)
 	(text "hero_move" (rect 5 0 60 12)(font "Arial" ))
-	(text "inst2" (rect 8 160 30 177)(font "Intel Clear" ))
+	(text "inst5" (rect 8 224 30 241)(font "Intel Clear" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -421,29 +524,71 @@ agreement for further details.
 		(line (pt 0 128)(pt 16 128))
 	)
 	(port
-		(pt 216 32)
+		(pt 0 144)
+		(input)
+		(text "GAME_STATE[2..0]" (rect 0 0 95 12)(font "Arial" ))
+		(text "GAME_STATE[2..0]" (rect 21 139 116 151)(font "Arial" ))
+		(line (pt 0 144)(pt 16 144)(line_width 3))
+	)
+	(port
+		(pt 0 160)
+		(input)
+		(text "state_transition" (rect 0 0 75 12)(font "Arial" ))
+		(text "state_transition" (rect 21 155 96 167)(font "Arial" ))
+		(line (pt 0 160)(pt 16 160))
+	)
+	(port
+		(pt 0 176)
+		(input)
+		(text "collision_hero_inverse_keys_pd" (rect 0 0 156 12)(font "Arial" ))
+		(text "collision_hero_inverse_keys_pd" (rect 21 171 177 183)(font "Arial" ))
+		(line (pt 0 176)(pt 16 176))
+	)
+	(port
+		(pt 0 192)
+		(input)
+		(text "collision_hero_slow_time_pu" (rect 0 0 138 12)(font "Arial" ))
+		(text "collision_hero_slow_time_pu" (rect 21 187 159 199)(font "Arial" ))
+		(line (pt 0 192)(pt 16 192))
+	)
+	(port
+		(pt 288 32)
+		(output)
+		(text "initial_X[10..0]" (rect 0 0 68 12)(font "Arial" ))
+		(text "initial_X[10..0]" (rect 210 27 278 39)(font "Arial" ))
+		(line (pt 288 32)(pt 272 32)(line_width 3))
+	)
+	(port
+		(pt 288 48)
+		(output)
+		(text "initial_Y[10..0]" (rect 0 0 70 12)(font "Arial" ))
+		(text "initial_Y[10..0]" (rect 208 43 278 55)(font "Arial" ))
+		(line (pt 288 48)(pt 272 48)(line_width 3))
+	)
+	(port
+		(pt 288 64)
 		(output)
 		(text "topLeftX[10..0]" (rect 0 0 73 12)(font "Arial" ))
-		(text "topLeftX[10..0]" (rect 134 27 207 39)(font "Arial" ))
-		(line (pt 216 32)(pt 200 32)(line_width 3))
+		(text "topLeftX[10..0]" (rect 206 59 279 71)(font "Arial" ))
+		(line (pt 288 64)(pt 272 64)(line_width 3))
 	)
 	(port
-		(pt 216 48)
+		(pt 288 80)
 		(output)
 		(text "topLeftY[10..0]" (rect 0 0 75 12)(font "Arial" ))
-		(text "topLeftY[10..0]" (rect 132 43 207 55)(font "Arial" ))
-		(line (pt 216 48)(pt 200 48)(line_width 3))
+		(text "topLeftY[10..0]" (rect 204 75 279 87)(font "Arial" ))
+		(line (pt 288 80)(pt 272 80)(line_width 3))
 	)
 	(port
-		(pt 216 64)
+		(pt 288 96)
 		(output)
 		(text "digit[3..0]" (rect 0 0 46 12)(font "Arial" ))
-		(text "digit[3..0]" (rect 157 59 203 71)(font "Arial" ))
-		(line (pt 216 64)(pt 200 64)(line_width 3))
+		(text "digit[3..0]" (rect 229 91 275 103)(font "Arial" ))
+		(line (pt 288 96)(pt 272 96)(line_width 3))
 	)
 	(parameter
 		"INITIAL_X"
-		"128"
+		"256"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
@@ -451,15 +596,10 @@ agreement for further details.
 		"160"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
-	(parameter
-		"player_speed"
-		"128"
-		""
-		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 200 160))
+		(rectangle (rect 16 16 272 224))
 	)
-	(annotation_block (parameter)(rect 184 232 369 308))
+	(annotation_block (parameter)(rect 136 200 312 264))
 )
 (connector
 	(text "clk" (rect 666 272 680 289)(font "Intel Clear" ))
@@ -501,42 +641,6 @@ agreement for further details.
 	(pt 1224 320)
 )
 (connector
-	(text "clk" (rect 90 336 104 353)(font "Intel Clear" ))
-	(pt -72 352)
-	(pt 168 352)
-)
-(connector
-	(text "resetN" (rect 90 352 120 369)(font "Intel Clear" ))
-	(pt -72 368)
-	(pt 168 368)
-)
-(connector
-	(text "startOfFrame" (rect 8 368 71 385)(font "Intel Clear" ))
-	(pt -72 384)
-	(pt 168 384)
-)
-(connector
-	(text "keyIsPressed[8]" (rect -11 384 64 401)(font "Intel Clear" ))
-	(pt 0 400)
-	(pt 168 400)
-)
-(connector
-	(text "keyIsPressed[6]" (rect -14 416 61 433)(font "Intel Clear" ))
-	(pt 0 432)
-	(pt 168 432)
-)
-(connector
-	(text "keyIsPressed[4]" (rect -6 432 69 449)(font "Intel Clear" ))
-	(pt 0 448)
-	(pt 168 448)
-)
-(connector
-	(text "KeyIsPressed[9..0]" (rect -120 408 -33 425)(font "Intel Clear" ))
-	(pt -120 424)
-	(pt -80 424)
-	(bus)
-)
-(connector
 	(text "pixelX[10..0]" (rect 586 384 645 401)(font "Intel Clear" ))
 	(pt 576 400)
 	(pt 672 400)
@@ -546,26 +650,6 @@ agreement for further details.
 	(text "pixelY[10..0]" (rect 586 408 645 425)(font "Intel Clear" ))
 	(pt 576 424)
 	(pt 672 424)
-	(bus)
-)
-(connector
-	(text "keyIsPressed[5]" (rect -14 400 61 417)(font "Intel Clear" ))
-	(pt 0 416)
-	(pt 168 416)
-)
-(connector
-	(text "digit[3..0]" (rect 394 368 437 385)(font "Intel Clear" ))
-	(pt 384 384)
-	(pt 456 384)
-	(bus)
-)
-(connector
-	(pt 1664 224)
-	(pt 1656 224)
-)
-(connector
-	(pt 1664 240)
-	(pt 1648 240)
 	(bus)
 )
 (connector
@@ -608,31 +692,6 @@ agreement for further details.
 	(pt 1224 272)
 )
 (connector
-	(pt 1656 224)
-	(pt 1656 208)
-)
-(connector
-	(text "<<__$DEF_ALIAS1852>>" (rect 1562 192 1680 209)(font "Intel Clear" )(invisible))
-	(pt 1656 208)
-	(pt 1560 208)
-)
-(connector
-	(pt 1648 240)
-	(pt 1648 224)
-	(bus)
-)
-(connector
-	(text "<<__$DEF_ALIAS1854>>" (rect 1570 208 1688 225)(font "Intel Clear" )(invisible))
-	(pt 1648 224)
-	(pt 1560 224)
-	(bus)
-)
-(connector
-	(text "motion_clk" (rect 1274 288 1327 305)(font "Intel Clear" ))
-	(pt 1336 304)
-	(pt 1264 304)
-)
-(connector
 	(text "digit[3..0]" (rect 1250 272 1293 289)(font "Intel Clear" ))
 	(pt 1336 288)
 	(pt 1240 288)
@@ -645,12 +704,6 @@ agreement for further details.
 	(bus)
 )
 (connector
-	(text "Hero_Y[10..0]" (rect 394 352 458 369)(font "Intel Clear" ))
-	(pt 384 368)
-	(pt 720 368)
-	(bus)
-)
-(connector
 	(text "Hero_X[10..0]" (rect 1594 416 1658 433)(font "Intel Clear" ))
 	(pt 1664 432)
 	(pt 1584 432)
@@ -660,6 +713,158 @@ agreement for further details.
 	(text "Hero_Y[10..0]" (rect 1594 432 1658 449)(font "Intel Clear" ))
 	(pt 1664 448)
 	(pt 1584 448)
+	(bus)
+)
+(connector
+	(pt 1696 224)
+	(pt 1688 224)
+)
+(connector
+	(pt 1696 240)
+	(pt 1680 240)
+	(bus)
+)
+(connector
+	(pt 1688 224)
+	(pt 1688 208)
+)
+(connector
+	(text "<<__$DEF_ALIAS1852>>" (rect 1594 192 1712 209)(font "Intel Clear" )(invisible))
+	(pt 1688 208)
+	(pt 1592 208)
+)
+(connector
+	(pt 1680 240)
+	(pt 1680 224)
+	(bus)
+)
+(connector
+	(text "<<__$DEF_ALIAS1854>>" (rect 1602 208 1720 225)(font "Intel Clear" )(invisible))
+	(pt 1592 224)
+	(pt 1680 224)
+	(bus)
+)
+(connector
+	(text "motion_clk" (rect 1274 288 1327 305)(font "Intel Clear" ))
+	(pt 1240 304)
+	(pt 1336 304)
+)
+(connector
+	(text "GAME_STATE[2..0]" (rect 1250 304 1339 321)(font "Intel Clear" ))
+	(pt 1336 320)
+	(pt 1240 320)
+	(bus)
+)
+(connector
+	(text "keyIsPressed[8]" (rect -131 336 -56 353)(font "Intel Clear" ))
+	(pt -120 352)
+	(pt 48 352)
+)
+(connector
+	(text "keyIsPressed[6]" (rect -134 368 -59 385)(font "Intel Clear" ))
+	(pt -120 384)
+	(pt 48 384)
+)
+(connector
+	(text "keyIsPressed[4]" (rect -126 384 -51 401)(font "Intel Clear" ))
+	(pt -120 400)
+	(pt 48 400)
+)
+(connector
+	(text "keyIsPressed[5]" (rect -134 352 -59 369)(font "Intel Clear" ))
+	(pt -120 368)
+	(pt 48 368)
+)
+(connector
+	(text "GAME_STATE[2..0]" (rect -118 400 -29 417)(font "Intel Clear" ))
+	(pt 48 416)
+	(pt -120 416)
+	(bus)
+)
+(connector
+	(text "KeyIsPressed[9..0]" (rect -240 360 -153 377)(font "Intel Clear" ))
+	(pt -240 376)
+	(pt -200 376)
+	(bus)
+)
+(connector
+	(text "state_transition" (rect -118 416 -45 433)(font "Intel Clear" ))
+	(pt -120 432)
+	(pt 48 432)
+)
+(connector
+	(text "clk" (rect -30 288 -16 305)(font "Intel Clear" ))
+	(pt -192 304)
+	(pt 48 304)
+)
+(connector
+	(text "resetN" (rect -30 304 0 321)(font "Intel Clear" ))
+	(pt -192 320)
+	(pt 48 320)
+)
+(connector
+	(text "startOfFrame" (rect -112 320 -49 337)(font "Intel Clear" ))
+	(pt -192 336)
+	(pt 48 336)
+)
+(connector
+	(pt -48 448)
+	(pt 48 448)
+)
+(connector
+	(pt -48 464)
+	(pt 48 464)
+)
+(connector
+	(pt 336 368)
+	(pt 344 368)
+	(bus)
+)
+(connector
+	(pt 344 368)
+	(pt 344 384)
+	(bus)
+)
+(connector
+	(text "digit[3..0]" (rect 394 368 437 385)(font "Intel Clear" ))
+	(pt 344 384)
+	(pt 456 384)
+	(bus)
+)
+(connector
+	(pt 336 352)
+	(pt 360 352)
+	(bus)
+)
+(connector
+	(pt 360 368)
+	(pt 360 352)
+	(bus)
+)
+(connector
+	(text "Hero_Y[10..0]" (rect 394 352 458 369)(font "Intel Clear" ))
+	(pt 360 368)
+	(pt 720 368)
+	(bus)
+)
+(connector
+	(pt 384 352)
+	(pt 384 336)
+	(bus)
+)
+(connector
+	(pt 384 336)
+	(pt 336 336)
+	(bus)
+)
+(connector
+	(pt 336 320)
+	(pt 384 320)
+	(bus)
+)
+(connector
+	(pt 336 304)
+	(pt 384 304)
 	(bus)
 )
 (text " " (rect 224 216 226 233)(font "Intel Clear" ))

@@ -17,7 +17,15 @@ module	hero_move	(
 					input	 logic down_key,      //2 for down 
 					input	 logic right_key,      //6 for right
 					input	 logic left_key,      //4 for left
+					input  logic [2:0] GAME_STATE,
+					input	 logic state_transition,
 					
+					input logic collision_hero_inverse_keys_pd,
+					input logic collision_hero_slow_time_pu,
+					
+					output logic [10:0] initial_X, // output the top left corner 
+					output logic [10:0] initial_Y, // output the top left corner 
+
 					output logic signed 	[10:0] topLeftX, // output the top left corner 
 					output logic signed	[10:0] topLeftY,  // can be negative , if the object is partliy outside 
 					output logic [3:0] digit // which direction the character is moving
@@ -30,7 +38,7 @@ module	hero_move	(
 
 parameter int INITIAL_X = 256;
 parameter int INITIAL_Y = 160;
-parameter int player_speed = 64;
+int player_speed;
 
 //const int	FIXED_POINT_MULTIPLIER = 64; // note it must be 2^n 
 const logic signed 	[10:0]	FIXED_POINT_MULTIPLIER = 64; // note it must be 2^n 
@@ -48,6 +56,20 @@ const int	x_FRAME_LEFT	=	(SafetyMargin)* FIXED_POINT_MULTIPLIER;
 const int	x_FRAME_RIGHT	=	(639 - SafetyMargin - OBJECT_WIDTH_X)* FIXED_POINT_MULTIPLIER; 
 const int	y_FRAME_TOP		=	(SafetyMargin) * FIXED_POINT_MULTIPLIER;
 const int	y_FRAME_BOTTOM	=	(479 -SafetyMargin - OBJECT_HIGHT_Y ) * FIXED_POINT_MULTIPLIER; //- OBJECT_HIGHT_Y
+
+
+typedef enum logic [2:0] {
+	 OPENING_ST     = 3'd0,
+    FIRST_LEVEL_ST = 3'd1,
+	 SECOND_LEVEL_ST = 3'd2,
+    FAILURE_ST     = 3'd3
+} local_state;
+
+local_state CURRENT_STATE;
+
+assign CURRENT_STATE = local_state'(GAME_STATE);
+
+
 
 
 typedef struct packed {
@@ -80,8 +102,9 @@ int Yposition ;
 always_ff @(posedge clk or negedge resetN)
 begin : fsm_sync_proc
 
-	if (resetN == 1'b0) begin 
+	if (!resetN) begin 
 		SM_Motion <= IDLE_ST ; 
+		player_speed <= 128;
 		Xspeed <= 0   ; 
 		Yspeed <= 0  ; 
 		digit <= 4'd4; // player starts to the right
@@ -90,6 +113,42 @@ begin : fsm_sync_proc
 	change_direction_flag <= 1'b0;
 	
 	end 	
+	
+	else if (CURRENT_STATE == FAILURE_ST) begin 
+		// wait untill start of a level
+
+	end 
+	
+	else if (CURRENT_STATE == OPENING_ST) begin
+		// wait untill start of a level
+	end
+	
+		else if (state_transition) begin // not in open or end, only before levels do once
+			SM_Motion <= IDLE_ST ; 
+			player_speed <= 128;
+			Xspeed <= 0   ; 
+			Yspeed <= 0  ; 
+			digit <= 4'd4; // player starts to the right
+			Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
+			Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
+			change_direction_flag <= 1'b0;
+				
+
+//		case (CURRENT_STATE)
+//			FIRST_LEVEL_ST : begin
+//				
+//			end
+//			
+//			SECOND_LEVEL_ST : begin
+//
+//			end
+//			
+//			default : begin
+//
+//			end	
+//		endcase
+	
+	end	
 	
 	else begin
 	
@@ -211,7 +270,11 @@ assign 	topLeftX_tmp = Xposition / FIXED_POINT_MULTIPLIER ;   // note it must be
 assign 	topLeftY_tmp = Yposition / FIXED_POINT_MULTIPLIER ;    
 
 assign 	topLeftX = {topLeftX_tmp[10:0]} ;   // note it must be 2^n 
-assign 	topLeftY = {topLeftY_tmp[10:0]} ;    	
+assign 	topLeftY = {topLeftY_tmp[10:0]} ; 
+
+assign 	initial_X = {INITIAL_X[10:0]} ;   // note it must be 2^n 
+assign 	initial_Y = {INITIAL_Y[10:0]} ; 
+   	
 
 assign X_in_grid = topLeftX[4:0] == 5'b0; 
 
