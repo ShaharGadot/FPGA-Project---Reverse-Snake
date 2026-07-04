@@ -118,7 +118,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -408 480 -240 496)
+	(rect -432 520 -264 536)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "motion_clk" (rect 5 0 58 12)(font "Arial" ))
 	(pt 168 8)
@@ -134,7 +134,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -432 496 -240 512)
+	(rect -456 536 -264 552)
 	(text "INPUT" (rect 149 0 177 10)(font "Arial" (font_size 6)))
 	(text "GAME_STATE[2..0]" (rect 5 0 100 12)(font "Arial" ))
 	(pt 192 8)
@@ -150,9 +150,9 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -304 440 -48 456)
+	(rect -304 472 -48 488)
 	(text "INPUT" (rect 213 0 241 10)(font "Arial" (font_size 6)))
-	(text "collision_hero_inverse_keys_pd" (rect 5 0 162 12)(font "Arial" ))
+	(text "collision_hero_inverse_keys_pd" (rect 5 0 161 12)(font "Arial" ))
 	(pt 256 8)
 	(drawing
 		(line (pt 172 12)(pt 197 12))
@@ -166,9 +166,9 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -288 456 -48 472)
+	(rect -288 488 -48 504)
 	(text "INPUT" (rect 197 0 225 10)(font "Arial" (font_size 6)))
-	(text "collision_hero_super_trap_pu" (rect 5 0 146 17)(font "Intel Clear" ))
+	(text "collision_hero_super_trap_pu" (rect 5 0 145 17)(font "Intel Clear" ))
 	(pt 240 8)
 	(drawing
 		(line (pt 156 12)(pt 181 12))
@@ -182,9 +182,9 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect -416 512 -240 528)
+	(rect -440 552 -264 568)
 	(text "INPUT" (rect 133 0 161 10)(font "Arial" (font_size 6)))
-	(text "state_transition" (rect 5 0 81 12)(font "Arial" ))
+	(text "state_transition" (rect 5 0 80 12)(font "Arial" ))
 	(pt 176 8)
 	(drawing
 		(line (pt 92 12)(pt 117 12))
@@ -195,6 +195,38 @@ agreement for further details.
 		(line (pt 117 12)(pt 121 8))
 	)
 	(text "VCC" (rect 136 7 156 17)(font "Arial" (font_size 6)))
+)
+(pin
+	(input)
+	(rect -264 440 -48 456)
+	(text "INPUT" (rect 173 0 201 10)(font "Arial" (font_size 6)))
+	(text "inverse_countdown[3..0]" (rect 5 0 126 12)(font "Arial" ))
+	(pt 216 8)
+	(drawing
+		(line (pt 132 12)(pt 157 12))
+		(line (pt 132 4)(pt 157 4))
+		(line (pt 161 8)(pt 216 8))
+		(line (pt 132 12)(pt 132 4))
+		(line (pt 157 4)(pt 161 8))
+		(line (pt 157 12)(pt 161 8))
+	)
+	(text "VCC" (rect 176 7 196 17)(font "Arial" (font_size 6)))
+)
+(pin
+	(input)
+	(rect -272 456 -48 472)
+	(text "INPUT" (rect 181 0 209 10)(font "Arial" (font_size 6)))
+	(text "slow_time_countdown[3..0]" (rect 5 0 136 17)(font "Intel Clear" ))
+	(pt 224 8)
+	(drawing
+		(line (pt 140 12)(pt 165 12))
+		(line (pt 140 4)(pt 165 4))
+		(line (pt 169 8)(pt 224 8))
+		(line (pt 140 12)(pt 140 4))
+		(line (pt 165 4)(pt 169 8))
+		(line (pt 165 12)(pt 169 8))
+	)
+	(text "VCC" (rect 184 7 204 17)(font "Arial" (font_size 6)))
 )
 (pin
 	(output)
@@ -471,9 +503,9 @@ agreement for further details.
 	(annotation_block (parameter)(rect 1592 136 1800 176))
 )
 (symbol
-	(rect 48 272 336 512)
+	(rect 48 272 336 544)
 	(text "hero_move" (rect 5 0 60 12)(font "Arial" ))
-	(text "inst5" (rect 8 224 30 241)(font "Intel Clear" ))
+	(text "inst2" (rect 8 256 30 273)(font "Intel Clear" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -540,16 +572,30 @@ agreement for further details.
 	(port
 		(pt 0 176)
 		(input)
-		(text "collision_hero_inverse_keys_pd" (rect 0 0 156 12)(font "Arial" ))
-		(text "collision_hero_inverse_keys_pd" (rect 21 171 177 183)(font "Arial" ))
-		(line (pt 0 176)(pt 16 176))
+		(text "inverse_countdown[3..0]" (rect 0 0 120 12)(font "Arial" ))
+		(text "inverse_countdown[3..0]" (rect 21 171 141 183)(font "Arial" ))
+		(line (pt 0 176)(pt 16 176)(line_width 3))
 	)
 	(port
 		(pt 0 192)
 		(input)
+		(text "slow_time_countdown[3..0]" (rect 0 0 132 12)(font "Arial" ))
+		(text "slow_time_countdown[3..0]" (rect 21 187 153 199)(font "Arial" ))
+		(line (pt 0 192)(pt 16 192)(line_width 3))
+	)
+	(port
+		(pt 0 208)
+		(input)
+		(text "collision_hero_inverse_keys_pd" (rect 0 0 156 12)(font "Arial" ))
+		(text "collision_hero_inverse_keys_pd" (rect 21 203 177 215)(font "Arial" ))
+		(line (pt 0 208)(pt 16 208))
+	)
+	(port
+		(pt 0 224)
+		(input)
 		(text "collision_hero_slow_time_pu" (rect 0 0 138 12)(font "Arial" ))
-		(text "collision_hero_slow_time_pu" (rect 21 187 159 199)(font "Arial" ))
-		(line (pt 0 192)(pt 16 192))
+		(text "collision_hero_slow_time_pu" (rect 21 219 159 231)(font "Arial" ))
+		(line (pt 0 224)(pt 16 224))
 	)
 	(port
 		(pt 288 32)
@@ -597,9 +643,9 @@ agreement for further details.
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 272 224))
+		(rectangle (rect 16 16 272 256))
 	)
-	(annotation_block (parameter)(rect 136 200 312 264))
+	(annotation_block (parameter)(rect 336 208 512 272))
 )
 (connector
 	(text "clk" (rect 666 272 680 289)(font "Intel Clear" ))
@@ -729,7 +775,6 @@ agreement for further details.
 	(pt 1688 208)
 )
 (connector
-	(text "<<__$DEF_ALIAS1852>>" (rect 1594 192 1712 209)(font "Intel Clear" )(invisible))
 	(pt 1688 208)
 	(pt 1592 208)
 )
@@ -739,7 +784,6 @@ agreement for further details.
 	(bus)
 )
 (connector
-	(text "<<__$DEF_ALIAS1854>>" (rect 1602 208 1720 225)(font "Intel Clear" )(invisible))
 	(pt 1592 224)
 	(pt 1680 224)
 	(bus)
@@ -808,14 +852,6 @@ agreement for further details.
 	(pt 48 336)
 )
 (connector
-	(pt -48 448)
-	(pt 48 448)
-)
-(connector
-	(pt -48 464)
-	(pt 48 464)
-)
-(connector
 	(pt 336 368)
 	(pt 344 368)
 	(bus)
@@ -865,6 +901,24 @@ agreement for further details.
 (connector
 	(pt 336 304)
 	(pt 384 304)
+	(bus)
+)
+(connector
+	(pt -48 480)
+	(pt 48 480)
+)
+(connector
+	(pt -48 496)
+	(pt 48 496)
+)
+(connector
+	(pt -48 448)
+	(pt 48 448)
+	(bus)
+)
+(connector
+	(pt 48 464)
+	(pt -48 464)
 	(bus)
 )
 (text " " (rect 224 216 226 233)(font "Intel Clear" ))

@@ -19,6 +19,9 @@ module	hero_move	(
 					input	 logic left_key,      //4 for left
 					input  logic [2:0] GAME_STATE,
 					input	 logic state_transition,
+					input  logic [3:0] inverse_countdown,
+					input  logic [3:0] slow_time_countdown,
+
 					
 					input logic collision_hero_inverse_keys_pd,
 					input logic collision_hero_slow_time_pu,
@@ -31,6 +34,14 @@ module	hero_move	(
 					output logic [3:0] digit // which direction the character is moving
 					
 );
+
+logic UP;
+logic DOWN;
+logic RIGHT;
+logic LEFT;
+		
+logic slow_time_flag;
+		
  int 	 topLeftX_tmp; // output the top left corner 
  int   topLeftY_tmp;  // can be negative , if the object is partliy outside 
 
@@ -69,8 +80,29 @@ local_state CURRENT_STATE;
 
 assign CURRENT_STATE = local_state'(GAME_STATE);
 
+///////////////////////////// inverse keys pwr //////////////////////////////////
+
+always_comb begin
 
 
+	if (inverse_countdown != 4'd0) begin // inverse activated
+		UP = down_key;
+		DOWN = up_key;
+		RIGHT	= left_key;
+		LEFT = right_key;
+	end
+	else begin // normal settings
+		UP = up_key;
+		DOWN = down_key;
+		RIGHT	= right_key;
+		LEFT = left_key;
+	end
+	
+	
+end
+
+
+ ////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct packed {
  	 int Y_speed;
@@ -108,9 +140,11 @@ begin : fsm_sync_proc
 		Xspeed <= 0   ; 
 		Yspeed <= 0  ; 
 		digit <= 4'd4; // player starts to the right
-	Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
-	Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
-	change_direction_flag <= 1'b0;
+		Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
+		Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
+		change_direction_flag <= 1'b0;
+		slow_time_flag <= 1'b0;
+
 	
 	end 	
 	
@@ -132,6 +166,8 @@ begin : fsm_sync_proc
 			Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
 			Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
 			change_direction_flag <= 1'b0;
+			slow_time_flag <= 1'b0;
+
 				
 
 //		case (CURRENT_STATE)
@@ -152,7 +188,17 @@ begin : fsm_sync_proc
 	
 	else begin
 	
+	/////////////////////////////// slow time pwr /////////////////////////////////
 	
+		if (collision_hero_slow_time_pu) begin // slow time activated
+			slow_time_flag <= 1'b1;
+			player_speed <= player_speed / 2;
+		end
+		else if (slow_time_countdown == 4'd0 && slow_time_flag) begin
+			player_speed <= player_speed * 2;
+			slow_time_flag <= 1'b0;
+		end
+////////////////////////////////// motion state machine /////////////////////////	
 		case(SM_Motion)
 		
 		//------------
@@ -175,7 +221,7 @@ begin : fsm_sync_proc
 		// keys direction change 
 		
 			if(!change_direction_flag) begin
-				if (up_key && Yspeed <= 0 ) begin
+				if (UP && Yspeed <= 0 ) begin
 					req.Y_speed <= -player_speed; 
 					req.X_speed <= 0; 
 					req.dig <= 4'd2; // back
@@ -183,7 +229,7 @@ begin : fsm_sync_proc
 
 				end
 					
-				else if (down_key && Yspeed >= 0 ) begin
+				else if (DOWN && Yspeed >= 0 ) begin
 					req.Y_speed <= player_speed; 
 					req.X_speed <= 0; 
 					req.dig <= 4'd0; // front
@@ -191,7 +237,7 @@ begin : fsm_sync_proc
 
 				end
 				
-				else if (right_key && Xspeed >= 0 ) begin
+				else if (RIGHT && Xspeed >= 0 ) begin
 					req.Y_speed <= 0; 
 					req.X_speed <= player_speed;
 					req.dig <= 4'd4; // right
@@ -199,7 +245,7 @@ begin : fsm_sync_proc
 
 				end
 		
-				else if (left_key && Xspeed <= 0 ) begin
+				else if (LEFT && Xspeed <= 0 ) begin
 					req.Y_speed <= 0; 
 					req.X_speed <= -player_speed; 
 					req.dig <= 4'd6; // left

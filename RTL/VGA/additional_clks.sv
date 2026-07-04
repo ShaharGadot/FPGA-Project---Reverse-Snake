@@ -1,5 +1,5 @@
 
-module	motion_clk	(	
+module	additional_clks	(	
 					input		logic	clk,
 					input		logic startOfFrame,
 					input		logic	resetN,

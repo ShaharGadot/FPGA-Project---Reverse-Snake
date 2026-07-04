@@ -1,5 +1,5 @@
 
-module	LFSR_random_pixel	(	
+module	LFSR_random	(	
 					input		logic	clk,
 					input		logic	resetN,
 		 

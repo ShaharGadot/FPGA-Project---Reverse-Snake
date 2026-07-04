@@ -12,6 +12,8 @@ module	game_controller	(
 		
 			input	logic	[8:0] GridDrawingRequest,	
 			input	logic	HeroDrawingRequest,
+			
+			input logic one_sec_pulse,
 
 			
 			output logic collision_hero_trap, // collisions are active in case of collision between objects
@@ -23,7 +25,10 @@ module	game_controller	(
 			output logic [2:0] GAME_STATE,
 			output logic state_transition,
 			
-			output logic open_sesame
+			output logic open_sesame,
+			
+			output logic [3:0] inverse_countdown,
+			output logic [3:0] slow_time_countdown
 
 
 			//output logic SinglePulse_TrapCollision //generating A single pulse in a frame in trap collision 
@@ -43,6 +48,9 @@ logic graveDrawingRequest;
 logic inverse_keys_pd_DrawingRequest;
 logic slow_time_pu_DrawingRequest;
 logic super_trap_pu_DrawingRequest;
+
+logic inverse_countdown_activated;
+logic slow_time_countdown_activated;
 
 
 assign BorderDrawingRequest = GridDrawingRequest[0];
@@ -167,11 +175,54 @@ end
 
 
 
+always_ff@(posedge clk or negedge resetN)
+begin
+	if(!resetN) begin
+		inverse_countdown_activated <= 1'b0;
+		inverse_countdown <= 4'd0;
+		
+		slow_time_countdown_activated <= 1'b0;
+		slow_time_countdown <= 4'd0;
+	end
+	
+	else begin
+	
+	/////////////////////////////////////////// inverse coundown when activated /////////////
 
+		if (collision_hero_inverse_keys_pd) begin
+			inverse_countdown_activated <= 1'b1;
+			inverse_countdown <= 4'd10;
+		end
+		
+		if (inverse_countdown_activated && one_sec_pulse) begin
+			inverse_countdown <= inverse_countdown - 1'b1;
+			
+			if (inverse_countdown == 4'd1)
+				inverse_countdown_activated <= 1'b0;
+				
+			
+		end
+		
+		/////////////////////////////////////////// slow time coundown when activated /////////////
 
-
-
-
+		
+		if (collision_hero_slow_time_pu) begin
+			slow_time_countdown_activated <= 1'b1;
+			slow_time_countdown <= 4'd10;
+		end
+		
+		if (slow_time_countdown_activated && one_sec_pulse) begin
+			slow_time_countdown <= slow_time_countdown - 1'b1;
+			
+			if (slow_time_countdown == 4'd1)
+				slow_time_countdown_activated <= 1'b0;
+				
+			
+		end
+		
+			
+	end
+end	
 
 
 

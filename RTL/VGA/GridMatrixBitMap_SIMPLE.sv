@@ -16,8 +16,8 @@ module	GridMatrixBitMap_SIMPLE	(
 					input logic collision_hero_inverse_keys_pd,
 					input logic collision_hero_slow_time_pu,
 					input logic collision_hero_super_trap_pu,
-
-
+					input logic [3:0] random_item,
+								
 					input logic [2:0] GAME_STATE,
 					input logic open_sesame,
 					input logic state_transition,
@@ -37,6 +37,7 @@ module	GridMatrixBitMap_SIMPLE	(
 					input logic startOfFrame,
 					
 					
+					output logic [4:0] max_num_ghosts,
 					output logic [4:0] num_ghosts,
 					output logic	[8:0] drawingRequest, //output that the pixel should be dispalyed 
 					output logic	[7:0] RGBout  //rgb value from the bitmap 
@@ -74,16 +75,19 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//16
  logic [7:0] itemColor ;
  logic [7:0] ghostColor ;
  
+ logic collision_pwr_item;
  logic [3:0] object_flag;//in object
  logic [1:0] border_type;
  logic collision_trap_flag;//in collision
  logic collision_skull_flag;//in collision
+ logic collision_passive_item_flag;//in collision with pwr item that dosent affect grid
+ logic collision_super_trap_flag;
 
  logic [5:0] hit_X;//coardinates of tile to erase
  logic [5:0] hit_Y;
 
- logic generate_trap;// on wjile generating trap
- logic generate_skull;// on wjile generating skull
+ logic generate_trap;// on while generating trap
+ logic generate_pwr_item;// on while generating pwr item
  logic [5:0] random_X_MSB;//random tile
  logic [5:0] random_Y_MSB;
 
@@ -99,6 +103,7 @@ logic [5:0] explosionX;
 logic [5:0] explosionY;
 logic explosion_end;
 logic [1:0] explosion_flag;
+logic second_explosion; // for super trap
 
 
 logic [4:0]  crnt_num_ghosts; // Counter for current number of active ghosts (0 to 20)
@@ -132,6 +137,8 @@ logic [3:0] direction_d2;
  assign item_address = (object_flag - 4'h2) * 32 * 32 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
 
 localparam int MAX_num_ghosts = 20;
+assign max_num_ghosts = {MAX_num_ghosts[4:0]};
+
 
 typedef enum logic [2:0] {
 	 OPENING_ST     = 3'd0,
@@ -272,6 +279,7 @@ begin
 		explosion_end <= 1'b0;
 		explosion_flag <= 2'b0;
 		generate_trap <= 1'b0;
+		second_explosion <= 1'b0;
 		
 		collision_trap_flag <= 1'b0;
 		collision_skull_flag <= 1'b0;
@@ -312,6 +320,7 @@ begin
 		explosion_end <= 1'b0;
 		explosion_flag <= 2'b0;
 		generate_trap <= 1'b0;
+		second_explosion <= 1'b0;
 
 		collision_trap_flag <= 1'b0;
 		collision_skull_flag <= 1'b0;
@@ -370,14 +379,14 @@ begin
 			MazeBitMapMask  <=  EndOfLevelBitMapMask ;  //  copy end tabel 
 			num_ghosts <= 5'd0;
 			generate_trap <= 1'b0;
-			generate_skull <= 1'b0;
+			generate_pwr_item <= 1'b0;
 
 
 		end
 		
 		////////////////////////////////// collision hero trap //////////////////////
 		
-		
+		//-------exploding ghost---------------
 		else if(object_flag == 4'hE && explosion_flag == 2'd3)
 			explosion_end <= 1'd1;//for stepping up the adress to next mif
 
@@ -388,6 +397,7 @@ begin
 			MazeBitMapMask[explosionY][explosionX] <= 4'h0;  //deleting last ghost when explosion ends
 			explosion_flag <= 2'd0;
 		end	
+		//-------------------------------------
 		
 		else if (collision_hero_trap) begin
 			collision_trap_flag <= 1'b1;
@@ -408,8 +418,7 @@ begin
 			crnt_num_ghosts <= crnt_num_ghosts - 1'b1;
 			num_ghosts <= num_ghosts - 1'b1;
 		end
-		
-		
+
 		else if (check_random_valid && generate_trap && explosion_flag == 2'd0) begin //place to put trap, one clk after start of frame so acceptable, makimg sure not to generate trap until explosion ends
 			MazeBitMapMask[random_Y_MSB][random_X_MSB] <= 4'h2;  //put trap
 			generate_trap <= 1'b0;
@@ -418,23 +427,77 @@ begin
 		////////////////////////////////// collision hero skull //////////////////////
 		
 		else if (collision_hero_skull) begin
+			hit_X <= offsetX_MSB;//save coordinates for deleting the item next startOfFrame
+			hit_Y <= offsetY_MSB;	
 			collision_skull_flag <= 1'b1;
-			hit_X <= offsetX_MSB;//save coordinates for deleting the trap next startOfFrame
-			hit_Y <= offsetY_MSB;
 		end
+		
 		else if (collision_skull_flag && startOfFrame) begin
-			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting trap 
+			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting item 
 			collision_skull_flag <= 1'b0;
-			generate_skull <= 1'b1;
-			
+			generate_pwr_item <= 1'b1;
+				
 			if (num_ghosts < MAX_num_ghosts)
-				num_ghosts <= num_ghosts + 1'b1;
+				num_ghosts <= num_ghosts + 1'b1; // skull pwr - adding ghost
+		end
+		
+		////////////////////////////////// collision hero inverse keys or slow time //////////////////////
+		
+		else if (collision_hero_inverse_keys_pd || collision_hero_slow_time_pu) begin
+			hit_X <= offsetX_MSB;//save coordinates for deleting the item next startOfFrame
+			hit_Y <= offsetY_MSB;	
+			collision_passive_item_flag <= 1'b1;
+		end
+			
+		else if (collision_passive_item_flag && startOfFrame) begin
+			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting item 
+			collision_passive_item_flag <= 1'b0;
+			generate_pwr_item <= 1'b1;
+				
+		end
+		////////////////////////////////// collision hero super trap//////////////////////
+
+		else if (collision_hero_super_trap_pu) begin
+			hit_X <= offsetX_MSB;//save coordinates for deleting the item next startOfFrame
+			hit_Y <= offsetY_MSB;	
+			collision_super_trap_flag <= 1'b1;
+		end
+			
+		else if (collision_super_trap_flag && explosion_flag == 2'd0 && startOfFrame) begin
+			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting item 
+			collision_super_trap_flag <= 1'b0;
+			
+			second_explosion <= 1'b1;//trigger to set off second explosion
+			MazeBitMapMask[ghosts_history_Y[crnt_num_ghosts-1]][ghosts_history_X[crnt_num_ghosts-1]] <= 4'hE;  //exploding last ghost when stepping on trap
+			explosion_flag <= 2'd1; // starting exploding ghost drill
+			
+			explosionX <= ghosts_history_X[crnt_num_ghosts-1];//saving pos for deleting ghost
+			explosionY <= ghosts_history_Y[crnt_num_ghosts-1];
+
+			crnt_num_ghosts <= crnt_num_ghosts - 1'b1;
+			num_ghosts <= num_ghosts - 1'b1;
+		end
+		
+		else if (second_explosion && explosion_flag == 2'd0 && startOfFrame) begin//second explosion
+			generate_pwr_item <= 1'b1;
+			second_explosion <= 1'b0;//turn off trigger
+			
+			MazeBitMapMask[ghosts_history_Y[crnt_num_ghosts-1]][ghosts_history_X[crnt_num_ghosts-1]] <= 4'hE;  //exploding last ghost when stepping on trap
+			explosion_flag <= 2'd1; // starting exploding ghost drill
+			
+			explosionX <= ghosts_history_X[crnt_num_ghosts-1];//saving pos for deleting ghost
+			explosionY <= ghosts_history_Y[crnt_num_ghosts-1];
+
+			crnt_num_ghosts <= crnt_num_ghosts - 1'b1;
+			num_ghosts <= num_ghosts - 1'b1;
 		end
 		
 		
-		else if (check_random_valid && generate_skull) begin //place to put skull, one clk after start of frame so acceptable
-			MazeBitMapMask[random_Y_MSB][random_X_MSB] <= 4'h3;  //put skull
-			generate_skull <= 1'b0;
+		///////////////////////////////// generating random pwr item /////////////////////
+		
+		else if (check_random_valid && generate_pwr_item && explosion_flag == 2'd0) begin //place to put pwr item, one clk after start of frame so acceptable
+				MazeBitMapMask[random_Y_MSB][random_X_MSB] <= random_item;  //put pwr item
+				generate_pwr_item <= 1'b0;
 		end
 		
 		///////////////////////////////////crnt object color out////////////////////////////////////////
@@ -495,6 +558,7 @@ assign in_borders = (0 < random_X_MSB) && (4 < random_Y_MSB) && (random_Y_MSB < 
 assign unoccupied = (MazeBitMapMask[random_Y_MSB][random_X_MSB] == 4'h0);
 
 assign check_random_valid = in_borders && unoccupied;
+
 
 always_comb begin
 	case (CURRENT_STATE)

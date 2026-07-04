@@ -21,9 +21,9 @@ agreement for further details.
 */
 (header "symbol" (version "1.1"))
 (symbol
-	(rect 16 16 352 192)
+	(rect 16 16 352 224)
 	(text "game_controller" (rect 5 0 68 12)(font "Arial" ))
-	(text "inst" (rect 8 160 20 172)(font "Arial" ))
+	(text "inst" (rect 8 192 20 204)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -81,6 +81,13 @@ agreement for further details.
 		(line (pt 0 144)(pt 16 144)(line_width 1))
 	)
 	(port
+		(pt 0 160)
+		(input)
+		(text "one_sec_pulse" (rect 0 0 60 12)(font "Arial" ))
+		(text "one_sec_pulse" (rect 21 155 81 167)(font "Arial" ))
+		(line (pt 0 160)(pt 16 160)(line_width 1))
+	)
+	(port
 		(pt 336 32)
 		(output)
 		(text "collision_hero_trap" (rect 0 0 73 12)(font "Arial" ))
@@ -136,7 +143,21 @@ agreement for further details.
 		(text "open_sesame" (rect 259 139 315 151)(font "Arial" ))
 		(line (pt 336 144)(pt 320 144)(line_width 1))
 	)
+	(port
+		(pt 336 160)
+		(output)
+		(text "inverse_countdown[3..0]" (rect 0 0 96 12)(font "Arial" ))
+		(text "inverse_countdown[3..0]" (rect 219 155 315 167)(font "Arial" ))
+		(line (pt 336 160)(pt 320 160)(line_width 3))
+	)
+	(port
+		(pt 336 176)
+		(output)
+		(text "slow_time_countdown[3..0]" (rect 0 0 106 12)(font "Arial" ))
+		(text "slow_time_countdown[3..0]" (rect 209 171 315 183)(font "Arial" ))
+		(line (pt 336 176)(pt 320 176)(line_width 3))
+	)
 	(drawing
-		(rectangle (rect 16 16 320 160)(line_width 1))
+		(rectangle (rect 16 16 320 192)(line_width 1))
 	)
 )
