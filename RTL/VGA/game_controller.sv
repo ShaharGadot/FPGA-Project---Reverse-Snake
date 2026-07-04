@@ -187,36 +187,43 @@ begin
 	
 	else begin
 	
-	/////////////////////////////////////////// inverse coundown when activated /////////////
-
-		if (collision_hero_inverse_keys_pd) begin
-			inverse_countdown_activated <= 1'b1;
-			inverse_countdown <= 4'd10;
-		end
-		
-		if (inverse_countdown_activated && one_sec_pulse) begin
-			inverse_countdown <= inverse_countdown - 1'b1;
+		if (state_transition <= 1'b1) begin // cancle pwr ups between levels
+			inverse_countdown_activated <= 1'b0;
+			inverse_countdown <= 4'd0;
 			
+			slow_time_countdown_activated <= 1'b0;
+			slow_time_countdown <= 4'd0;
+		end
+
+		/////////////////////////////////////////// inverse coundown when activated /////////////
+
+		else if (collision_hero_inverse_keys_pd) begin
+				inverse_countdown_activated <= 1'b1;
+				inverse_countdown <= 4'd10;
+		end
+			
+		else if (inverse_countdown_activated && one_sec_pulse) begin
+		
 			if (inverse_countdown == 4'd1)
 				inverse_countdown_activated <= 1'b0;
-				
+			else
+				inverse_countdown <= inverse_countdown - 1'b1;	
 			
 		end
 		
 		/////////////////////////////////////////// slow time coundown when activated /////////////
 
-		
-		if (collision_hero_slow_time_pu) begin
-			slow_time_countdown_activated <= 1'b1;
-			slow_time_countdown <= 4'd10;
+		else if (collision_hero_slow_time_pu) begin
+				slow_time_countdown_activated <= 1'b1;
+				slow_time_countdown <= 4'd10;
 		end
-		
-		if (slow_time_countdown_activated && one_sec_pulse) begin
-			slow_time_countdown <= slow_time_countdown - 1'b1;
 			
+		else if (slow_time_countdown_activated && one_sec_pulse) begin
+		
 			if (slow_time_countdown == 4'd1)
 				slow_time_countdown_activated <= 1'b0;
-				
+			else
+				slow_time_countdown <= slow_time_countdown - 1'b1;	
 			
 		end
 		

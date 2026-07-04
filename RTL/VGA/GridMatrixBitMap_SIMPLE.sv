@@ -69,11 +69,15 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//16
  logic [10:0] border_address  ;
  logic [12:0] item_address  ;
  logic [12:0] ghost_address ;
+ logic [10:0] grave_address  ;
+
 
 
  logic [7:0] borderColor  ;
  logic [7:0] itemColor ;
  logic [7:0] ghostColor ;
+ logic [7:0] graveColor ;
+
  
  logic collision_pwr_item;
  logic [3:0] object_flag;//in object
@@ -86,10 +90,14 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//16
  logic [5:0] hit_X;//coardinates of tile to erase
  logic [5:0] hit_Y;
 
+ logic switch_grave_pos;// on while moving grave
  logic generate_trap;// on while generating trap
  logic generate_pwr_item;// on while generating pwr item
  logic [5:0] random_X_MSB;//random tile
  logic [5:0] random_Y_MSB;
+ 
+ logic [5:0] grave_X;
+ logic [5:0] grave_Y;
 
  logic check_random_valid;//1 if in valid place
  logic in_borders;
@@ -135,9 +143,13 @@ logic [3:0] direction_d2;
  assign border_address = border_type * 32 * 32 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
  assign ghost_address = (object_flag - 4'hA + explosion_end)* 32 * 32 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
  assign item_address = (object_flag - 4'h2) * 32 * 32 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
+ assign grave_address =  grave_appearance * 32 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
+
 
 localparam int MAX_num_ghosts = 20;
 assign max_num_ghosts = {MAX_num_ghosts[4:0]};
+int grave_appearance; // between 0 (not visible) to 32 (visible)
+int grave_direction; // +1 or -1 for addition
 
 
 typedef enum logic [2:0] {
@@ -255,6 +267,24 @@ lpm_rom #(
     .q(ghostColor)
 ); 
  
+ lpm_rom #(
+    .LPM_WIDTH(8),
+    .LPM_WIDTHAD(11),
+	 .LPM_NUMWORDS(2048),
+    .LPM_FILE("RTL/grave.mif"),
+	   .LPM_TYPE               ("LPM_ROM"),
+      .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
+		.LPM_OUTDATA            ("UNREGISTERED"), 
+		.AUTO_CARRY_CHAINS      ("ON"),
+		.AUTO_CASCADE_BUFFERS   ("ON"),
+	   .INTENDED_DEVICE_FAMILY ("Cyclone V")  
+) rom_inst4 (
+    .address(grave_address),
+	 .inclock(clk),
+	// .outclock(clk),
+    .q(graveColor)
+); 
+ 
 
 //==----------------------------------------------------------------------------------------------------------------=
 always_ff@(posedge clk or negedge resetN)
@@ -283,6 +313,12 @@ begin
 		
 		collision_trap_flag <= 1'b0;
 		collision_skull_flag <= 1'b0;
+		
+		grave_appearance <= 0;
+		grave_direction <= 1;
+		switch_grave_pos <= 1'b0;
+		grave_X <= 6'd0;
+		grave_Y <= 6'd0;
 
 
 	end
@@ -325,6 +361,12 @@ begin
 		collision_trap_flag <= 1'b0;
 		collision_skull_flag <= 1'b0;
 		
+		grave_appearance <= 0;
+		grave_direction <= 1;
+		switch_grave_pos <= 1'b0;
+		grave_X <= 6'd0;
+		grave_Y <= 6'd0;
+	
 	
 	end	
 	else begin
@@ -384,10 +426,38 @@ begin
 
 		end
 		
+		/////////////////////////////// graves of fury //////////////////////////////
+		if (CURRENT_STATE == SECOND_LEVEL_ST) begin
+		
+			if (grave_appearance <= 0 && motion_pulse) begin // grave in ground
+				switch_grave_pos <= 1'b1;
+				grave_direction <= 1;
+				MazeBitMapMask[grave_Y][grave_X] <= 4'd0;  //delete grave
+
+			end
+
+			else if (grave_appearance >= 32 && motion_pulse) begin
+				grave_direction <= -1;
+				
+			end
+			else if (check_random_valid && switch_grave_pos && explosion_flag == 2'd0) begin //place to put grave, one clk after start of frame so acceptable
+				grave_X <= random_X_MSB;// saving grave for delete
+				grave_Y <= random_Y_MSB;
+				MazeBitMapMask[random_Y_MSB][random_X_MSB] <= 4'd8;  //put pwr item
+				switch_grave_pos <= 1'b0;
+				
+			end
+			else begin
+				grave_appearance <= grave_appearance + grave_direction; // cycling grave appearence
+			
+			end
+			
+		end
+		
 		////////////////////////////////// collision hero trap //////////////////////
 		
 		//-------exploding ghost---------------
-		else if(object_flag == 4'hE && explosion_flag == 2'd3)
+		if(object_flag == 4'hE && explosion_flag == 2'd3)
 			explosion_end <= 1'd1;//for stepping up the adress to next mif
 
 		else if (motion_pulse && explosion_flag > 2'd0 && explosion_flag < 2'd3) //explostion phaze 2
@@ -514,7 +584,8 @@ begin
 					 4'h6 : RGBout <= itemColor ; 
 					 4'h7 : RGBout <= itemColor ;
 //					 4'h8 : RGBout <= itemColor ; 
-					 4'h9 : RGBout <= itemColor ; 
+
+					 4'h9 : RGBout <= graveColor ; 
 					 
 					 4'hA : RGBout <= ghostColor;
 					 4'hB : RGBout <= ghostColor;

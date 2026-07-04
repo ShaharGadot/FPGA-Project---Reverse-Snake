@@ -21,6 +21,7 @@ module	hero_move	(
 					input	 logic state_transition,
 					input  logic [3:0] inverse_countdown,
 					input  logic [3:0] slow_time_countdown,
+					input	 logic collision_hero_slow_time_pu,
 
 					
 					output logic [10:0] initial_X, // output the top left corner 
@@ -152,6 +153,15 @@ begin : fsm_sync_proc
 
 	
 	end 	
+	/////////////// immidiate transition if slow down activated /////////////////
+	
+	else if (collision_hero_slow_time_pu) begin
+		Xspeed <= Xspeed / 2;
+		Yspeed <= Yspeed / 2;
+
+	end
+	
+	//////////////////game state changes////////////////////////////////////////
 	
 	else if (CURRENT_STATE == FAILURE_ST) begin 
 		// wait untill start of a level
@@ -190,8 +200,9 @@ begin : fsm_sync_proc
 	
 	end	
 	
-	else begin
+	/////////////////////////////////////////////////////////////////////////
 	
+	else begin
 	
 		case(SM_Motion)
 		
