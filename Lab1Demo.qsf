@@ -330,5 +330,5 @@ set_global_assignment -name BDF_FILE RTL/VGA/GAME_STATS.bdf
 set_global_assignment -name SYSTEMVERILOG_FILE RTL/VGA/GreenBarBitMap.sv
 set_global_assignment -name SYSTEMVERILOG_FILE RTL/VGA/LFSR_random.sv
 set_global_assignment -name SYSTEMVERILOG_FILE RTL/VGA/additional_clks.sv
-set_global_assignment -name SLD_FILE db/stp1_auto_stripped.stp
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name SLD_FILE db/stp1_auto_stripped.stp
