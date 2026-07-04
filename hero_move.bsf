@@ -21,9 +21,9 @@ agreement for further details.
 */
 (header "symbol" (version "1.1"))
 (symbol
-	(rect 16 16 304 288)
+	(rect 16 16 280 256)
 	(text "hero_move" (rect 5 0 52 12)(font "Arial" ))
-	(text "inst" (rect 8 256 20 268)(font "Arial" ))
+	(text "inst" (rect 8 224 20 236)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -102,53 +102,39 @@ agreement for further details.
 		(line (pt 0 192)(pt 16 192)(line_width 3))
 	)
 	(port
-		(pt 0 208)
-		(input)
-		(text "collision_hero_inverse_keys_pd" (rect 0 0 128 12)(font "Arial" ))
-		(text "collision_hero_inverse_keys_pd" (rect 21 203 149 215)(font "Arial" ))
-		(line (pt 0 208)(pt 16 208)(line_width 1))
-	)
-	(port
-		(pt 0 224)
-		(input)
-		(text "collision_hero_slow_time_pu" (rect 0 0 112 12)(font "Arial" ))
-		(text "collision_hero_slow_time_pu" (rect 21 219 133 231)(font "Arial" ))
-		(line (pt 0 224)(pt 16 224)(line_width 1))
-	)
-	(port
-		(pt 288 32)
+		(pt 264 32)
 		(output)
 		(text "initial_X[10..0]" (rect 0 0 51 12)(font "Arial" ))
-		(text "initial_X[10..0]" (rect 216 27 267 39)(font "Arial" ))
-		(line (pt 288 32)(pt 272 32)(line_width 3))
+		(text "initial_X[10..0]" (rect 192 27 243 39)(font "Arial" ))
+		(line (pt 264 32)(pt 248 32)(line_width 3))
 	)
 	(port
-		(pt 288 48)
+		(pt 264 48)
 		(output)
 		(text "initial_Y[10..0]" (rect 0 0 53 12)(font "Arial" ))
-		(text "initial_Y[10..0]" (rect 214 43 267 55)(font "Arial" ))
-		(line (pt 288 48)(pt 272 48)(line_width 3))
+		(text "initial_Y[10..0]" (rect 190 43 243 55)(font "Arial" ))
+		(line (pt 264 48)(pt 248 48)(line_width 3))
 	)
 	(port
-		(pt 288 64)
+		(pt 264 64)
 		(output)
 		(text "topLeftX[10..0]" (rect 0 0 57 12)(font "Arial" ))
-		(text "topLeftX[10..0]" (rect 210 59 267 71)(font "Arial" ))
-		(line (pt 288 64)(pt 272 64)(line_width 3))
+		(text "topLeftX[10..0]" (rect 186 59 243 71)(font "Arial" ))
+		(line (pt 264 64)(pt 248 64)(line_width 3))
 	)
 	(port
-		(pt 288 80)
+		(pt 264 80)
 		(output)
 		(text "topLeftY[10..0]" (rect 0 0 59 12)(font "Arial" ))
-		(text "topLeftY[10..0]" (rect 208 75 267 87)(font "Arial" ))
-		(line (pt 288 80)(pt 272 80)(line_width 3))
+		(text "topLeftY[10..0]" (rect 184 75 243 87)(font "Arial" ))
+		(line (pt 264 80)(pt 248 80)(line_width 3))
 	)
 	(port
-		(pt 288 96)
+		(pt 264 96)
 		(output)
 		(text "digit[3..0]" (rect 0 0 34 12)(font "Arial" ))
-		(text "digit[3..0]" (rect 233 91 267 103)(font "Arial" ))
-		(line (pt 288 96)(pt 272 96)(line_width 3))
+		(text "digit[3..0]" (rect 209 91 243 103)(font "Arial" ))
+		(line (pt 264 96)(pt 248 96)(line_width 3))
 	)
 	(parameter
 		"INITIAL_X"
@@ -160,8 +146,13 @@ agreement for further details.
 		"160"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
+	(parameter
+		"player_speed"
+		"128"
+		""
+		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 272 256)(line_width 1))
+		(rectangle (rect 16 16 248 224)(line_width 1))
 	)
-	(annotation_block (parameter)(rect 304 -64 404 16))
+	(annotation_block (parameter)(rect 280 -64 380 16))
 )
