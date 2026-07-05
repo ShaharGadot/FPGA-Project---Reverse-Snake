@@ -72,17 +72,15 @@ const int	y_FRAME_TOP		=	(SafetyMargin) * FIXED_POINT_MULTIPLIER;
 const int	y_FRAME_BOTTOM	=	(479 -SafetyMargin - OBJECT_HIGHT_Y ) * FIXED_POINT_MULTIPLIER; //- OBJECT_HIGHT_Y
 
 
-typedef enum logic [2:0] {
-	 OPENING_ST     = 3'd0,
-    FIRST_LEVEL_ST = 3'd1,
-	 SECOND_LEVEL_ST = 3'd2,
-	 VICTORY_ST = 3'd3,
-    FAILURE_ST = 3'd4
-} local_state;
 
-local_state CURRENT_STATE;
+logic [2:0] CURRENT_STATE;
+localparam logic [2:0] OPENING_ST = 3'd0;
+localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
+localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
+localparam logic [2:0] VICTORY_ST = 3'd3;
+localparam logic [2:0] FAILURE_ST = 3'd4;
 
-assign CURRENT_STATE = local_state'(GAME_STATE);
+assign CURRENT_STATE = GAME_STATE;
 
 
 always_comb begin
@@ -105,8 +103,8 @@ always_comb begin
 ///////////////////////////// slow time pwr //////////////////////////////////
 
 	if (slow_time_countdown != 4'd0) begin // slow time activated
-		crnt_X_speed = Xspeed / 2;
-		crnt_Y_speed = Yspeed / 2;
+		crnt_X_speed = Xspeed >>> 1;
+		crnt_Y_speed = Yspeed >>> 1;
 		
 	end
 	else begin

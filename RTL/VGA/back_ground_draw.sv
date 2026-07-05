@@ -98,19 +98,14 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   FailureBitMapMask= // de
     {64'h0000000000_000000}
 };
 
-typedef enum logic [2:0] {
-	 OPENING_ST     = 3'd0,
-    FIRST_LEVEL_ST = 3'd1,
-	 SECOND_LEVEL_ST = 3'd2,
-	 VICTORY_ST = 3'd3,
-    FAILURE_ST = 3'd4
-} local_state;
+logic [2:0] CURRENT_STATE;
+localparam logic [2:0] OPENING_ST = 3'd0;
+localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
+localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
+localparam logic [2:0] VICTORY_ST = 3'd3;
+localparam logic [2:0] FAILURE_ST = 3'd4;
 
-local_state CURRENT_STATE;
-
-assign CURRENT_STATE = local_state'(GAME_STATE);
-
-
+assign CURRENT_STATE = GAME_STATE;
 
 
  lpm_rom #(

@@ -36,17 +36,15 @@ assign address = ((MIF_area*(digit + motion_clk))+((offsetY)*OBJECT_WIDTH_X + (o
 parameter  logic	[7:0] digit_color = 8'hff ; //set the color of the digit
 
 
-typedef enum logic [2:0] {
-	 OPENING_ST     = 3'd0,
-    FIRST_LEVEL_ST = 3'd1,
-	 SECOND_LEVEL_ST = 3'd2,
-	 VICTORY_ST = 3'd3,
-    FAILURE_ST = 3'd4
-} local_state;
+logic [2:0] CURRENT_STATE;
+localparam logic [2:0] OPENING_ST = 3'd0;
+localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
+localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
+localparam logic [2:0] VICTORY_ST = 3'd3;
+localparam logic [2:0] FAILURE_ST = 3'd4;
 
-local_state CURRENT_STATE;
+assign CURRENT_STATE = GAME_STATE;
 
-assign CURRENT_STATE = local_state'(GAME_STATE); 
 
 lpm_rom #(
     .LPM_WIDTH(8),

@@ -30,23 +30,22 @@ localparam logic[12:0] digit_area = OBJECT_WIDTH_X*OBJECT_WIDTH_Y;
 logic [12:0] address  ;
 logic color  ;
 
-assign address = ((digit_area*digit)+((offsetY)*OBJECT_WIDTH_X + (offsetX))); //Origimal size of digit
+assign address = ((digit_area*digit)+((offsetY)*OBJECT_WIDTH_X + (offsetX))); //Original size of digit
+//assign address = ((digit_area*GAME_STATE)+((offsetY)*OBJECT_WIDTH_X + (offsetX))); // used for checking game states
+
 
 
 logic	[7:0] digit_color;
 
 
-typedef enum logic [2:0] {
-	 OPENING_ST     = 3'd0,
-    FIRST_LEVEL_ST = 3'd1,
-	 SECOND_LEVEL_ST = 3'd2,
-	 VICTORY_ST = 3'd3,
-    FAILURE_ST = 3'd4
-} local_state;
+logic [2:0] CURRENT_STATE;
+localparam logic [2:0] OPENING_ST = 3'd0;
+localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
+localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
+localparam logic [2:0] VICTORY_ST = 3'd3;
+localparam logic [2:0] FAILURE_ST = 3'd4;
 
-local_state CURRENT_STATE;
-
-assign CURRENT_STATE = local_state'(GAME_STATE); 
+assign CURRENT_STATE = GAME_STATE;
 
 lpm_rom #(
     .LPM_WIDTH(1),
@@ -74,7 +73,7 @@ begin
 		drawingRequest <= 1'b0;
 	end
 	
-	else if(CURRENT_STATE == FAILURE_ST || CURRENT_STATE == OPENING_ST) begin 
+	else if(CURRENT_STATE == OPENING_ST) begin 
 		drawingRequest <= 1'b0;
 
 	end
@@ -108,15 +107,15 @@ end
 always_comb begin //////////////////diferent color to digits in diferent leveld
 	case (CURRENT_STATE)
 		FIRST_LEVEL_ST: begin
-			digit_color = 8'hE0;
+			digit_color = 8'hE0;//red
 		end
 		
 		SECOND_LEVEL_ST: begin
-			digit_color = 8'hFA;
+			digit_color = 8'hFA;//whiteish
 		end
 		
 		default: begin
-			digit_color = 8'hE0;
+			digit_color = 8'hE0;//RANDOM for check
 		end
 		
 	endcase

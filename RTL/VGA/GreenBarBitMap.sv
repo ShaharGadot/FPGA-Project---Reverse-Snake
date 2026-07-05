@@ -53,18 +53,15 @@ end
 logic [15:0] green_zone_limit;
 assign green_zone_limit = ((OBJECT_WIDTH_X - 10) * 16'd1 * num_ghosts) / 16'(max_num_ghosts); // how much of the bar is green
 
-typedef enum logic [2:0] {
-	 OPENING_ST     = 3'd0,
-    FIRST_LEVEL_ST = 3'd1,
-	 SECOND_LEVEL_ST = 3'd2,
-	 VICTORY_ST = 3'd3,
-    FAILURE_ST = 3'd4
-} local_state;
 
-local_state CURRENT_STATE;
+logic [2:0] CURRENT_STATE;
+localparam logic [2:0] OPENING_ST = 3'd0;
+localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
+localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
+localparam logic [2:0] VICTORY_ST = 3'd3;
+localparam logic [2:0] FAILURE_ST = 3'd4;
 
-assign CURRENT_STATE = local_state'(GAME_STATE); 
-
+assign CURRENT_STATE = GAME_STATE;
 
 // pipeline (ff) to get the pixel color from the array 	 
 

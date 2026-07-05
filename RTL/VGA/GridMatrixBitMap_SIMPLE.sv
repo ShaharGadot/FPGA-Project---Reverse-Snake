@@ -153,17 +153,15 @@ int grave_appearance; // between 0 (not visible) to 32 (visible)
 int grave_direction; // +1 or -1 for addition
 
 
-typedef enum logic [2:0] {
-	 OPENING_ST     = 3'd0,
-    FIRST_LEVEL_ST = 3'd1,
-	 SECOND_LEVEL_ST = 3'd2,
-	 VICTORY_ST = 3'd3,
-    FAILURE_ST = 3'd4
-} local_state;
 
-local_state CURRENT_STATE;
+logic [2:0] CURRENT_STATE;
+localparam logic [2:0] OPENING_ST = 3'd0;
+localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
+localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
+localparam logic [2:0] VICTORY_ST = 3'd3;
+localparam logic [2:0] FAILURE_ST = 3'd4;
 
-assign CURRENT_STATE = local_state'(GAME_STATE);
+assign CURRENT_STATE = GAME_STATE;
 
 
 
@@ -550,7 +548,7 @@ begin
 			num_ghosts <= num_ghosts - 1'b1;
 		end
 		
-		else if (second_explosion && explosion_flag == 2'd0 && startOfFrame) begin//second explosion
+		else if (second_explosion && explosion_flag == 2'd0 && motion_pulse) begin//second explosion !!!!!!!!!!!!bug fix unchecked !!!!!!!!!!!!!!!!!!!!!!!!
 			generate_pwr_item <= 1'b1;
 			second_explosion <= 1'b0;//turn off trigger
 			
@@ -628,7 +626,8 @@ assign random_Y_MSB  = RandomPixelY[10:TILE_NUMBER_OF_Y_BITS] ; // get higher bi
 
 assign in_borders = (0 < random_X_MSB) && (4 < random_Y_MSB) && (random_Y_MSB < 15) && (random_X_MSB < 20);//between borders
 
-assign unoccupied = (MazeBitMapMask[random_Y_MSB][random_X_MSB] == 4'h0);
+assign unoccupied = ((MazeBitMapMask[random_Y_MSB][random_X_MSB] == 4'h0) && (random_X_MSB != hero_X_MSB_d1) && (random_Y_MSB != hero_Y_MSB_d1)
+																								  && (random_X_MSB != hero_X_MSB_d2) && (random_Y_MSB != hero_Y_MSB_d2));
 
 assign check_random_valid = in_borders && unoccupied;
 

@@ -14,6 +14,11 @@ module	game_controller	(
 			input	logic	HeroDrawingRequest,
 			
 			input logic one_sec_pulse,
+			
+			input	logic [3:0] big_min_count,
+			input	logic [3:0] small_min_count,
+			input	logic [3:0] big_sec_count,
+			input	logic [3:0] small_sec_count,
 
 			
 			output logic collision_hero_trap, // collisions are active in case of collision between objects
@@ -37,6 +42,10 @@ module	game_controller	(
 
 //logic flag ; // a semaphore to set the output only once per frame regardless of number of collisions 
 
+logic portal_flag;
+logic SinglePulse_PortalCollision;
+
+logic state_transition_margin;
 
 logic BorderDrawingRequest;
 logic TrapDrawingRequest;
@@ -51,6 +60,15 @@ logic super_trap_pu_DrawingRequest;
 
 logic inverse_countdown_activated;
 logic slow_time_countdown_activated;
+
+logic [3:0] big_min_HS = 4'd5;
+logic [3:0] small_min_HS = 4'd9;
+logic [3:0] big_sec_HS = 4'd5;
+logic [3:0] small_sec_HS = 4'd9;
+
+assign points_HS = big_min_HS * 1000 + small_min_HS * 100 + big_sec_HS * 10 + small_sec_HS;
+assign points_crnt = big_min_count * 1000 + small_min_count * 100 + big_sec_count * 10 + small_sec_count; // to compare crnt and high score
+
 
 
 assign BorderDrawingRequest = GridDrawingRequest[0];
@@ -86,6 +104,8 @@ assign collision_hero_super_trap_pu = (super_trap_pu_DrawingRequest && HeroDrawi
 
 // ---------------------------------------------------------------------------
 
+logic [2:0] SM_GAME_q;
+
 enum  logic [2:0] {  OPENING_ST,
 							FIRST_LEVEL_ST,
 							SECOND_LEVEL_ST,
@@ -102,13 +122,10 @@ begin : fsm_sync_proc
 	if(!resetN)
 	begin 
 		SM_GAME <= OPENING_ST ; 
-		GAME_STATE <= 3'd0;
-		state_transition <= 1'b0;
 		open_sesame <= 1'b0;
 
 	end 
 	else begin 
-		state_transition <= 1'b0;
 		open_sesame <= 1'b0;
 
 	
@@ -117,11 +134,8 @@ begin : fsm_sync_proc
 			//-----------------
 				OPENING_ST : begin
 			//-----------------
-					GAME_STATE <= 3'd0;
 					if (enter) begin
 						SM_GAME <= FIRST_LEVEL_ST;
-						state_transition <= 1'b1;
-						GAME_STATE <= 3'd1;
 
 					end
 				end
@@ -129,25 +143,20 @@ begin : fsm_sync_proc
 			//-----------------
 				FIRST_LEVEL_ST : begin
 			//-----------------
-					GAME_STATE <= 3'd1;
 					
 					if (num_ghosts == 5'd0 || minus) // finished ghosts or CHEAT
 						open_sesame <= 1'b1;
 					
 					
 					
-					if (collision_hero_border || collision_hero_ghost) begin
-						SM_GAME <= FAILURE_ST;
-						state_transition <= 1'b1;
-						GAME_STATE <= 3'd4;
+					if ((collision_hero_border || collision_hero_ghost) && (!state_transition_margin)) begin
+						SM_GAME <= FAILURE_ST; //4
 
 					end
 
 						
-					else if (collision_hero_portal) begin
-						SM_GAME <= SECOND_LEVEL_ST;
-						state_transition <= 1'b1;
-						GAME_STATE <= 3'd2;
+					else if (SinglePulse_PortalCollision && (!state_transition_margin)) begin // make sure the collision ends after clk
+						SM_GAME <= SECOND_LEVEL_ST; //2
 
 					end
 
@@ -155,24 +164,18 @@ begin : fsm_sync_proc
 				
 				//-----------------
 				SECOND_LEVEL_ST : begin
-			//-----------------
-					GAME_STATE <= 3'd2;
-					
+			//-----------------					
 					
 					if (num_ghosts == 5'd0 || minus) // finished ghosts or CHEAT
 						open_sesame <= 1'b1;
 					
-					if (collision_hero_border || collision_hero_ghost) begin
-						SM_GAME <= FAILURE_ST;
-						state_transition <= 1'b1;
-						GAME_STATE <= 3'd4;
+					if ((collision_hero_border || collision_hero_ghost) && (!state_transition_margin)) begin
+						SM_GAME <= FAILURE_ST; //4
 
 					end
 					
-					else if (collision_hero_portal) begin
-						SM_GAME <= VICTORY_ST;
-						state_transition <= 1'b1;
-						GAME_STATE <= 3'd3;
+					else if (SinglePulse_PortalCollision && (!state_transition_margin)) begin // make sure the collision ends after clk
+						SM_GAME <= VICTORY_ST; //3
 
 					end
 
@@ -182,11 +185,18 @@ begin : fsm_sync_proc
 				VICTORY_ST : begin
 			//-----------------
 			
-					GAME_STATE <= 3'd3;
+					if (points_crnt < points_HS) begin // save high score
+						big_min_HS <= big_min_count;
+						small_min_HS <= small_min_count;
+						big_sec_HS <= big_sec_count;
+						small_sec_HS <= small_sec_count;
+		
+					end
+
+					
+					
 					if (enter) begin
 						SM_GAME <= FIRST_LEVEL_ST;
-						state_transition <= 1'b1;
-						GAME_STATE <= 3'd1;
 
 					end
 					
@@ -196,12 +206,9 @@ begin : fsm_sync_proc
 				FAILURE_ST : begin
 			//-----------------
 			
-					GAME_STATE <= 3'd4;
 					if (enter) begin
 						SM_GAME <= FIRST_LEVEL_ST;
-						state_transition <= 1'b1;
-						GAME_STATE <= 3'd1;
-
+						
 					end
 					
 				end
@@ -212,9 +219,48 @@ begin : fsm_sync_proc
 end
 
 
+always_comb begin
+    case (SM_GAME)
+	 
+        OPENING_ST : GAME_STATE = 3'd0;
+        FIRST_LEVEL_ST : GAME_STATE = 3'd1;
+        SECOND_LEVEL_ST : GAME_STATE = 3'd2;
+        VICTORY_ST : GAME_STATE = 3'd3;
+        FAILURE_ST : GAME_STATE = 3'd4;
+		  
+        default : GAME_STATE = 3'd0;
+		  
+    endcase
+end
 
+////////////////////////// for game transition ///////////////////////
 
+always_ff @(posedge clk or negedge resetN) begin 
+    if (!resetN) begin
+        SM_GAME_q <= OPENING_ST;
+        state_transition <= 1'b0;
+		  state_transition_margin <= 1'b0;
 
+    end else begin
+        SM_GAME_q <= SM_GAME; 
+        
+        if (SM_GAME != SM_GAME_q) begin
+            state_transition <= 1'b1;	
+				state_transition_margin <= 1'b1;
+				
+        end 
+		  else begin
+            state_transition <= 1'b0;
+				
+				if (one_sec_pulse) 
+					state_transition_margin <= 1'b0; // one sec (tops) margin after state transition
+				
+        end
+		  
+    end
+end
+
+/////////////////////////////countdowns////////////////////////////////////
 
 always_ff@(posedge clk or negedge resetN)
 begin
@@ -256,7 +302,7 @@ begin
 
 		else if (collision_hero_slow_time_pu) begin
 				slow_time_countdown_activated <= 1'b1;
-				slow_time_countdown <= 4'd10;
+				slow_time_countdown <= 4'd5;
 		end
 			
 		else if (slow_time_countdown_activated && one_sec_pulse) begin
@@ -275,43 +321,30 @@ end
 
 
 
+////////////////////////////////////////////// cooldown for portal collision /////////////////////////////
 
+always_ff@(posedge clk or negedge resetN)
+begin
+	if(!resetN)
+	begin 
+		portal_flag	<= 1'b0;
+		SinglePulse_PortalCollision <= 1'b0 ; 
+		
+	end 
+	else begin 
+	
+			SinglePulse_PortalCollision <= 1'b0 ; // default 
+			if(one_sec_pulse) 
+				portal_flag <= 1'b0 ; // reset for next time 
+				
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//always_ff@(posedge clk or negedge resetN)
-//begin
-//	if(!resetN)
-//	begin 
-//		flag	<= 1'b0;
-//		SinglePulse_TrapCollision <= 1'b0 ; 
-//		
-//	end 
-//	else begin 
-//	
-//			SinglePulse_TrapCollision <= 1'b0 ; // default 
-//			if(startOfFrame) 
-//				flag <= 1'b0 ; // reset for next time 
-//				
-//
-//if ( collision_hero_trap && (flag == 1'b0)) begin 
-//			flag	<= 1'b1; // to enter only once 
-//			SinglePulse_TrapCollision <= 1'b1 ; 
-//		end ; 
-// 
-//	end 
-//end
+if ( collision_hero_portal && (portal_flag == 1'b0)) begin 
+			portal_flag	<= 1'b1; // to enter only once 
+			SinglePulse_PortalCollision <= 1'b1 ; 
+		end ; 
+ 
+	end 
+end
 
 endmodule
 
