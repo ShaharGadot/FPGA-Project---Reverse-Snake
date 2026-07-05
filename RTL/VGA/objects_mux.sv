@@ -16,8 +16,12 @@ module	objects_mux	(
 					input		logic	HeroDrawingRequest,
 					input		logic	[7:0] HeroRGB, 
 					
+					input		logic	GameTimeDrawingRequest,
+					input		logic	[7:0] GameTimeRGB, 
+					
 					input		logic	GreenBarDrawingRequest,
-					input		logic	[7:0] StatsRGB, 
+					input		logic	[7:0] GreenBarRGB, 
+				
 			  
 					input		logic	[8:0] GridDrawingRequest, 
 					input		logic	[7:0] GridRGB, 
@@ -39,8 +43,11 @@ begin
 		if (HeroDrawingRequest == 1'b1)
 				RGBOut <= HeroRGB;
 				
+		else if (GameTimeDrawingRequest == 1'b1)
+				RGBOut <= GameTimeRGB ;
+				
 		else if (GreenBarDrawingRequest == 1'b1)
-				RGBOut <= StatsRGB ;
+				RGBOut <= GreenBarRGB ;
 				
 		else if (GridDrawingRequest != 4'b0)
 				RGBOut <= GridRGB ;

@@ -18,12 +18,12 @@ module GreenBarBitMap	(
 
 
 localparam int OBJECT_WIDTH_X = 250;
-localparam int OBJECT_WIDTH_Y = 50;
+localparam int OBJECT_WIDTH_Y = 32;
 
 
 logic [7:0] TRANSPARENT_ENCODING = 8'hFF ;
 logic [7:0] shaded_green;
-logic [7:0] BORDERCOLOR = 8'h04; // black?
+logic [7:0] BORDERCOLOR = 8'hFA; // black?
 
 int internal_height;
 assign internal_height = OBJECT_WIDTH_Y - 10;
@@ -57,7 +57,8 @@ typedef enum logic [2:0] {
 	 OPENING_ST     = 3'd0,
     FIRST_LEVEL_ST = 3'd1,
 	 SECOND_LEVEL_ST = 3'd2,
-    FAILURE_ST     = 3'd3
+	 VICTORY_ST = 3'd3,
+    FAILURE_ST = 3'd4
 } local_state;
 
 local_state CURRENT_STATE;

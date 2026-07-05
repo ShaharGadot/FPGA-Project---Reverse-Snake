@@ -21,7 +21,6 @@ module	hero_move	(
 					input	 logic state_transition,
 					input  logic [3:0] inverse_countdown,
 					input  logic [3:0] slow_time_countdown,
-					input	 logic collision_hero_slow_time_pu,
 
 					
 					output logic [10:0] initial_X, // output the top left corner 
@@ -37,9 +36,7 @@ logic UP;
 logic DOWN;
 logic RIGHT;
 logic LEFT;
-		
-logic slow_time_flag;
-		
+				
  int 	 topLeftX_tmp; // output the top left corner 
  int   topLeftY_tmp;  // can be negative , if the object is partliy outside 
 
@@ -49,7 +46,13 @@ parameter int INITIAL_X = 256;
 parameter int INITIAL_Y = 160;
 parameter int player_speed = 128;
 
-int crnt_speed;
+int crnt_X_speed;
+int crnt_Y_speed;
+
+int Xspeed  ; // speed    
+int Yspeed  ; 
+int Xposition ; //position   
+int Yposition ;  
 
 //const int	FIXED_POINT_MULTIPLIER = 64; // note it must be 2^n 
 const logic signed 	[10:0]	FIXED_POINT_MULTIPLIER = 64; // note it must be 2^n 
@@ -73,7 +76,8 @@ typedef enum logic [2:0] {
 	 OPENING_ST     = 3'd0,
     FIRST_LEVEL_ST = 3'd1,
 	 SECOND_LEVEL_ST = 3'd2,
-    FAILURE_ST     = 3'd3
+	 VICTORY_ST = 3'd3,
+    FAILURE_ST = 3'd4
 } local_state;
 
 local_state CURRENT_STATE;
@@ -98,14 +102,19 @@ always_comb begin
 		LEFT = left_key;
 	end
 	
-///////////////////////////// slow time keys pwr //////////////////////////////////
+///////////////////////////// slow time pwr //////////////////////////////////
 
-	if (slow_time_countdown != 4'd0) // slow time activated
-		crnt_speed = player_speed / 2;
-	
-	else
-		crnt_speed = player_speed;
+	if (slow_time_countdown != 4'd0) begin // slow time activated
+		crnt_X_speed = Xspeed / 2;
+		crnt_Y_speed = Yspeed / 2;
 		
+	end
+	else begin
+		crnt_X_speed = Xspeed;
+		crnt_Y_speed = Yspeed;
+
+	
+	end
 end
 
 
@@ -131,10 +140,7 @@ enum  logic [2:0] {IDLE_ST,         	// initial state
 						 POSITION_LIMITS_ST  // check if inside the frame  
 						}  SM_Motion ;
 
-int Xspeed  ; // speed    
-int Yspeed  ; 
-int Xposition ; //position   
-int Yposition ;  
+
 
  //---------
  
@@ -149,18 +155,8 @@ begin : fsm_sync_proc
 		Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
 		Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
 		change_direction_flag <= 1'b0;
-		slow_time_flag <= 1'b0;
-
 	
-	end 	
-	/////////////// immidiate transition if slow down activated /////////////////
-	
-	else if (collision_hero_slow_time_pu) begin
-		Xspeed <= Xspeed / 2;
-		Yspeed <= Yspeed / 2;
-
 	end
-	
 	//////////////////game state changes////////////////////////////////////////
 	
 	else if (CURRENT_STATE == FAILURE_ST) begin 
@@ -180,8 +176,6 @@ begin : fsm_sync_proc
 			Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
 			Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
 			change_direction_flag <= 1'b0;
-			slow_time_flag <= 1'b0;
-
 				
 
 //		case (CURRENT_STATE)
@@ -210,7 +204,7 @@ begin : fsm_sync_proc
 			IDLE_ST: begin
 		//------------
 		
-				Xspeed  <= crnt_speed ; // player starts to the left
+				Xspeed  <= player_speed ; // player starts to the left
 				Yspeed  <= 0  ; 
 				Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER; 
 				Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER; 
@@ -227,7 +221,7 @@ begin : fsm_sync_proc
 		
 			if(!change_direction_flag) begin
 				if (UP && Yspeed <= 0 ) begin
-					req.Y_speed <= -crnt_speed; 
+					req.Y_speed <= -player_speed; 
 					req.X_speed <= 0; 
 					req.dig <= 4'd2; // back
 					change_direction_flag <= 1'b1;
@@ -235,7 +229,7 @@ begin : fsm_sync_proc
 				end
 					
 				else if (DOWN && Yspeed >= 0 ) begin
-					req.Y_speed <= crnt_speed; 
+					req.Y_speed <= player_speed; 
 					req.X_speed <= 0; 
 					req.dig <= 4'd0; // front
 					change_direction_flag <= 1'b1;
@@ -244,7 +238,7 @@ begin : fsm_sync_proc
 				
 				else if (RIGHT && Xspeed >= 0 ) begin
 					req.Y_speed <= 0; 
-					req.X_speed <= crnt_speed;
+					req.X_speed <= player_speed;
 					req.dig <= 4'd4; // right
 					change_direction_flag <= 1'b1;
 
@@ -252,7 +246,7 @@ begin : fsm_sync_proc
 		
 				else if (LEFT && Xspeed <= 0 ) begin
 					req.Y_speed <= 0; 
-					req.X_speed <= -crnt_speed; 
+					req.X_speed <= -player_speed; 
 					req.dig <= 4'd6; // left
 					change_direction_flag <= 1'b1;
 
@@ -281,8 +275,8 @@ begin : fsm_sync_proc
 			POSITION_CHANGE_ST : begin  // position interpolate 
 		//------------------------
 	
-				Xposition <= Xposition + Xspeed ; 
-				Yposition <= Yposition + Yspeed ;
+				Xposition <= Xposition + crnt_X_speed ; 
+				Yposition <= Yposition + crnt_Y_speed ;
 			 
 				// accelerate 
 		

@@ -22,7 +22,7 @@ agreement for further details.
 (header "graphic" (version "1.4"))
 (pin
 	(input)
-	(rect 352 320 520 336)
+	(rect -216 168 -48 184)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "clk" (rect 5 0 19 12)(font "Arial" ))
 	(pt 168 8)
@@ -38,7 +38,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect 352 336 520 352)
+	(rect -216 184 -48 200)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "resetN" (rect 5 0 35 17)(font "Intel Clear" ))
 	(pt 168 8)
@@ -54,7 +54,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect 352 352 520 368)
+	(rect -216 200 -48 216)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
 	(text "pixelX[10..0]" (rect 5 0 64 17)(font "Intel Clear" ))
 	(pt 168 8)
@@ -70,7 +70,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect 344 384 520 400)
+	(rect -224 232 -48 248)
 	(text "INPUT" (rect 133 0 161 10)(font "Arial" (font_size 6)))
 	(text "num_ghosts[4..0]" (rect 5 0 86 17)(font "Intel Clear" ))
 	(pt 176 8)
@@ -86,7 +86,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect 336 416 520 432)
+	(rect -232 264 -48 280)
 	(text "INPUT" (rect 141 0 169 10)(font "Arial" (font_size 6)))
 	(text "GAME_STATE[2..0]" (rect 5 0 94 17)(font "Intel Clear" ))
 	(pt 184 8)
@@ -102,7 +102,7 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect 312 400 520 416)
+	(rect -256 248 -48 264)
 	(text "INPUT" (rect 165 0 193 10)(font "Arial" (font_size 6)))
 	(text "max_num_ghosts[4..0]" (rect 5 0 112 17)(font "Intel Clear" ))
 	(pt 208 8)
@@ -118,9 +118,41 @@ agreement for further details.
 )
 (pin
 	(input)
-	(rect 352 368 520 384)
+	(rect -216 216 -48 232)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
-	(text "pixelY[10..0]" (rect 5 0 65 17)(font "Intel Clear" ))
+	(text "pixelY[10..0]" (rect 5 0 64 17)(font "Intel Clear" ))
+	(pt 168 8)
+	(drawing
+		(line (pt 84 12)(pt 109 12))
+		(line (pt 84 4)(pt 109 4))
+		(line (pt 113 8)(pt 168 8))
+		(line (pt 84 12)(pt 84 4))
+		(line (pt 109 4)(pt 113 8))
+		(line (pt 109 12)(pt 113 8))
+	)
+	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
+)
+(pin
+	(input)
+	(rect -224 280 -48 296)
+	(text "INPUT" (rect 133 0 161 10)(font "Arial" (font_size 6)))
+	(text "state_transition" (rect 5 0 80 12)(font "Arial" ))
+	(pt 176 8)
+	(drawing
+		(line (pt 92 12)(pt 117 12))
+		(line (pt 92 4)(pt 117 4))
+		(line (pt 121 8)(pt 176 8))
+		(line (pt 92 12)(pt 92 4))
+		(line (pt 117 4)(pt 121 8))
+		(line (pt 117 12)(pt 121 8))
+	)
+	(text "VCC" (rect 136 7 156 17)(font "Arial" (font_size 6)))
+)
+(pin
+	(input)
+	(rect -216 296 -48 312)
+	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
+	(text "one_sec_pulse" (rect 5 0 75 17)(font "Intel Clear" ))
 	(pt 168 8)
 	(drawing
 		(line (pt 84 12)(pt 109 12))
@@ -134,7 +166,7 @@ agreement for further details.
 )
 (pin
 	(output)
-	(rect 560 320 782 336)
+	(rect 976 136 1198 152)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
 	(text "GreenBarDrawingRequest" (rect 90 0 216 12)(font "Arial" ))
 	(pt 0 8)
@@ -150,9 +182,9 @@ agreement for further details.
 )
 (pin
 	(output)
-	(rect 560 336 736 352)
+	(rect 976 152 1161 168)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
-	(text "StatsRGB[7..0]" (rect 90 0 158 17)(font "Intel Clear" ))
+	(text "GreenBarRGB[7..0]" (rect 90 0 179 17)(font "Intel Clear" ))
 	(pt 0 8)
 	(drawing
 		(line (pt 0 8)(pt 52 8))
@@ -163,6 +195,128 @@ agreement for further details.
 		(line (pt 82 8)(pt 78 12))
 		(line (pt 78 12)(pt 82 8))
 	)
+)
+(pin
+	(output)
+	(rect 976 360 1205 376)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "GameTimeDrawingRequest" (rect 90 0 223 12)(font "Arial" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+)
+(pin
+	(output)
+	(rect 976 376 1168 392)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "GameTimeRGB[7..0]" (rect 90 0 186 17)(font "Intel Clear" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+)
+(pin
+	(output)
+	(rect 976 392 1165 408)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "big_min_count[3..0]" (rect 90 0 183 17)(font "Intel Clear" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+)
+(pin
+	(output)
+	(rect 976 408 1178 424)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "small_min_count[3..0]" (rect 90 0 196 17)(font "Intel Clear" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+)
+(pin
+	(output)
+	(rect 976 424 1162 440)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "big_sec_count[3..0]" (rect 90 0 180 17)(font "Intel Clear" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+)
+(pin
+	(output)
+	(rect 976 440 1175 456)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "small_sec_count[3..0]" (rect 90 0 193 17)(font "Intel Clear" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+)
+(symbol
+	(rect 48 144 208 224)
+	(text "MyConstant" (rect 5 0 65 12)(font "Arial" ))
+	(text "inst3" (rect 8 64 30 81)(font "Intel Clear" ))
+	(port
+		(pt 160 32)
+		(output)
+		(text "value[size-1..0]" (rect 0 0 75 12)(font "Arial" ))
+		(text "value[size-1..0]" (rect 76 27 151 39)(font "Arial" ))
+		(line (pt 160 32)(pt 144 32)(line_width 3))
+	)
+	(parameter
+		"size"
+		"11"
+		""
+		(type "PARAMETER_SIGNED_DEC")	)
+	(parameter
+		"MyValue"
+		"195"
+		""
+		(type "PARAMETER_UNSIGNED_DEC")	)
+	(drawing
+		(rectangle (rect 16 16 144 64))
+	)
+	(annotation_block (parameter)(rect 32 80 214 137))
 )
 (symbol
 	(rect 320 144 544 288)
@@ -245,7 +399,7 @@ agreement for further details.
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
 		"OBJECT_HEIGHT_Y"
-		"50"
+		"32"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
@@ -257,32 +411,6 @@ agreement for further details.
 		(rectangle (rect 16 16 208 128))
 	)
 	(annotation_block (parameter)(rect 304 56 559 132))
-)
-(symbol
-	(rect 48 144 208 224)
-	(text "MyConstant" (rect 5 0 65 12)(font "Arial" ))
-	(text "inst3" (rect 8 64 30 81)(font "Intel Clear" ))
-	(port
-		(pt 160 32)
-		(output)
-		(text "value[size-1..0]" (rect 0 0 75 12)(font "Arial" ))
-		(text "value[size-1..0]" (rect 76 27 151 39)(font "Arial" ))
-		(line (pt 160 32)(pt 144 32)(line_width 3))
-	)
-	(parameter
-		"size"
-		"11"
-		""
-		(type "PARAMETER_SIGNED_DEC")	)
-	(parameter
-		"MyValue"
-		"195"
-		""
-		(type "PARAMETER_UNSIGNED_DEC")	)
-	(drawing
-		(rectangle (rect 16 16 144 64))
-	)
-	(annotation_block (parameter)(rect 32 80 214 137))
 )
 (symbol
 	(rect 48 224 208 304)
@@ -302,7 +430,7 @@ agreement for further details.
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
 		"MyValue"
-		"39"
+		"60"
 		""
 		(type "PARAMETER_UNSIGNED_DEC")	)
 	(drawing
@@ -313,7 +441,7 @@ agreement for further details.
 (symbol
 	(rect 696 112 952 288)
 	(text "GreenBarBitMap" (rect 5 0 84 12)(font "Arial" ))
-	(text "inst1" (rect 8 160 31 172)(font "Arial" ))
+	(text "inst1" (rect 8 160 30 177)(font "Intel Clear" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -388,6 +516,105 @@ agreement for further details.
 		(rectangle (rect 16 16 240 160))
 	)
 )
+(symbol
+	(rect 624 336 952 496)
+	(text "GAME_TIME" (rect 5 0 76 19)(font "Intel Clear" (font_size 8)))
+	(text "inst2" (rect 8 139 30 156)(font "Intel Clear" ))
+	(port
+		(pt 0 32)
+		(input)
+		(text "clk" (rect 0 0 16 19)(font "Intel Clear" (font_size 8)))
+		(text "clk" (rect 21 27 37 46)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 32)(pt 16 32))
+	)
+	(port
+		(pt 0 48)
+		(input)
+		(text "resetN" (rect 0 0 38 19)(font "Intel Clear" (font_size 8)))
+		(text "resetN" (rect 21 43 59 62)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 48)(pt 16 48))
+	)
+	(port
+		(pt 0 64)
+		(input)
+		(text "pixelX[10..0]" (rect 0 0 75 19)(font "Intel Clear" (font_size 8)))
+		(text "pixelX[10..0]" (rect 21 59 96 78)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 64)(pt 16 64)(line_width 3))
+	)
+	(port
+		(pt 0 80)
+		(input)
+		(text "pixelY[10..0]" (rect 0 0 75 19)(font "Intel Clear" (font_size 8)))
+		(text "pixelY[10..0]" (rect 21 75 96 94)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 80)(pt 16 80)(line_width 3))
+	)
+	(port
+		(pt 0 96)
+		(input)
+		(text "one_sec_pulse" (rect 0 0 86 19)(font "Intel Clear" (font_size 8)))
+		(text "one_sec_pulse" (rect 21 91 107 110)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 96)(pt 16 96))
+	)
+	(port
+		(pt 0 112)
+		(input)
+		(text "GAME_STATE[2..0]" (rect 0 0 113 19)(font "Intel Clear" (font_size 8)))
+		(text "GAME_STATE[2..0]" (rect 21 107 134 126)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 112)(pt 16 112)(line_width 3))
+	)
+	(port
+		(pt 0 128)
+		(input)
+		(text "state_transition" (rect 0 0 92 19)(font "Intel Clear" (font_size 8)))
+		(text "state_transition" (rect 21 123 113 142)(font "Intel Clear" (font_size 8)))
+		(line (pt 0 128)(pt 16 128))
+	)
+	(port
+		(pt 328 32)
+		(output)
+		(text "GameTimeDrawingRequest" (rect 0 0 162 19)(font "Intel Clear" (font_size 8)))
+		(text "GameTimeDrawingRequest" (rect 145 27 307 46)(font "Intel Clear" (font_size 8)))
+		(line (pt 328 32)(pt 312 32))
+	)
+	(port
+		(pt 328 48)
+		(output)
+		(text "GameTimeRGB[7..0]" (rect 0 0 122 19)(font "Intel Clear" (font_size 8)))
+		(text "GameTimeRGB[7..0]" (rect 185 43 307 62)(font "Intel Clear" (font_size 8)))
+		(line (pt 328 48)(pt 312 48)(line_width 3))
+	)
+	(port
+		(pt 328 64)
+		(output)
+		(text "big_min_count[3..0]" (rect 0 0 118 19)(font "Intel Clear" (font_size 8)))
+		(text "big_min_count[3..0]" (rect 189 59 307 78)(font "Intel Clear" (font_size 8)))
+		(line (pt 328 64)(pt 312 64)(line_width 3))
+	)
+	(port
+		(pt 328 80)
+		(output)
+		(text "small_min_count[3..0]" (rect 0 0 130 19)(font "Intel Clear" (font_size 8)))
+		(text "small_min_count[3..0]" (rect 177 75 307 94)(font "Intel Clear" (font_size 8)))
+		(line (pt 328 80)(pt 312 80)(line_width 3))
+	)
+	(port
+		(pt 328 96)
+		(output)
+		(text "big_sec_count[3..0]" (rect 0 0 114 19)(font "Intel Clear" (font_size 8)))
+		(text "big_sec_count[3..0]" (rect 193 91 307 110)(font "Intel Clear" (font_size 8)))
+		(line (pt 328 96)(pt 312 96)(line_width 3))
+	)
+	(port
+		(pt 328 112)
+		(output)
+		(text "small_sec_count[3..0]" (rect 0 0 127 19)(font "Intel Clear" (font_size 8)))
+		(text "small_sec_count[3..0]" (rect 180 107 307 126)(font "Intel Clear" (font_size 8)))
+		(line (pt 328 112)(pt 312 112)(line_width 3))
+	)
+	(drawing
+		(rectangle (rect 16 16 312 144))
+	)
+)
 (connector
 	(text "clk" (rect 258 160 272 177)(font "Intel Clear" ))
 	(pt 320 176)
@@ -431,17 +658,6 @@ agreement for further details.
 	(bus)
 )
 (connector
-	(text "GreenBarDrawingRequest" (rect 952 128 1074 145)(font "Intel Clear" ))
-	(pt 952 144)
-	(pt 1024 144)
-)
-(connector
-	(text "StatsRGB[7..0]" (rect 962 144 1030 161)(font "Intel Clear" ))
-	(pt 952 160)
-	(pt 1024 160)
-	(bus)
-)
-(connector
 	(text "clk" (rect 658 128 672 145)(font "Intel Clear" ))
 	(pt 648 144)
 	(pt 696 144)
@@ -482,4 +698,80 @@ agreement for further details.
 	(pt 696 256)
 	(pt 600 256)
 	(bus)
+)
+(connector
+	(pt 952 144)
+	(pt 976 144)
+)
+(connector
+	(pt 952 160)
+	(pt 976 160)
+	(bus)
+)
+(connector
+	(pt 952 368)
+	(pt 976 368)
+)
+(connector
+	(pt 952 384)
+	(pt 976 384)
+	(bus)
+)
+(connector
+	(pt 952 400)
+	(pt 976 400)
+	(bus)
+)
+(connector
+	(pt 952 416)
+	(pt 976 416)
+	(bus)
+)
+(connector
+	(pt 952 432)
+	(pt 976 432)
+	(bus)
+)
+(connector
+	(pt 952 448)
+	(pt 976 448)
+	(bus)
+)
+(connector
+	(text "clk" (rect 538 352 552 369)(font "Intel Clear" ))
+	(pt 624 368)
+	(pt 528 368)
+)
+(connector
+	(text "resetN" (rect 538 368 568 385)(font "Intel Clear" ))
+	(pt 624 384)
+	(pt 528 384)
+)
+(connector
+	(text "pixelX[10..0]" (rect 538 384 597 401)(font "Intel Clear" ))
+	(pt 624 400)
+	(pt 528 400)
+	(bus)
+)
+(connector
+	(text "pixelY[10..0]" (rect 538 400 597 417)(font "Intel Clear" ))
+	(pt 528 416)
+	(pt 624 416)
+	(bus)
+)
+(connector
+	(text "one_sec_pulse" (rect 538 416 608 433)(font "Intel Clear" ))
+	(pt 624 432)
+	(pt 528 432)
+)
+(connector
+	(text "GAME_STATE[2..0]" (rect 538 432 627 449)(font "Intel Clear" ))
+	(pt 624 448)
+	(pt 528 448)
+	(bus)
+)
+(connector
+	(text "state_transition" (rect 538 448 611 465)(font "Intel Clear" ))
+	(pt 624 464)
+	(pt 528 464)
 )

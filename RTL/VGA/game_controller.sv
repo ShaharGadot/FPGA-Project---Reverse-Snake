@@ -65,14 +65,21 @@ assign slow_time_pu_DrawingRequest = GridDrawingRequest[7];
 assign super_trap_pu_DrawingRequest = GridDrawingRequest[8];
 
 						
-// -----------------------collisions----------------------------------------		
+// -----------------------collisions----------------------------------------	
+
+logic collision_hero_border;
+logic collision_hero_ghost;
+logic collision_hero_portal;
+logic collision_hero_grave;
+
+	
 assign collision_hero_trap = (TrapDrawingRequest && HeroDrawingRequest); //
 assign collision_hero_border = (BorderDrawingRequest && HeroDrawingRequest);
 assign collision_hero_ghost = (GhostDrawingRequest && HeroDrawingRequest);
 assign collision_hero_skull = (SkullDrawingRequest && HeroDrawingRequest); //
 
 assign collision_hero_portal = (portalDrawingRequest && HeroDrawingRequest);
-assign collision_hero_grave = (graveDrawingRequest && graveDrawingRequest);
+assign collision_hero_grave = (graveDrawingRequest && HeroDrawingRequest);
 assign collision_hero_inverse_keys_pd = (inverse_keys_pd_DrawingRequest && HeroDrawingRequest); //
 assign collision_hero_slow_time_pu = (slow_time_pu_DrawingRequest && HeroDrawingRequest); //
 assign collision_hero_super_trap_pu = (super_trap_pu_DrawingRequest && HeroDrawingRequest); //
@@ -82,6 +89,7 @@ assign collision_hero_super_trap_pu = (super_trap_pu_DrawingRequest && HeroDrawi
 enum  logic [2:0] {  OPENING_ST,
 							FIRST_LEVEL_ST,
 							SECOND_LEVEL_ST,
+							VICTORY_ST,
 							FAILURE_ST
 						}  SM_GAME ;
 
@@ -113,6 +121,8 @@ begin : fsm_sync_proc
 					if (enter) begin
 						SM_GAME <= FIRST_LEVEL_ST;
 						state_transition <= 1'b1;
+						GAME_STATE <= 3'd1;
+
 					end
 				end
 				
@@ -129,12 +139,16 @@ begin : fsm_sync_proc
 					if (collision_hero_border || collision_hero_ghost) begin
 						SM_GAME <= FAILURE_ST;
 						state_transition <= 1'b1;
+						GAME_STATE <= 3'd4;
+
 					end
 
 						
 					else if (collision_hero_portal) begin
 						SM_GAME <= SECOND_LEVEL_ST;
 						state_transition <= 1'b1;
+						GAME_STATE <= 3'd2;
+
 					end
 
 				end
@@ -145,22 +159,49 @@ begin : fsm_sync_proc
 					GAME_STATE <= 3'd2;
 					
 					
+					if (num_ghosts == 5'd0 || minus) // finished ghosts or CHEAT
+						open_sesame <= 1'b1;
 					
 					if (collision_hero_border || collision_hero_ghost) begin
 						SM_GAME <= FAILURE_ST;
 						state_transition <= 1'b1;
+						GAME_STATE <= 3'd4;
+
+					end
+					
+					else if (collision_hero_portal) begin
+						SM_GAME <= VICTORY_ST;
+						state_transition <= 1'b1;
+						GAME_STATE <= 3'd3;
+
 					end
 
 				end
 				
 			//-----------------
-				FAILURE_ST : begin
+				VICTORY_ST : begin
 			//-----------------
 			
 					GAME_STATE <= 3'd3;
 					if (enter) begin
 						SM_GAME <= FIRST_LEVEL_ST;
 						state_transition <= 1'b1;
+						GAME_STATE <= 3'd1;
+
+					end
+					
+				end
+				
+				//-----------------
+				FAILURE_ST : begin
+			//-----------------
+			
+					GAME_STATE <= 3'd4;
+					if (enter) begin
+						SM_GAME <= FIRST_LEVEL_ST;
+						state_transition <= 1'b1;
+						GAME_STATE <= 3'd1;
+
 					end
 					
 				end
@@ -187,7 +228,7 @@ begin
 	
 	else begin
 	
-		if (state_transition <= 1'b1) begin // cancle pwr ups between levels
+		if (state_transition == 1'b1) begin // cancle pwr ups between levels
 			inverse_countdown_activated <= 1'b0;
 			inverse_countdown <= 4'd0;
 			
@@ -204,7 +245,7 @@ begin
 			
 		else if (inverse_countdown_activated && one_sec_pulse) begin
 		
-			if (inverse_countdown == 4'd1)
+			if (inverse_countdown == 4'd0)
 				inverse_countdown_activated <= 1'b0;
 			else
 				inverse_countdown <= inverse_countdown - 1'b1;	
@@ -220,7 +261,7 @@ begin
 			
 		else if (slow_time_countdown_activated && one_sec_pulse) begin
 		
-			if (slow_time_countdown == 4'd1)
+			if (slow_time_countdown == 4'd0)
 				slow_time_countdown_activated <= 1'b0;
 			else
 				slow_time_countdown <= slow_time_countdown - 1'b1;	

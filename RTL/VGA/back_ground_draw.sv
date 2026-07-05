@@ -102,7 +102,8 @@ typedef enum logic [2:0] {
 	 OPENING_ST     = 3'd0,
     FIRST_LEVEL_ST = 3'd1,
 	 SECOND_LEVEL_ST = 3'd2,
-    FAILURE_ST     = 3'd3
+	 VICTORY_ST = 3'd3,
+    FAILURE_ST = 3'd4
 } local_state;
 
 local_state CURRENT_STATE;
@@ -199,6 +200,11 @@ always_comb begin
 		end
 		
 		SECOND_LEVEL_ST: begin
+			next_BackGroundRGB = SecondLevelRGB;
+			MazeBitMapMask = SecondLevelBitMapMask;
+		end
+		
+		VICTORY_ST: begin
 			next_BackGroundRGB = SecondLevelRGB;
 			MazeBitMapMask = SecondLevelBitMapMask;
 		end
