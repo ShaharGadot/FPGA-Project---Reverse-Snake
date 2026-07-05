@@ -111,7 +111,6 @@ always_comb begin
 		crnt_X_speed = Xspeed;
 		crnt_Y_speed = Yspeed;
 
-	
 	end
 end
 
@@ -276,9 +275,17 @@ begin : fsm_sync_proc
 				Xposition <= Xposition + crnt_X_speed ; 
 				Yposition <= Yposition + crnt_Y_speed ;
 			 
-				// accelerate 
-		
-	
+				
+				if (slow_time_countdown == 4'd0) begin //fixing drift after slow down, one pixel nudge
+					  
+					if (Xposition[6] == 1'b1) begin // xposition[0] * MULTIPLIER = xposition[0] <<< 6 = xposition[6]
+						Xposition <= Xposition + FIXED_POINT_MULTIPLIER; // +1 pixel
+					end
+					if (Yposition[6] == 1'b1) begin
+						Yposition <= Yposition + FIXED_POINT_MULTIPLIER; // +1 pixel
+					end
+				end
+				
 				
 				SM_Motion <= POSITION_LIMITS_ST ; 
 			end

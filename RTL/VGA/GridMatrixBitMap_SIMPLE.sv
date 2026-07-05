@@ -464,7 +464,10 @@ begin
 			explosion_flag <= explosion_flag + 2'd1;//counter++
 		
 		else if (motion_pulse && explosion_flag == 2'd3) begin
-			MazeBitMapMask[explosionY][explosionX] <= 4'h0;  //deleting last ghost when explosion ends
+		
+			if(MazeBitMapMask[explosionY][explosionX] == 4'hE)	 // check if didnt get "run over"
+				MazeBitMapMask[explosionY][explosionX] <= 4'h0;  //deleting last ghost when explosion ends
+			
 			explosion_flag <= 2'd0;
 		end	
 		//-------------------------------------
