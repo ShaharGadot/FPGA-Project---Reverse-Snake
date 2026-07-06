@@ -22,6 +22,8 @@ module melody_player_1
  input logic CLOCK_31p5,
  input logic startMelody,
  input logic [3:0] melodySelect, // selector of one melody  
+ input logic stopMelody,
+
 // input logic [15:0] songs_mem,		// input from songs.mif
  
  output logic [3:0] tone,
@@ -94,55 +96,77 @@ module melody_player_1
         melodyEnded <= 1'b0;
 
         case ( SM_Maestro )			
-            s_idle: begin
-                noteIndex <= 8'b0;
-                if (startMelody) begin   
-                    melodySelect_reg <= melodySelect;
-                    SM_Maestro <= s_playNote;    
-                end
-            end
-
-            s_playNote: begin	
-                EnableSoundOut <= 1'b1; 
-
- 
-  
-                if (noteTimeCounter == 5'b0) begin
-                    noteTimeCounter <= noteDuration;
-                end
-
-                if (noteDuration != 5'b0) begin    
-                    if ( hundredthSecPulse ) begin
-                        noteTimeCounter <= noteTimeCounter - 5'b1; 
-                    end
-                    if (noteTimeCounter == 5'b1 && hundredthSecPulse) begin
-                        noteIndex <= noteIndex + 1'b1;   
-                        SM_Maestro <= s_gap;   
-                        noteTimeCounter <= gapDuration; 
-                    end 
-                end    
-                else begin
-                    SM_Maestro <= s_ended;
-                end
-            end
-
-            s_gap : begin	
-                if ( hundredthSecPulse ) begin
-                    noteTimeCounter <= noteTimeCounter - 5'b1;   
-                end
-                if (noteTimeCounter == 5'b0) begin 
-                    SM_Maestro <= s_playNote;      
-                    noteTimeCounter <= noteDuration;     
-                end 
-            end
-
-            s_ended : begin
-                melodyEnded <= 1'b1;   
-                SM_Maestro <= s_idle;  
-            end
-
-            default: SM_Maestro <= s_idle;
-        endcase
+               s_idle: begin
+                   noteIndex <= 8'b0;
+                   if (startMelody) begin   
+                       melodySelect_reg <= melodySelect;
+                       SM_Maestro <= s_playNote;    
+                   end
+               end
+               
+               s_playNote: begin	
+                   EnableSoundOut <= 1'b1; 
+                   
+                   if (stopMelody) begin  // if we want to stop the melody
+                       noteTimeCounter <= 5'b0;
+                       SM_Maestro <= s_ended;     
+                   end
+                   else if (startMelody) begin  // if we want to play new melody during another
+                       melodySelect_reg <= melodySelect; 
+                       noteIndex <= 8'b0;            
+                       noteTimeCounter <= 5'b0;   
+                       SM_Maestro <= s_playNote;  
+                   end
+                   else begin
+                       if (noteTimeCounter == 5'b0) begin
+                           noteTimeCounter <= noteDuration;
+                       end
+                       
+                       if (noteDuration != 5'b0) begin    
+                           if ( hundredthSecPulse ) begin
+                               noteTimeCounter <= noteTimeCounter - 5'b1; 
+                           end
+                           if (noteTimeCounter == 5'b1 && hundredthSecPulse) begin
+                               noteIndex <= noteIndex + 1'b1;   
+                               SM_Maestro <= s_gap;   
+                               noteTimeCounter <= gapDuration; 
+                           end 
+                       end    
+                       else begin
+                           SM_Maestro <= s_ended;
+                       end
+                   end
+               end
+               
+               s_gap : begin	
+                   if (stopMelody) begin  // if we want to stop the melody
+                       noteTimeCounter <= 5'b0;
+                       SM_Maestro <= s_ended;
+                   end
+                   else if (startMelody) begin    // if we want to play new melody during another
+                       melodySelect_reg <= melodySelect; 
+                       noteIndex <= 8'b0;                
+                       noteTimeCounter <= 5'b0;          
+                       SM_Maestro <= s_playNote;
+                   end
+                   else begin
+                       if ( hundredthSecPulse ) begin
+                           noteTimeCounter <= noteTimeCounter - 5'b1;   
+                       end
+                       if (noteTimeCounter == 5'b0) begin 
+                           SM_Maestro <= s_playNote;      
+                           noteTimeCounter <= noteDuration;     
+                       end 
+                   end
+               end
+               
+               s_ended : begin
+                   melodyEnded <= 1'b1;   
+                   SM_Maestro <= s_idle;  
+               end
+               
+               default: SM_Maestro <= s_idle;
+           endcase
     end
 end
 

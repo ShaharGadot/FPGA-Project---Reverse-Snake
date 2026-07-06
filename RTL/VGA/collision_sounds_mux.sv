@@ -15,9 +15,12 @@ module	collision_sounds_mux	(
 			
 			
 			output logic enable_sound,
-			output logic [3:0] tune
+			output logic [3:0] tune,
+			output logic stopMelody
 );
 
+
+logic stop_melody;
 
 logic [2:0] CURRENT_STATE;
 localparam logic [2:0] OPENING_ST = 3'd0;
@@ -28,11 +31,14 @@ localparam logic [2:0] VICTORY_ST = 3'd4;
 localparam logic [2:0] FAILURE_ST = 3'd5;
 
 assign CURRENT_STATE = GAME_STATE;
+assign stopMelody = stop_melody;
 
 always_comb begin
 
 	enable_sound = 1'b0;
    tune = 4'd0;
+	stop_melody <= 1'b0;
+
 
 	
 	if (collision_hero_trap) begin
@@ -45,6 +51,12 @@ always_comb begin
 	
 		enable_sound = 1'b1;
 		tune = 4'd1;
+		
+		
+	end
+	else if (CURRENT_STATE == FIRST_LEVEL_ST && state_transition) begin // stoping opening music
+	
+		stop_melody <= 1'b1;
 		
 		
 	end
