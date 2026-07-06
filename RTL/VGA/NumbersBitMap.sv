@@ -73,7 +73,7 @@ begin
 		drawingRequest <= 1'b0;
 	end
 	
-	else if(CURRENT_STATE == OPENING_ST) begin 
+	else if(CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST) begin 
 		drawingRequest <= 1'b0;
 
 	end
@@ -106,6 +106,7 @@ end
 
 always_comb begin //////////////////diferent color to digits in diferent leveld
 	case (CURRENT_STATE)
+	
 		FIRST_LEVEL_ST: begin
 			digit_color = 8'hE0;//red
 		end
@@ -114,8 +115,16 @@ always_comb begin //////////////////diferent color to digits in diferent leveld
 			digit_color = 8'hFA;//whiteish
 		end
 		
+		VICTORY_ST: begin
+			digit_color = 8'hB7;//purple-white
+		end
+		
+		FAILURE_ST: begin
+			digit_color = 8'hB7;//purple-white
+		end
+		
 		default: begin
-			digit_color = 8'hE0;//RANDOM for check
+			digit_color = 8'hFA;//whiteish
 		end
 		
 	endcase

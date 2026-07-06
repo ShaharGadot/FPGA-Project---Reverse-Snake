@@ -71,15 +71,11 @@ begin
 	if(!resetN) begin
 		RGBout <= TRANSPARENT_ENCODING ;
 	end
-	
-	else if (CURRENT_STATE == FAILURE_ST) begin
-		RGBout <= TRANSPARENT_ENCODING ;
-		//wait for start of level
-	end
 
-	else if (CURRENT_STATE == OPENING_ST) begin
-		RGBout <= TRANSPARENT_ENCODING ; 
+	else if (CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST || CURRENT_STATE == VICTORY_ST) begin
+	
 		//wait for start of level
+		RGBout <= TRANSPARENT_ENCODING ; 
 	end
 	
 	else begin

@@ -32,12 +32,13 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//8
 logic [7:0] OpeningRGB;
 logic [7:0] FirstLevelRGB;
 logic [7:0] SecondLevelRGB;
+logic [7:0] VictoryRGB;
 logic [7:0] FailureRGB;
 
 logic [3:0] object;
 logic [13:0] first_level_address  ;
 logic [12:0] second_level_address  ;
-logic [14:0] failure_address  ;
+logic [14:0] failure_and_victory_address  ;
 
 logic [7:0]  next_BackGroundRGB;
 
@@ -52,9 +53,9 @@ assign offsetX_MSB  = pixelX[10:TILE_NUMBER_OF_X_BITS] ; // get higher bits
 assign offsetY_MSB  = pixelY[10:TILE_NUMBER_OF_Y_BITS] ; // get higher bits 
 
 assign object = MazeBitMapMask[offsetY_MSB][offsetX_MSB]; // crnt object wer'e on
-assign first_level_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
+assign first_level_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB); // not code replicas because addresses have different sizes
 assign second_level_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
-assign failure_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
+assign failure_and_victory_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
 
 
 logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]  MazeBitMapMask ;  
@@ -85,7 +86,7 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   SecondLevelBitMapMask= /
     {64'h0000000000_000000}
 };
 
-logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   FailureBitMapMask= // defult table to load on reset
+logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   EndGameBitMapMask= // defult table to load on reset
 {
     
     {64'h0000000000_000000},
@@ -166,6 +167,24 @@ assign CURRENT_STATE = GAME_STATE;
     .LPM_WIDTH(8),
     .LPM_WIDTHAD(15),
 	 .LPM_NUMWORDS(20480),
+    .LPM_FILE("RTL/VictoryBG.mif"),
+	   .LPM_TYPE               ("LPM_ROM"),
+      .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
+		.LPM_OUTDATA            ("UNREGISTERED"), 
+		.AUTO_CARRY_CHAINS      ("ON"),
+		.AUTO_CASCADE_BUFFERS   ("ON"),
+	   .INTENDED_DEVICE_FAMILY ("Cyclone V")  
+) victory_rom_inst (
+    .address(failure_and_victory_address),
+	 .inclock(clk),
+	// .outclock(clk),
+    .q(VictoryRGB)
+);
+
+ lpm_rom #(
+    .LPM_WIDTH(8),
+    .LPM_WIDTHAD(15),
+	 .LPM_NUMWORDS(20480),
     .LPM_FILE("RTL/FailureBG.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
@@ -174,7 +193,7 @@ assign CURRENT_STATE = GAME_STATE;
 		.AUTO_CASCADE_BUFFERS   ("ON"),
 	   .INTENDED_DEVICE_FAMILY ("Cyclone V")  
 ) failure_rom_inst (
-    .address(failure_address),
+    .address(failure_and_victory_address),
 	 .inclock(clk),
 	// .outclock(clk),
     .q(FailureRGB)
@@ -200,13 +219,13 @@ always_comb begin
 		end
 		
 		VICTORY_ST: begin
-			next_BackGroundRGB = SecondLevelRGB;
-			MazeBitMapMask = SecondLevelBitMapMask;
+			next_BackGroundRGB = VictoryRGB;
+			MazeBitMapMask = EndGameBitMapMask;
 		end
 		
 		FAILURE_ST: begin   
 			next_BackGroundRGB = FailureRGB;
-			MazeBitMapMask = FailureBitMapMask;
+			MazeBitMapMask = EndGameBitMapMask;
 		end
 		  
 		default: begin 

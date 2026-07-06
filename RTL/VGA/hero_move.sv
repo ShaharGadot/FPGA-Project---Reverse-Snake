@@ -156,12 +156,8 @@ begin : fsm_sync_proc
 	end
 	//////////////////game state changes////////////////////////////////////////
 	
-	else if (CURRENT_STATE == FAILURE_ST) begin 
-		// wait untill start of a level
-
-	end 
 	
-	else if (CURRENT_STATE == OPENING_ST) begin
+	else if (CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST || CURRENT_STATE == VICTORY_ST) begin
 		// wait untill start of a level
 	end
 	

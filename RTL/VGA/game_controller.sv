@@ -33,14 +33,18 @@ module	game_controller	(
 			output logic open_sesame,
 			
 			output logic [3:0] inverse_countdown,
-			output logic [3:0] slow_time_countdown
+			output logic [3:0] slow_time_countdown,
+			
+			output logic [3:0] big_min_HS = 4'd5,
+			output logic [3:0] small_min_HS = 4'd9,
+			output logic [3:0] big_sec_HS = 4'd5,
+			output logic [3:0] small_sec_HS = 4'd9
 
-
-			//output logic SinglePulse_TrapCollision //generating A single pulse in a frame in trap collision 
 			
 );
 
-//logic flag ; // a semaphore to set the output only once per frame regardless of number of collisions 
+
+
 
 logic portal_flag;
 logic SinglePulse_PortalCollision;
@@ -61,10 +65,6 @@ logic super_trap_pu_DrawingRequest;
 logic inverse_countdown_activated;
 logic slow_time_countdown_activated;
 
-logic [3:0] big_min_HS = 4'd5;
-logic [3:0] small_min_HS = 4'd9;
-logic [3:0] big_sec_HS = 4'd5;
-logic [3:0] small_sec_HS = 4'd9;
 
 assign points_HS = big_min_HS * 1000 + small_min_HS * 100 + big_sec_HS * 10 + small_sec_HS;
 assign points_crnt = big_min_count * 1000 + small_min_count * 100 + big_sec_count * 10 + small_sec_count; // to compare crnt and high score
@@ -149,7 +149,7 @@ begin : fsm_sync_proc
 					
 					
 					
-					if ((collision_hero_border || collision_hero_ghost) && (!state_transition_margin)) begin
+					if ((collision_hero_border || collision_hero_ghost || collision_hero_grave) && (!state_transition_margin)) begin
 						SM_GAME <= FAILURE_ST; //4
 
 					end
@@ -169,7 +169,7 @@ begin : fsm_sync_proc
 					if (num_ghosts == 5'd0 || minus) // finished ghosts or CHEAT
 						open_sesame <= 1'b1;
 					
-					if ((collision_hero_border || collision_hero_ghost) && (!state_transition_margin)) begin
+					if ((collision_hero_border || collision_hero_ghost || collision_hero_grave) && (!state_transition_margin)) begin
 						SM_GAME <= FAILURE_ST; //4
 
 					end

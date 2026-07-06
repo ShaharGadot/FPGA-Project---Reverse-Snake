@@ -71,7 +71,7 @@ begin
 		RGBout <= TRANSPARENT_ENCODING ;
 	end
 	
-	else if (CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST) begin
+	else if (CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST || CURRENT_STATE == VICTORY_ST) begin
 		RGBout <= TRANSPARENT_ENCODING ;
 		//wait for start of level
 	end

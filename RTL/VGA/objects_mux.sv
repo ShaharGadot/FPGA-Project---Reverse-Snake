@@ -19,6 +19,9 @@ module	objects_mux	(
 					input		logic	GameTimeDrawingRequest,
 					input		logic	[7:0] GameTimeRGB, 
 					
+					input		logic	HighScoreDrawingRequest,
+					input		logic	[7:0] HighScoreRGB, 
+					
 					input		logic	GreenBarDrawingRequest,
 					input		logic	[7:0] GreenBarRGB, 
 				
@@ -45,6 +48,9 @@ begin
 				
 		else if (GameTimeDrawingRequest == 1'b1)
 				RGBOut <= GameTimeRGB ;
+				
+		else if (HighScoreDrawingRequest == 1'b1)
+				RGBOut <= HighScoreRGB ;
 				
 		else if (GreenBarDrawingRequest == 1'b1)
 				RGBOut <= GreenBarRGB ;

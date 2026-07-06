@@ -323,12 +323,7 @@ begin
 
 	end
 	
-	else if(CURRENT_STATE == FAILURE_ST) begin 
-		RGBout <=	TRANSPARENT_ENCODING;
-
-	end
-	
-	else if (CURRENT_STATE == OPENING_ST) begin
+	else if (CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST || CURRENT_STATE == VICTORY_ST) begin
 		
 		//do nothing while opening screen
 		RGBout <= TRANSPARENT_ENCODING ;
@@ -430,14 +425,16 @@ begin
 		if (CURRENT_STATE == SECOND_LEVEL_ST && motion_pulse) begin
 		
 			if (grave_appearance <= 0) begin // grave in ground
+				grave_appearance <= 2;
 				switch_grave_pos <= 1'b1;
-				grave_direction <= 1;
+				grave_direction <= 2;
 				MazeBitMapMask[grave_Y][grave_X] <= 4'd0;  //delete grave
 
 			end
 
 			else if (grave_appearance >= 32) begin
-				grave_direction <= -1;
+				grave_appearance <= 30;
+				grave_direction <= -2;
 				
 			end
 			else if (check_random_valid && switch_grave_pos && explosion_flag == 2'd0) begin //place to put grave, one clk after start of frame so acceptable

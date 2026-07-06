@@ -129,7 +129,7 @@ begin
 
 	end
 	
-	else if(CURRENT_STATE == FAILURE_ST || CURRENT_STATE == OPENING_ST) begin 
+	else if(CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST || CURRENT_STATE == VICTORY_ST) begin 
 		// maybe restart counter when in opening or failure state?
 
 	end
