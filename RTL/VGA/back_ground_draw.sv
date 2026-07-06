@@ -184,7 +184,7 @@ assign CURRENT_STATE = GAME_STATE;
     .LPM_WIDTH(8),
     .LPM_WIDTHAD(14),
 	 .LPM_NUMWORDS(12288),
-    .LPM_FILE("RTL/Hell.mif"),
+    .LPM_FILE("RTL/ThirdLevelBG.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
 		.LPM_OUTDATA            ("UNREGISTERED"), 

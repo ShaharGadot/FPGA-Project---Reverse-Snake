@@ -135,6 +135,7 @@ begin : fsm_sync_proc
 	begin 
 		SM_GAME <= OPENING_ST ; 
 		open_sesame <= 1'b0;
+		
 
 	end 
 	else begin 
@@ -262,10 +263,11 @@ end
 always_ff @(posedge clk or negedge resetN) begin 
     if (!resetN) begin
         SM_GAME_q <= OPENING_ST;
-        state_transition <= 1'b0;
+        state_transition <= 1'b1;
 		  state_transition_margin <= 1'b0;
 
-    end else begin
+    end 
+	 else begin
         SM_GAME_q <= SM_GAME; 
         
         if (SM_GAME != SM_GAME_q) begin
@@ -344,12 +346,7 @@ end
 
 //////////////////////////////////////// saving new high score (without reseting) ///////////////////////////////
 
-//initial begin
-//    big_min_HS   = 4'd5;
-//    small_min_HS = 4'd9;
-//    big_sec_HS   = 4'd5;
-//    small_sec_HS = 4'd9;
-//end
+
 
 always_ff@(posedge clk)
 begin

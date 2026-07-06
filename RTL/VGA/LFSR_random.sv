@@ -43,13 +43,13 @@ end
 
 always_comb begin 
 
-	if(register_item < 7'd40) // 1 - 40
+	if(register_item < 7'd60) // 1 - 40
 		random_item = skull;
 	
-	else if(register_item < 7'd80) // 40 - 80
+	else if(register_item < 7'd90) // 40 - 80
 		random_item = slow_time;
 		
-	else if(register_item < 7'd100) // 80 - 100
+	else if(register_item < 7'd110) // 80 - 100
 		random_item = inverse_keys;
 		
 	else
