@@ -19,7 +19,7 @@ module TextBitMap	(
 
 localparam logic[12:0] OBJECT_WIDTH_X = 13'd128; // some are double, but taken care off in addres
 localparam logic[12:0] OBJECT_WIDTH_Y = 13'd128;
-localparam logic[12:0] MIF_area = OBJECT_WIDTH_X * OBJECT_WIDTH_Y;
+localparam logic[14:0] MIF_area = OBJECT_WIDTH_X * OBJECT_WIDTH_Y;
 
 
 localparam logic [2:0]	die_or_win_line = 3'd1;//coded like in the mux 
