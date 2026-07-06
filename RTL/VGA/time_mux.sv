@@ -119,6 +119,9 @@ assign small_min_en = big_sec_en && (big_sec_count == 4'd5);
 assign big_min_en = small_min_en && (small_min_count == 4'd9);
 
 
+
+////////////////////////////////////////////////game counting//////////////////////////////////////////////
+
 always_ff@(posedge clk or negedge resetN)
 begin
 	if(!resetN) begin
@@ -129,7 +132,7 @@ begin
 
 	end
 	
-	else if(CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST || CURRENT_STATE == VICTORY_ST) begin 
+	else if(CURRENT_STATE == OPENING_ST || CURRENT_STATE == FAILURE_ST || CURRENT_STATE == VICTORY_ST) begin  //stop counting
 		// maybe restart counter when in opening or failure state?
 
 	end

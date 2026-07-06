@@ -42,18 +42,12 @@ always_comb begin
    TEXT_offsety = 11'd0;
 	TEXT = 3'd0;
 
+	
 	if (DieOrWinDrawingRequest) begin
 	
 		TEXT_offsetx = DieOrWin_offsetx;
 		TEXT_offsety = DieOrWin_offsety;
 		TEXT = die_or_win_line;
-		
-	end
-	else if (PressEnterDrawingRequest) begin
-	
-		TEXT_offsetx = PressEnter_offsetx;
-		TEXT_offsety = PressEnter_offsety;
-		TEXT = press_enter;
 		
 	end
 	else if (YourTimeDrawingRequest) begin
@@ -70,6 +64,14 @@ always_comb begin
 		TEXT = high_score;
 		
 	end
+	else if (PressEnterDrawingRequest) begin
+	
+		TEXT_offsetx = PressEnter_offsetx;
+		TEXT_offsety = PressEnter_offsety;
+		TEXT = press_enter;
+		
+	end
+
 
 end
 

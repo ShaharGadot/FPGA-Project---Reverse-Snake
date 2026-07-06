@@ -35,10 +35,10 @@ module	game_controller	(
 			output logic [3:0] inverse_countdown,
 			output logic [3:0] slow_time_countdown,
 			
-			output logic [3:0] big_min_HS = 4'd5,
-			output logic [3:0] small_min_HS = 4'd9,
-			output logic [3:0] big_sec_HS = 4'd5,
-			output logic [3:0] small_sec_HS = 4'd9
+			output logic [3:0] big_min_HS,
+			output logic [3:0] small_min_HS,
+			output logic [3:0] big_sec_HS ,
+			output logic [3:0] small_sec_HS
 
 			
 );
@@ -65,8 +65,20 @@ logic super_trap_pu_DrawingRequest;
 logic inverse_countdown_activated;
 logic slow_time_countdown_activated;
 
+logic [15:0] points_HS;
+logic [15:0] points_crnt;
 
-assign points_HS = big_min_HS * 1000 + small_min_HS * 100 + big_sec_HS * 10 + small_sec_HS;
+logic [3:0] big_min_HS_reg   = 4'd5; // initial reset
+logic [3:0] small_min_HS_reg = 4'd9;
+logic [3:0] big_sec_HS_reg   = 4'd5;
+logic [3:0] small_sec_HS_reg = 4'd9;
+
+assign big_min_HS   = big_min_HS_reg; // not changing directly the output
+assign small_min_HS = small_min_HS_reg;
+assign big_sec_HS   = big_sec_HS_reg;
+assign small_sec_HS = small_sec_HS_reg;
+
+assign points_HS = big_min_HS_reg * 1000 + small_min_HS_reg * 100 + big_sec_HS_reg * 10 + small_sec_HS_reg;
 assign points_crnt = big_min_count * 1000 + small_min_count * 100 + big_sec_count * 10 + small_sec_count; // to compare crnt and high score
 
 
@@ -113,14 +125,6 @@ enum  logic [2:0] {  OPENING_ST,
 							FAILURE_ST
 						}  SM_GAME ;
 
-
-						
-initial begin
-	big_min_HS = 4'd5;
-	small_min_HS = 4'd9;
-	big_sec_HS = 4'd5;
-	small_sec_HS = 4'd9;
-end
 
 
 always_ff@(posedge clk or negedge resetN)
@@ -191,14 +195,6 @@ begin : fsm_sync_proc
 			//-----------------
 				VICTORY_ST : begin
 			//-----------------
-			
-					if (points_crnt < points_HS) begin // save high score
-						big_min_HS <= big_min_count;
-						small_min_HS <= small_min_count;
-						big_sec_HS <= big_sec_count;
-						small_sec_HS <= small_sec_count;
-		
-					end
 
 					
 					
@@ -325,6 +321,29 @@ begin
 	end
 end	
 
+//////////////////////////////////////// saving new high score (without reseting) ///////////////////////////////
+
+//initial begin
+//    big_min_HS   = 4'd5;
+//    small_min_HS = 4'd9;
+//    big_sec_HS   = 4'd5;
+//    small_sec_HS = 4'd9;
+//end
+
+always_ff@(posedge clk)
+begin
+
+	if (SM_GAME == VICTORY_ST) begin
+	
+		if (points_crnt < points_HS) begin // save high score
+		
+			big_min_HS_reg   <= big_min_count;
+         small_min_HS_reg <= small_min_count;
+         big_sec_HS_reg   <= big_sec_count;
+         small_sec_HS_reg <= small_sec_count;
+		end
+	end
+end
 
 
 
