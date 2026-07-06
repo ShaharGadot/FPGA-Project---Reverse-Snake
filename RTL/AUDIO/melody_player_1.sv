@@ -1,9 +1,4 @@
-//
-// (c) Technion IIT, The Faculty of Electrical and Computer Engineering, 2025
-//
-//  PRELIMINARY VERSION  -  23 March 2025
-//  Updated: March 29, 2026 - Gadi Shavit 
-//
+
 
 /*
 typedef struct packed {

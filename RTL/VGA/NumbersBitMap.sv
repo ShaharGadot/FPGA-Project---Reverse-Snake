@@ -42,8 +42,9 @@ logic [2:0] CURRENT_STATE;
 localparam logic [2:0] OPENING_ST = 3'd0;
 localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
 localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
-localparam logic [2:0] VICTORY_ST = 3'd3;
-localparam logic [2:0] FAILURE_ST = 3'd4;
+localparam logic [2:0] THIRD_LEVEL_ST = 3'd3;
+localparam logic [2:0] VICTORY_ST = 3'd4;
+localparam logic [2:0] FAILURE_ST = 3'd5;
 
 assign CURRENT_STATE = GAME_STATE;
 
@@ -115,8 +116,12 @@ always_comb begin //////////////////diferent color to digits in diferent leveld
 			digit_color = 8'hFA;//whiteish
 		end
 		
+		THIRD_LEVEL_ST: begin
+			digit_color = 8'hFA;//whiteish
+		end
+		
 		VICTORY_ST: begin
-			digit_color = 8'hB7;//purple-white
+			digit_color = 8'hE0;//red
 		end
 		
 		FAILURE_ST: begin

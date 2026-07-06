@@ -19,7 +19,7 @@ logic [26:0] sec_counter;
 logic [5:0] crnt_frames_per_motion;
 logic [26:0] crnt_clks_per_sec;
 
-parameter int frames_per_motion = 16;
+parameter int frames_per_motion = 8;
 parameter int clks_per_sec = 31500000;
 
 assign crnt_frames_per_motion = (slow_time_countdown != 4'd0) ? (frames_per_motion * 2) : frames_per_motion;

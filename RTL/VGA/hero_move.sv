@@ -40,10 +40,10 @@ logic LEFT;
  int 	 topLeftX_tmp; // output the top left corner 
  int   topLeftY_tmp;  // can be negative , if the object is partliy outside 
 
-// a module used to generate the  ball trajectory.  
 
 parameter int INITIAL_X = 256;
 parameter int INITIAL_Y = 160;
+
 parameter int player_speed = 128;
 
 int crnt_X_speed;
@@ -77,8 +77,9 @@ logic [2:0] CURRENT_STATE;
 localparam logic [2:0] OPENING_ST = 3'd0;
 localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
 localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
-localparam logic [2:0] VICTORY_ST = 3'd3;
-localparam logic [2:0] FAILURE_ST = 3'd4;
+localparam logic [2:0] THIRD_LEVEL_ST = 3'd3;
+localparam logic [2:0] VICTORY_ST = 3'd4;
+localparam logic [2:0] FAILURE_ST = 3'd5;
 
 assign CURRENT_STATE = GAME_STATE;
 
@@ -112,6 +113,7 @@ always_comb begin
 		crnt_Y_speed = Yspeed;
 
 	end
+		
 end
 
 
@@ -169,22 +171,7 @@ begin : fsm_sync_proc
 			Xposition <= INITIAL_X*FIXED_POINT_MULTIPLIER  ; 
 			Yposition <= INITIAL_Y*FIXED_POINT_MULTIPLIER   ; 
 			change_direction_flag <= 1'b0;
-				
 
-//		case (CURRENT_STATE)
-//			FIRST_LEVEL_ST : begin
-//				
-//			end
-//			
-//			SECOND_LEVEL_ST : begin
-//
-//			end
-//			
-//			default : begin
-//
-//			end	
-//		endcase
-	
 	end	
 	
 	/////////////////////////////////////////////////////////////////////////

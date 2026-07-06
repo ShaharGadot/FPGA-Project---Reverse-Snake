@@ -42,6 +42,7 @@ end
 
 
 always_comb begin 
+
 	if(register_item < 7'd40) // 1 - 40
 		random_item = skull;
 	

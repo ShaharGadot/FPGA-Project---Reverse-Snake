@@ -32,12 +32,14 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//8
 logic [7:0] OpeningRGB;
 logic [7:0] FirstLevelRGB;
 logic [7:0] SecondLevelRGB;
+logic [7:0] ThirdLevelRGB;
 logic [7:0] VictoryRGB;
 logic [7:0] FailureRGB;
 
 logic [3:0] object;
 logic [13:0] first_level_address  ;
 logic [12:0] second_level_address  ;
+logic [13:0] third_level_address  ;
 logic [14:0] failure_and_victory_address  ;
 
 logic [7:0]  next_BackGroundRGB;
@@ -54,7 +56,8 @@ assign offsetY_MSB  = pixelY[10:TILE_NUMBER_OF_Y_BITS] ; // get higher bits
 
 assign object = MazeBitMapMask[offsetY_MSB][offsetX_MSB]; // crnt object wer'e on
 assign first_level_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB); // not code replicas because addresses have different sizes
-assign second_level_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
+assign second_level_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);assign second_level_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
+assign third_level_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
 assign failure_and_victory_address = (object) * 64 * 64 + (offsetY_LSB*TILE_WIDTH_X + offsetX_LSB);
 
 
@@ -86,6 +89,19 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   SecondLevelBitMapMask= /
     {64'h0000000000_000000}
 };
 
+logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   ThirdLevelBitMapMask= // defult table to load on reset
+{
+    
+    {64'h1111111111_000000},
+    {64'h2222222222_000000},
+    {64'h0000000000_000000},
+    {64'h0000000000_000000},
+    {64'h0000000000_000000},
+    {64'h0000000000_000000},
+    {64'h0000000000_000000},
+    {64'h0000000000_000000}
+};
+
 logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   EndGameBitMapMask= // defult table to load on reset
 {
     
@@ -103,8 +119,9 @@ logic [2:0] CURRENT_STATE;
 localparam logic [2:0] OPENING_ST = 3'd0;
 localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
 localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
-localparam logic [2:0] VICTORY_ST = 3'd3;
-localparam logic [2:0] FAILURE_ST = 3'd4;
+localparam logic [2:0] THIRD_LEVEL_ST = 3'd3;
+localparam logic [2:0] VICTORY_ST = 3'd4;
+localparam logic [2:0] FAILURE_ST = 3'd5;
 
 assign CURRENT_STATE = GAME_STATE;
 
@@ -165,6 +182,24 @@ assign CURRENT_STATE = GAME_STATE;
 
  lpm_rom #(
     .LPM_WIDTH(8),
+    .LPM_WIDTHAD(14),
+	 .LPM_NUMWORDS(12288),
+    .LPM_FILE("RTL/Hell.mif"),
+	   .LPM_TYPE               ("LPM_ROM"),
+      .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
+		.LPM_OUTDATA            ("UNREGISTERED"), 
+		.AUTO_CARRY_CHAINS      ("ON"),
+		.AUTO_CASCADE_BUFFERS   ("ON"),
+	   .INTENDED_DEVICE_FAMILY ("Cyclone V")  
+) third_level_rom_inst (
+    .address(third_level_address),
+	 .inclock(clk),
+	// .outclock(clk),
+    .q(ThirdLevelRGB)
+);
+
+ lpm_rom #(
+    .LPM_WIDTH(8),
     .LPM_WIDTHAD(15),
 	 .LPM_NUMWORDS(20480),
     .LPM_FILE("RTL/VictoryBG.mif"),
@@ -216,6 +251,11 @@ always_comb begin
 		SECOND_LEVEL_ST: begin
 			next_BackGroundRGB = SecondLevelRGB;
 			MazeBitMapMask = SecondLevelBitMapMask;
+		end
+		
+		THIRD_LEVEL_ST: begin
+			next_BackGroundRGB = ThirdLevelRGB;
+			MazeBitMapMask = ThirdLevelBitMapMask;
 		end
 		
 		VICTORY_ST: begin

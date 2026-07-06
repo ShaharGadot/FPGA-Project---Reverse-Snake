@@ -121,6 +121,7 @@ logic [2:0] SM_GAME_q;
 enum  logic [2:0] {  OPENING_ST,
 							FIRST_LEVEL_ST,
 							SECOND_LEVEL_ST,
+							THIRD_LEVEL_ST,
 							VICTORY_ST,
 							FAILURE_ST
 						}  SM_GAME ;
@@ -161,13 +162,13 @@ begin : fsm_sync_proc
 					
 					
 					if ((collision_hero_border || collision_hero_ghost || collision_hero_grave) && (!state_transition_margin)) begin
-						SM_GAME <= FAILURE_ST; //4
+						SM_GAME <= FAILURE_ST; 
 
 					end
 
 						
 					else if (SinglePulse_PortalCollision && (!state_transition_margin)) begin // make sure the collision ends after clk
-						SM_GAME <= SECOND_LEVEL_ST; //2
+						SM_GAME <= SECOND_LEVEL_ST; 
 
 					end
 
@@ -181,16 +182,35 @@ begin : fsm_sync_proc
 						open_sesame <= 1'b1;
 					
 					if ((collision_hero_border || collision_hero_ghost || collision_hero_grave) && (!state_transition_margin)) begin
-						SM_GAME <= FAILURE_ST; //4
+						SM_GAME <= FAILURE_ST; 
 
 					end
 					
 					else if (SinglePulse_PortalCollision && (!state_transition_margin)) begin // make sure the collision ends after clk
-						SM_GAME <= VICTORY_ST; //3
+						SM_GAME <= THIRD_LEVEL_ST; 
 
 					end
 
 				end
+						
+				//-----------------
+				THIRD_LEVEL_ST : begin
+			//-----------------					
+					
+					if (num_ghosts == 5'd0 || minus) // finished ghosts or CHEAT
+						open_sesame <= 1'b1;
+					
+					if ((collision_hero_border || collision_hero_ghost || collision_hero_grave) && (!state_transition_margin)) begin
+						SM_GAME <= FAILURE_ST; 
+
+					end
+					
+					else if (SinglePulse_PortalCollision && (!state_transition_margin)) begin // make sure the collision ends after clk
+						SM_GAME <= VICTORY_ST; 
+
+					end
+
+				end	
 				
 			//-----------------
 				VICTORY_ST : begin
@@ -228,8 +248,9 @@ always_comb begin
         OPENING_ST : GAME_STATE = 3'd0;
         FIRST_LEVEL_ST : GAME_STATE = 3'd1;
         SECOND_LEVEL_ST : GAME_STATE = 3'd2;
-        VICTORY_ST : GAME_STATE = 3'd3;
-        FAILURE_ST : GAME_STATE = 3'd4;
+		  THIRD_LEVEL_ST : GAME_STATE = 3'd3;
+        VICTORY_ST : GAME_STATE = 3'd4;
+        FAILURE_ST : GAME_STATE = 3'd5;
 		  
         default : GAME_STATE = 3'd0;
 		  

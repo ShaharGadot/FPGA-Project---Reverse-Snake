@@ -1,8 +1,3 @@
-// HartsMatrixBitMap File 
-// A two level bitmap. dosplaying harts on the screen Feb 2025 
-//(c) Technion IIT, Department of Electrical Engineering 2025 
-
-
 
 module	GridMatrixBitMap_SIMPLE	(	
 					input	logic	clk,
@@ -37,8 +32,8 @@ module	GridMatrixBitMap_SIMPLE	(
 					input logic startOfFrame,
 					
 					
-					output logic [4:0] max_num_ghosts,
-					output logic [4:0] num_ghosts,
+					output logic 	[4:0] max_num_ghosts,
+					output logic 	[4:0] num_ghosts,
 					output logic	[8:0] drawingRequest, //output that the pixel should be dispalyed 
 					output logic	[7:0] RGBout  //rgb value from the bitmap 
  ) ;
@@ -66,7 +61,7 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//16
  logic [9:0] offsetY_LSB  ; 
  logic [5:0] offsetX_MSB ;
  logic [5:0] offsetY_MSB  ;
- logic [10:0] border_address  ;
+ logic [11:0] border_address  ;
  logic [12:0] item_address  ;
  logic [12:0] ghost_address ;
  logic [10:0] grave_address  ;
@@ -81,7 +76,7 @@ localparam  logic [10:0] MAZE_HEIGHT_Y = 11'b1 << MAZE_NUMBER_OF__Y_BITS ;//16
  
  logic collision_pwr_item;
  logic [3:0] object_flag;//in object
- logic [1:0] border_type;
+ logic [2:0] border_type;
  logic collision_trap_flag;//in collision
  logic collision_skull_flag;//in collision
  logic collision_passive_item_flag;//in collision with pwr item that dosent affect grid
@@ -151,15 +146,16 @@ assign max_num_ghosts = {MAX_num_ghosts[4:0]};
 
 int grave_appearance; // between 0 (not visible) to 32 (visible)
 int grave_direction; // +1 or -1 for addition
-
+int grave_level_speed; // 2 or 4 pixels per motion_pulse, depends on level
 
 
 logic [2:0] CURRENT_STATE;
 localparam logic [2:0] OPENING_ST = 3'd0;
 localparam logic [2:0] FIRST_LEVEL_ST = 3'd1;
 localparam logic [2:0] SECOND_LEVEL_ST = 3'd2;
-localparam logic [2:0] VICTORY_ST = 3'd3;
-localparam logic [2:0] FAILURE_ST = 3'd4;
+localparam logic [2:0] THIRD_LEVEL_ST = 3'd3;
+localparam logic [2:0] VICTORY_ST = 3'd4;
+localparam logic [2:0] FAILURE_ST = 3'd5;
 
 assign CURRENT_STATE = GAME_STATE;
 
@@ -214,8 +210,8 @@ logic [0:(MAZE_HEIGHT_Y-1)][0:(MAZE_WIDTH_X-1)] [3:0]   EndOfLevelBitMapMask= //
 
 lpm_rom #(
     .LPM_WIDTH(8),
-    .LPM_WIDTHAD(11),
-	 .LPM_NUMWORDS(2048),
+    .LPM_WIDTHAD(12),
+	 .LPM_NUMWORDS(3072),
     .LPM_FILE("RTL/borders.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
@@ -422,19 +418,19 @@ begin
 		end
 		
 		/////////////////////////////// graves of fury //////////////////////////////
-		if (CURRENT_STATE == SECOND_LEVEL_ST && motion_pulse) begin
+		if ((CURRENT_STATE == SECOND_LEVEL_ST || CURRENT_STATE == THIRD_LEVEL_ST) && motion_pulse) begin
 		
 			if (grave_appearance <= 0) begin // grave in ground
 				grave_appearance <= 2;
 				switch_grave_pos <= 1'b1;
-				grave_direction <= 2;
+				grave_direction <= grave_level_speed;// 2 or 4
 				MazeBitMapMask[grave_Y][grave_X] <= 4'd0;  //delete grave
 
 			end
 
 			else if (grave_appearance >= 32) begin
 				grave_appearance <= 30;
-				grave_direction <= -2;
+				grave_direction <= -grave_level_speed;
 				
 			end
 			else if (check_random_valid && switch_grave_pos && explosion_flag == 2'd0) begin //place to put grave, one clk after start of frame so acceptable
@@ -636,17 +632,25 @@ always_comb begin
 	case (CURRENT_STATE)
 			FIRST_LEVEL_ST : begin
 				border_type = 2'd0;
-				
+				grave_level_speed = 2;
+		
 			end
 			
 			SECOND_LEVEL_ST : begin
 				border_type = 2'd1;
-
+				grave_level_speed = 2;
+				
+			end
+			
+			THIRD_LEVEL_ST : begin
+				border_type = 2'd2;
+				grave_level_speed = 4;
+				
 			end
 			
 			default : begin
 				border_type = 2'd0;
-
+				grave_level_speed = 2;
 			end	
 		endcase
 end
