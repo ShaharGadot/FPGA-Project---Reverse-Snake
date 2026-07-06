@@ -125,16 +125,9 @@ agreement for further details.
 	(port
 		(pt 296 64)
 		(output)
-		(text "InsideRectangle" (rect 0 0 62 12)(font "Arial" ))
-		(text "InsideRectangle" (rect 213 59 275 71)(font "Arial" ))
-		(line (pt 296 64)(pt 280 64)(line_width 1))
-	)
-	(port
-		(pt 296 80)
-		(output)
 		(text "TEXT[2..0]" (rect 0 0 44 12)(font "Arial" ))
-		(text "TEXT[2..0]" (rect 231 75 275 87)(font "Arial" ))
-		(line (pt 296 80)(pt 280 80)(line_width 3))
+		(text "TEXT[2..0]" (rect 231 59 275 71)(font "Arial" ))
+		(line (pt 296 64)(pt 280 64)(line_width 3))
 	)
 	(drawing
 		(rectangle (rect 16 16 280 224)(line_width 1))

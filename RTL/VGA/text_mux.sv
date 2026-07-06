@@ -26,7 +26,6 @@ module	text_mux	(
 			  
 					output	logic	[10:0] TEXT_offsetx,
 					output	logic	[10:0] TEXT_offsety,
-					output	logic InsideRectangle,
 					output	logic [2:0] TEXT
 
 );
@@ -39,16 +38,14 @@ localparam logic [2:0]	high_score = 3'd4;
 
 always_comb begin
 
-   TEXT_offsetx = 4'd0;
-   TEXT_offsety = 4'd0;
-   InsideRectangle = 1'b0;
+   TEXT_offsetx = 11'd0;
+   TEXT_offsety = 11'd0;
 	TEXT = 3'd0;
 
 	if (DieOrWinDrawingRequest) begin
 	
 		TEXT_offsetx = DieOrWin_offsetx;
 		TEXT_offsety = DieOrWin_offsety;
-		InsideRectangle = DieOrWinDrawingRequest;
 		TEXT = die_or_win_line;
 		
 	end
@@ -56,7 +53,6 @@ always_comb begin
 	
 		TEXT_offsetx = PressEnter_offsetx;
 		TEXT_offsety = PressEnter_offsety;
-		InsideRectangle = PressEnterDrawingRequest;
 		TEXT = press_enter;
 		
 	end
@@ -64,7 +60,6 @@ always_comb begin
 	
 		TEXT_offsetx = YourTime_offsetx;
 		TEXT_offsety = YourTime_offsety;
-		InsideRectangle = YourTimeDrawingRequest;
 		TEXT = your_time;
 		
 	end
@@ -72,7 +67,6 @@ always_comb begin
 	
 		TEXT_offsetx = HighScore_offsetx;
 		TEXT_offsety = HighScore_offsety;
-		InsideRectangle = HighScoreDrawingRequest;
 		TEXT = high_score;
 		
 	end

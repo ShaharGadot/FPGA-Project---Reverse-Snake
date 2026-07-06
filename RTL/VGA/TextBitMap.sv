@@ -9,7 +9,6 @@ module TextBitMap	(
 					input		logic	resetN,
 					input 	logic	[10:0] offsetX,// offset from top left  position 
 					input 	logic	[10:0] offsetY,
-					input		logic	InsideRectangle, //input that the pixel is within a bracket 
 					input		logic [2:0] GAME_STATE,
 					input		logic [2:0] TEXT,
 
@@ -23,7 +22,7 @@ localparam logic[12:0] OBJECT_WIDTH_Y = 13'd128;
 localparam logic[12:0] MIF_area = OBJECT_WIDTH_X * OBJECT_WIDTH_Y;
 
 
-localparam logic [2:0]	die_or_win_line = 3'd1;
+localparam logic [2:0]	die_or_win_line = 3'd1;//coded like in the mux 
 localparam logic [2:0]	press_enter = 3'd2;
 localparam logic [2:0]	your_time = 3'd3;
 localparam logic [2:0]	high_score = 3'd4;
@@ -38,10 +37,7 @@ localparam logic [7:0] TRANSPARENT_ENCODING = 8'hFF ;// RGB value in the bitmap 
  
 assign address = (offsetX < 128) ? (MIF_area * TEXT_addres + ((offsetY)*OBJECT_WIDTH_X + (offsetX))) :
 											  (MIF_area * (TEXT_addres + 1'b1) + ((offsetY)*OBJECT_WIDTH_X + (offsetX - 128)));
-
-
-parameter  logic	[7:0] digit_color = 8'hff ; //set the color of the digit
-
+												////// checking if the addres is of small or large object///////
 
 logic [2:0] CURRENT_STATE;
 localparam logic [2:0] OPENING_ST = 3'd0;
@@ -71,7 +67,7 @@ lpm_rom #(
     .q(color)
 );
 
-
+/////////////////////////// calculating correct mif using state and position in sceen ///////////////////
 always_comb begin
 
 	TEXT_addres = 4'd0;
@@ -100,7 +96,8 @@ always_comb begin
 	
 end
 
-// pipeline (ff) to get the pixel color from the array 	 
+/////////////////////////////// enabling color only when wanted //////////////////
+
 
 always_ff@(posedge clk or negedge resetN)
 begin
@@ -108,17 +105,18 @@ begin
 		TextRGBout <= TRANSPARENT_ENCODING ;
 	end
 	
-	else if (CURRENT_STATE == OPENING_ST || CURRENT_STATE == FIRST_LEVEL_ST || CURRENT_STATE == SECOND_LEVEL_ST) begin
-		RGBout <= TRANSPARENT_ENCODING ;
-		//wait for start of level
-	end
 	
 	else begin
 		TextRGBout <= TRANSPARENT_ENCODING ; // default  
-
-	  	if (InsideRectangle == 1'b1 ) begin
+		
+		if (CURRENT_STATE == FAILURE_ST && (TEXT == die_or_win_line || TEXT == press_enter))
 			TextRGBout <= color;
-		end
+			
+			
+		if (CURRENT_STATE == VICTORY_ST && (TEXT == die_or_win_line || TEXT == press_enter 
+															|| TEXT == your_time || TEXT == high_score))
+			TextRGBout <= color;
+
  	end 
 end
 
