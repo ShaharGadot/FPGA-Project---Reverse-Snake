@@ -470,7 +470,7 @@ begin
 			hit_X <= offsetX_MSB;//save coordinates for deleting the trap next startOfFrame
 			hit_Y <= offsetY_MSB;
 		end
-		else if (collision_trap_flag && startOfFrame) begin
+		else if (collision_trap_flag && startOfFrame && explosion_flag == 2'd0 && (hero_X_MSB == hero_X_MSB_d1) && (hero_Y_MSB == hero_Y_MSB_d1)) begin
 			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting trap 
 			collision_trap_flag <= 1'b0;
 			generate_trap <= 1'b1;
@@ -529,7 +529,7 @@ begin
 			collision_super_trap_flag <= 1'b1;
 		end
 			
-		else if (collision_super_trap_flag && explosion_flag == 2'd0 && startOfFrame) begin
+		else if (collision_super_trap_flag && startOfFrame && explosion_flag == 2'd0 && (hero_X_MSB == hero_X_MSB_d1) && (hero_Y_MSB == hero_Y_MSB_d1)) begin
 			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting item 
 			collision_super_trap_flag <= 1'b0;
 			
@@ -544,7 +544,7 @@ begin
 			num_ghosts <= num_ghosts - 1'b1;
 		end
 		
-		else if (second_explosion && explosion_flag == 2'd0 && motion_pulse) begin//second explosion !!!!!!!!!!!!bug fix unchecked !!!!!!!!!!!!!!!!!!!!!!!!
+		else if (second_explosion && explosion_flag == 2'd0 && startOfFrame && (hero_X_MSB == hero_X_MSB_d1) && (hero_Y_MSB == hero_Y_MSB_d1)) begin//second explosion !!!!!!!!!!!!bug fix unchecked !!!!!!!!!!!!!!!!!!!!!!!!
 			generate_pwr_item <= 1'b1;
 			second_explosion <= 1'b0;//turn off trigger
 			
