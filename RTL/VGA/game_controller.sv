@@ -114,6 +114,13 @@ enum  logic [2:0] {  OPENING_ST,
 						}  SM_GAME ;
 
 
+						
+initial begin
+	big_min_HS = 4'd5;
+	small_min_HS = 4'd9;
+	big_sec_HS = 4'd5;
+	small_sec_HS = 4'd9;
+end
 
 
 always_ff@(posedge clk or negedge resetN)

@@ -57,7 +57,7 @@ lpm_rom #(
     .LPM_WIDTH(8),
     .LPM_WIDTHAD(17),
 	 .LPM_NUMWORDS(131072),
-    .LPM_FILE("RTL/words_on_screen.mif"),
+    .LPM_FILE("RTL/Text.mif"),
 	   .LPM_TYPE               ("LPM_ROM"),
       .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
 		.LPM_OUTDATA            ("UNREGISTERED"), 
@@ -82,8 +82,6 @@ always_comb begin
 			
 			die_or_win_line : TEXT_addres = 4'd0;
 			press_enter : TEXT_addres = 4'd4;
-			your_time : TEXT_addres = 4'd6;
-			high_score : TEXT_addres = 4'd7;
 			
 		endcase	
 	end
@@ -108,6 +106,11 @@ always_ff@(posedge clk or negedge resetN)
 begin
 	if(!resetN) begin
 		TextRGBout <= TRANSPARENT_ENCODING ;
+	end
+	
+	else if (CURRENT_STATE == OPENING_ST || CURRENT_STATE == FIRST_LEVEL_ST || CURRENT_STATE == SECOND_LEVEL_ST) begin
+		RGBout <= TRANSPARENT_ENCODING ;
+		//wait for start of level
 	end
 	
 	else begin

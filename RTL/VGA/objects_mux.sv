@@ -24,6 +24,9 @@ module	objects_mux	(
 					
 					input		logic	GreenBarDrawingRequest,
 					input		logic	[7:0] GreenBarRGB, 
+					
+					input		logic	GameTextDrawingRequest,
+					input		logic	[7:0] GameTextRGB, 
 				
 			  
 					input		logic	[8:0] GridDrawingRequest, 
@@ -54,6 +57,9 @@ begin
 				
 		else if (GreenBarDrawingRequest == 1'b1)
 				RGBOut <= GreenBarRGB ;
+				
+		else if (GameTextDrawingRequest == 1'b1)
+				RGBOut <= GameTextRGB ;
 				
 		else if (GridDrawingRequest != 4'b0)
 				RGBOut <= GridRGB ;
