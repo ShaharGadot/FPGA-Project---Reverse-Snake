@@ -44,7 +44,7 @@ logic LEFT;
 parameter int INITIAL_X = 256;
 parameter int INITIAL_Y = 160;
 
-parameter int player_speed = 128;
+int player_speed;
 
 int crnt_X_speed;
 int crnt_Y_speed;
@@ -113,6 +113,13 @@ always_comb begin
 		crnt_Y_speed = Yspeed;
 
 	end
+	
+	if (CURRENT_STATE == THIRD_LEVEL_ST)
+		player_speed = 256;
+		
+	else 
+		player_speed = 128;
+		
 		
 end
 
@@ -257,9 +264,17 @@ begin : fsm_sync_proc
 	
 				Xposition <= Xposition + crnt_X_speed ; 
 				Yposition <= Yposition + crnt_Y_speed ;
-			 
 				
-				if (slow_time_countdown == 4'd0) begin //fixing drift after slow down, one pixel nudge
+				if (slow_time_countdown == 4'd0 && CURRENT_STATE == THIRD_LEVEL_ST) begin //fixing drift after slow down, one pixel nudge
+					  
+					if (Xposition[7] == 1'b1) begin // xposition[1] * MULTIPLIER = xposition[1] <<< 6 = xposition[7]
+						Xposition <= Xposition + FIXED_POINT_MULTIPLIER; // +1 pixel
+					end
+					if (Yposition[7] == 1'b1) begin
+						Yposition <= Yposition + 2 * FIXED_POINT_MULTIPLIER; // +2 pixel
+					end
+				end
+				else if (slow_time_countdown == 4'd0) begin //fixing drift after slow down, one pixel nudge
 					  
 					if (Xposition[6] == 1'b1) begin // xposition[0] * MULTIPLIER = xposition[0] <<< 6 = xposition[6]
 						Xposition <= Xposition + FIXED_POINT_MULTIPLIER; // +1 pixel

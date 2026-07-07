@@ -471,7 +471,9 @@ begin
 			hit_Y <= offsetY_MSB;
 		end
 		else if (collision_trap_flag && startOfFrame && explosion_flag == 2'd0 && (hero_X_MSB == hero_X_MSB_d1) && (hero_Y_MSB == hero_Y_MSB_d1)) begin
-			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting trap 
+			if (MazeBitMapMask[hit_Y][hit_X] == 4'h2)
+				MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting trap if not run over
+				
 			collision_trap_flag <= 1'b0;
 			generate_trap <= 1'b1;
 			
@@ -530,7 +532,9 @@ begin
 		end
 			
 		else if (collision_super_trap_flag && startOfFrame && explosion_flag == 2'd0 && (hero_X_MSB == hero_X_MSB_d1) && (hero_Y_MSB == hero_Y_MSB_d1)) begin
-			MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting item 
+			if (MazeBitMapMask[hit_Y][hit_X] == 4'h6)
+				MazeBitMapMask[hit_Y][hit_X] <= 4'h0;  // deleting item if not run over
+		
 			collision_super_trap_flag <= 1'b0;
 			
 			second_explosion <= 1'b1;//trigger to set off second explosion
