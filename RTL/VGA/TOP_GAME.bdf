@@ -2827,4 +2827,4 @@ agreement for further details.
 (rectangle (rect -576 -96 472 160)(color 0 0 0)(line_width 3))
 (rectangle (rect -784 184 -176 480)(color 0 0 0)(line_width 3))
 (rectangle (rect -136 960 472 1248)(color 0 0 0)(line_width 3))
-(rectangle (rect 1272 576 1672 888)(color 0 0 0)(line_width 3))
+(rectangle (rect 1280 584 1680 896)(color 0 0 0)(line_width 3))
